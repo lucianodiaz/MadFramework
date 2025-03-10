@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;D:\Documentos\SFML-2.6.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -127,7 +127,8 @@
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>if not exist "$(TargetDir)sfml-audio-d-2.dll" copy "$(SolutionDir)bin\sfml-audio-d-2.dll" "$(TargetDir)" if not exist "$(TargetDir)sfml-graphics-d-2.dll" copy "$(SolutionDir)bin\graphics-d-2.dll" "$(TargetDir)"if not exist "$(TargetDir)sfml-network-d-2.dll" copy "$(SolutionDir)bin\sfml-network-d-2.dll" "$(TargetDir)" if not exist "$(TargetDir)sfml-system-d-2.dll" copy "$(SolutionDir)bin\sfml-system-d-2.dll" "$(TargetDir)" if not exist "$(TargetDir)sfml-window-d-2.dll" copy "$(SolutionDir)bin\sfml-window-d-2.dll" "$(TargetDir)"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,8 +157,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\Core\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\World.h" />
     <ClInclude Include="include\MadFramework.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
