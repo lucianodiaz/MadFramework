@@ -1,11 +1,22 @@
 #include "Core/World.h"
+#include "ECS/ECSManager.h"
 #include <iostream>
+#include <string>
+#include <memory>
+#include <ECS/Systems/MovementSystem.h>
 
 
 World::World(int width, int height, const std::string& title) :
 	window(sf::VideoMode(width,height),title),m_isRunning(true)
 {
 
+
+	ecs = std::make_unique<ECSManager>();
+
+	if (!ecs)
+	{
+		std::cout << "Error creating ECS!.." << std::endl;
+	}
 	std::cout << "World is running!.." << std::endl;
 }
 
@@ -22,6 +33,7 @@ void World::Run(int frame_per_seconds)
 
 	sf::Time TimerPerFrame = sf::seconds(1.f / frame_per_seconds);
 
+	RegisterDefaultSystems();
 
 	while (m_isRunning)
 	{
@@ -39,6 +51,11 @@ void World::Run(int frame_per_seconds)
 	}
 }
 
+void World::RegisterDefaultSystems()
+{
+	ecs->RegisterSystem<MovementSystem>(ecs);
+}
+
 void World::ProcessInput()
 {
 	sf::Event event;
@@ -51,6 +68,7 @@ void World::ProcessInput()
 
 void World::Update(float deltaTime)
 {
+	ecs->Update(deltaTime);
 }
 
 void World::Render()

@@ -156,11 +156,19 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\ECS\ECSManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\Core\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\World.h" />
+    <ClInclude Include="include\ECS\Component.h" />
+    <ClInclude Include="include\ECS\Components\TransformComponent.h" />
+    <ClInclude Include="include\ECS\Components\VelocityComponent.h" />
+    <ClInclude Include="include\ECS\ECSManager.h" />
+    <ClInclude Include="include\ECS\Entity.h" />
+    <ClInclude Include="include\ECS\System.h" />
+    <ClInclude Include="include\ECS\Systems\MovementSystem.h" />
     <ClInclude Include="include\MadFramework.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

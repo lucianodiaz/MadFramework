@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <string>
+
+
+class ECSManager;
 
 
 class World
@@ -14,6 +16,8 @@ public:
 
 private:
 
+	void RegisterDefaultSystems();
+
 	void ProcessInput();
 
 	void Update(float deltaTime);
@@ -22,6 +26,7 @@ private:
 
 	sf::RenderWindow window;
 
+	std::unique_ptr<ECSManager> ecs;
 
 	bool m_isRunning;
 
