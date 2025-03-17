@@ -1,7 +1,11 @@
 #pragma once
 
 #include <Core/World.h>
-#include "ECS/ECSManager.h"
+#include <Gameplay/Actor.h>
+#include <ECS/Components/TransformComponent.h>
+#include <ECS/Components/VelocityComponent.h>
+#include <ECS/Component.h>
+#include <ECS/System.h>
 
 /**
 * 

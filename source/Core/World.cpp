@@ -6,18 +6,14 @@
 #include <ECS/Systems/MovementSystem.h>
 
 
-World::World(int width, int height, const std::string& title) :
-	window(sf::VideoMode(width,height),title),m_isRunning(true)
+std::shared_ptr<World> World::_world = nullptr;
+
+World::World() : m_isRunning(true)
 {
+	CreateECSManager();
+	RegisterDefaultSystems();
 
-
-	ecs = std::make_unique<ECSManager>();
-
-	if (!ecs)
-	{
-		std::cout << "Error creating ECS!.." << std::endl;
-	}
-	std::cout << "World is running!.." << std::endl;
+	CreateMainWindow(1920, 1080, "test");
 }
 
 World::~World()
@@ -33,9 +29,8 @@ void World::Run(int frame_per_seconds)
 
 	sf::Time TimerPerFrame = sf::seconds(1.f / frame_per_seconds);
 
-	RegisterDefaultSystems();
 
-	while (m_isRunning)
+	while (_window->IsOpen())
 	{
 		ProcessInput();
 		bool repaint = false;
@@ -51,6 +46,22 @@ void World::Run(int frame_per_seconds)
 	}
 }
 
+void World::CreateMainWindow(int width, int height, std::string name)
+{
+	_window = std::make_unique<Window>(width, height, name);
+}
+
+void World::CreateECSManager()
+{
+	ecs = std::make_unique<ECSManager>();
+
+	if (!ecs)
+	{
+		std::cout << "Error creating ECS!.." << std::endl;
+	}
+	std::cout << "World is running!.." << std::endl;
+}
+
 void World::RegisterDefaultSystems()
 {
 	ecs->RegisterSystem<MovementSystem>(ecs);
@@ -59,11 +70,13 @@ void World::RegisterDefaultSystems()
 void World::ProcessInput()
 {
 	sf::Event event;
-	while (window.pollEvent(event)) {
+
+	while (_window->pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
-			m_isRunning = false;
+			_window->Close();
 		}
 	}
+
 }
 
 void World::Update(float deltaTime)
@@ -73,8 +86,8 @@ void World::Update(float deltaTime)
 
 void World::Render()
 {
-	window.clear();
+	_window->Clear();
 
 
-	window.display();
+	_window->Display();
 }

@@ -5,5 +5,11 @@
 
 struct VelocityComponent : public IComponent
 {
-	sf::Vector2f velocity;
+	VelocityComponent(float x, float y) {
+
+		velocity.x = x;
+		velocity.y = y;
+	}
+
+	sf::Vector2f velocity{};
 };
