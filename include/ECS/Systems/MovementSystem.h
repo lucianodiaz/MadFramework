@@ -19,10 +19,10 @@ protected:
 
 		for (auto entity : entities)
 		{
-			auto transform = m_ecs->GetComponent<TransformComponent>(entity);
+			auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
 			if (m_ecs->HasComponent<VelocityComponent>(entity))
 			{
-				auto velocityComponent = m_ecs->GetComponent<VelocityComponent>(entity);
+				auto& velocityComponent = m_ecs->GetComponent<VelocityComponent>(entity);
 
 				transform.position.x += velocityComponent.velocity.x * deltaTime;
 				transform.position.y += velocityComponent.velocity.y * deltaTime;
