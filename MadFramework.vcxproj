@@ -156,6 +156,8 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\ECS\Components\SpriteComponent.h" />
+    <ClCompile Include="include\ECS\Systems\RenderSystem.cpp" />
     <ClCompile Include="source\ECS\ECSManager.cpp" />
     <ClCompile Include="source\Gameplay\Actor.cpp" />
     <ClCompile Include="main.cpp" />

@@ -17,7 +17,10 @@ public:
 	template<typename T, typename... Args>
 	T& SpawnActor(Args&&... args);
 
-	static std::shared_ptr <World> GetWorld() {
+	const std::unique_ptr<ECSManager>& GetECSManager() { return ecs; };
+
+	static std::shared_ptr <World> GetWorld() 
+	{
 		if (_world == nullptr)
 		{
 			_world = std::shared_ptr<World>(new World());
@@ -44,9 +47,6 @@ private:
 
 	void Render();
 
-
-	const std::unique_ptr<ECSManager>& GetECSManager(){ return ecs; };
-
 	std::unique_ptr<Window> _window;
 
 	std::unique_ptr<ECSManager> ecs;
@@ -59,6 +59,7 @@ private:
 	static std::shared_ptr <World> _world;
 
 	friend class Actor;
+	friend class ISystem;
 };
 
 

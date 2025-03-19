@@ -42,7 +42,7 @@ public:
 
 	std::vector<Entity> GetEntities();
 
-	template<typename T>
+	template<typename... Components>
 	std::vector<Entity> GetEntitiesWithComponent();
 
 
@@ -53,23 +53,6 @@ private:
 	std::unordered_map < Entity, std::unordered_map<size_t, std::unique_ptr<IComponent>>> m_components;
 	std::vector<std::shared_ptr<ISystem>> m_systems;
 };
-
-
-template<typename T>
-std::vector<Entity> ECSManager::GetEntitiesWithComponent()
-{
-    std::vector<Entity> entitiesWithComponent;
-
-    for (auto entity : m_entities)
-    {
-        if (HasComponent<T>(entity))
-        {
-            entitiesWithComponent.push_back(entity);
-        }
-    }
-
-    return entitiesWithComponent;
-}
 
 template<typename T, typename ...Args>
 void ECSManager::AddComponent(Entity entity, Args && ...args)
@@ -109,4 +92,20 @@ void ECSManager::RegisterSystem(Args && ...args)
 {
     auto system = std::make_shared<T>(std::forward<Args>(args)...);
     m_systems.push_back(system);
+}
+
+template<typename... Components>
+inline std::vector<Entity> ECSManager::GetEntitiesWithComponent()
+{
+	std::vector<Entity> entitiesWithComponent;
+
+	for (auto entity : m_entities)
+	{
+		if (HasComponent<Components>(entity) && ...)
+		{
+			entitiesWithComponent.push_back(entity);
+		}
+	}
+
+	return entitiesWithComponent;
 }

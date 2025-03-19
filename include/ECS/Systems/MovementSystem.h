@@ -1,11 +1,11 @@
 #pragma once
 
+
+#include <memory>
 #include "ECS/System.h"
 #include "ECS/ECSManager.h"
 #include <ECS/Components/VelocityComponent.h>
 #include <ECS/Components/TransformComponent.h>
-
-#include <memory>
 
 class MovementSystem : public System<TransformComponent>
 {
