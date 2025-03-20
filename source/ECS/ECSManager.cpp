@@ -1,4 +1,5 @@
 #include "ECS/ECSManager.h"
+#include <ECS/Systems/RenderSystem.h>
 
 Entity ECSManager::CreateEntity()
 {
@@ -23,6 +24,19 @@ void ECSManager::Update(float deltaTime)
     for (auto& system : m_systems)
     {
         system->Update(deltaTime);
+    }
+}
+
+void ECSManager::Draw(sf::RenderWindow& window)
+{
+    for (auto& system : m_systems)
+    {
+        // Intentar castear a RenderSystem
+        auto renderSystem = std::dynamic_pointer_cast<RenderSystem>(system);
+        if (renderSystem)
+        {
+            renderSystem->Render(window);
+        }
     }
 }
 

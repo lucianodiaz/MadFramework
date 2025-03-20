@@ -1,11 +1,12 @@
 #pragma once
 #include "Component.h"
 #include "Entity.h"
+#include "System.h"
 #include <bitset>
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include "System.h"
+#include <SFML/Graphics.hpp>
 
 
 
@@ -39,6 +40,9 @@ public:
 
 	void Update(float deltaTime);
 
+	void Draw(sf::RenderWindow& window);
+
+	std::vector<std::shared_ptr<ISystem>>& GetSystems() {return m_systems; }
 
 	std::vector<Entity> GetEntities();
 
@@ -101,7 +105,7 @@ inline std::vector<Entity> ECSManager::GetEntitiesWithComponent()
 
 	for (auto entity : m_entities)
 	{
-		if (HasComponent<Components>(entity) && ...)
+		if ((HasComponent<Components>(entity) && ...))
 		{
 			entitiesWithComponent.push_back(entity);
 		}

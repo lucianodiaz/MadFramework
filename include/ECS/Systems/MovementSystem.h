@@ -17,7 +17,7 @@ protected:
 	{
 		auto entities = m_ecs->GetEntitiesWithComponent<TransformComponent>();
 
-		for (auto entity : entities)
+		for (auto& entity : entities)
 		{
 			auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
 			if (m_ecs->HasComponent<VelocityComponent>(entity))

@@ -2,7 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <Gameplay/Actor.h>
 #include <Window/Window.h>
-
+#include <SFML/Audio.hpp>
+#include <nlohmann/json.hpp>
+#include "ResourceManager.h"
 
 class ECSManager;
 
@@ -29,6 +31,14 @@ public:
 		return _world;
 	}
 
+
+	sf::Texture& GetTexture(const std::string& id);
+	sf::Music& GetMusic(const std::string& id);
+	nlohmann::json& GetJson(const std::string& id);
+	sf::Font& GetFont(const std::string& id);
+	sf::SoundBuffer& GetSound(const std::string& id);
+
+
 protected:
 	World();
 
@@ -47,6 +57,13 @@ private:
 
 	void Render();
 
+	void Draw();
+
+	void LoadResources();
+
+	template<typename T>
+	std::shared_ptr<T> GetSystem();
+
 	std::unique_ptr<Window> _window;
 
 	std::unique_ptr<ECSManager> ecs;
@@ -54,9 +71,15 @@ private:
 	bool m_isRunning;
 
 	std::vector<std::unique_ptr<Actor>> m_actors;
-
-
 	static std::shared_ptr <World> _world;
+
+
+	ResourceManager<sf::Texture, std::string> m_textures;
+	ResourceManager<sf::Music, std::string> m_musics;
+	ResourceManager<sf::Font, std::string> m_fonts;
+	ResourceManager<sf::SoundBuffer, std::string> m_sounds;
+	ResourceManager<nlohmann::json, std::string> m_jsons;
+
 
 	friend class Actor;
 	friend class ISystem;
@@ -71,4 +94,18 @@ inline T& World::SpawnActor(Args && ...args)
 	m_actors.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 
 	return static_cast<T&>(*m_actors.back());
+}
+
+template<typename T>
+inline std::shared_ptr<T> World::GetSystem()
+{
+	for (auto& system : ecs->GetSystems())
+	{
+		if (auto castedSystem = std::dynamic_pointer_cast<T>(system))
+		{
+			return castedSystem;
+		}
+	}
+	
+	return nullptr;
 }

@@ -1,0 +1,4 @@
+[
+    {"src": "assets/images/human.png", "id": "player", "type": "texture"},
+    {"src": "assets/music/theme.ogg", "id": "theme_music", "type": "music"}
+]

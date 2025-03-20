@@ -30,7 +30,7 @@
     <ClCompile Include="source\Window\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\ECS\Systems\RenderSystem.cpp">
+    <ClCompile Include="include\ECS\Systems\RenderSystem.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\ECS\Components\SpriteComponent.h">
@@ -69,6 +69,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Window\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Core\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\StringUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

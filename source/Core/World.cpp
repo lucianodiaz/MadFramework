@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <ECS/Systems/MovementSystem.h>
+#include <ECS/Systems/RenderSystem.h>
 
 
 std::shared_ptr<World> World::_world = nullptr;
@@ -12,7 +13,7 @@ World::World() : m_isRunning(true)
 {
 	CreateECSManager();
 	RegisterDefaultSystems();
-
+	LoadResources();
 	CreateMainWindow(1920, 1080, "test");
 }
 
@@ -65,6 +66,7 @@ void World::CreateECSManager()
 void World::RegisterDefaultSystems()
 {
 	ecs->RegisterSystem<MovementSystem>(ecs);
+	ecs->RegisterSystem<RenderSystem>(ecs);
 }
 
 void World::ProcessInput()
@@ -88,6 +90,60 @@ void World::Render()
 {
 	_window->Clear();
 
+	ecs->Draw(_window->GetRenderWindow());
 
 	_window->Display();
+}
+
+void World::Draw()
+{
+	auto renderSystem = GetSystem<RenderSystem>();
+	if (renderSystem)
+	{
+		renderSystem->Render(_window->GetRenderWindow());
+	}
+
+}
+
+void World::LoadResources()
+{
+	std::cout << "Loading resources..." << std::endl;
+
+	try
+	{
+		m_textures.LoadFromJson("resources.json");
+		m_musics.LoadFromJson("resources.json");
+		//m_fonts.LoadFromJson("resources.json");
+		//m_sounds.LoadFromJson("resources.json");
+		//m_jsons.LoadFromJson("resources.json");
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr<<"error loading resources: " << e.what() << std::endl;
+	}
+}
+
+sf::Texture& World::GetTexture(const std::string& id)
+{
+	return m_textures.Get(id);
+}
+
+sf::Music& World::GetMusic(const std::string& id)
+{
+	return m_musics.Get(id);
+}
+
+nlohmann::json& World::GetJson(const std::string& id)
+{
+	return m_jsons.Get(id);
+}
+
+sf::Font& World::GetFont(const std::string& id)
+{
+	return m_fonts.Get(id);
+}
+
+sf::SoundBuffer& World::GetSound(const std::string& id)
+{
+	return m_sounds.Get(id);
 }

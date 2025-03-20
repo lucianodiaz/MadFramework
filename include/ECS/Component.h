@@ -3,33 +3,32 @@
 #include <memory>
 #include "Entity.h"
 
-class IComponent 
+// Generador de ID global para todos los componentes
+inline size_t GenerateGlobalComponentID()
+{
+    static size_t lastID = 0;
+    return lastID++;
+}
+
+class IComponent
 {
 public:
-	virtual ~IComponent()=default;
+    virtual ~IComponent() = default;
 };
 
 template <typename T>
 class Component : public IComponent
 {
 public:
-	static std::unordered_map<Entity, T> data;
+    static std::unordered_map<Entity, T> data;
 
-
-	static size_t GetID()
-	{
-		static size_t id = GenerateID();
-		return id;
-	}
-
-private:
-	static size_t GenerateID()
-	{
-		static size_t lastID = 0;
-		return lastID++;
-	}
+    static size_t GetID()
+    {
+        static size_t id = GenerateGlobalComponentID(); // Usa la función global
+        return id;
+    }
 };
 
+// Inicialización del almacenamiento estático
 template <typename T>
 std::unordered_map<Entity, T> Component<T>::data;
-
