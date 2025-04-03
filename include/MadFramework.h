@@ -7,7 +7,8 @@
 #include <ECS/Components/SpriteComponent.h>
 #include <ECS/Component.h>
 #include <ECS/System.h>
-
+#include <Core/Signal.h>
+#include <Core/MadEntry.h>
 /**
 * 
 * Here is where all include of framework 

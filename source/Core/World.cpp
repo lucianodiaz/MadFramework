@@ -24,6 +24,8 @@ World::~World()
 
 void World::Run(int frame_per_seconds)
 {
+	m_wasRun = true;
+
 	sf::Clock clock;
 
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;

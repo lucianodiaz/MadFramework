@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include "ResourceManager.h"
 
+
 class ECSManager;
 
 class World
@@ -13,8 +14,6 @@ class World
 public:
 
 	virtual ~World();
-
-	void Run(int frame_per_seconds = 30);
 
 	template<typename T, typename... Args>
 	T& SpawnActor(Args&&... args);
@@ -31,6 +30,7 @@ public:
 		return _world;
 	}
 
+	inline void StartGame() { if(!m_wasRun)Run(); }
 
 	sf::Texture& GetTexture(const std::string& id);
 	sf::Music& GetMusic(const std::string& id);
@@ -38,12 +38,10 @@ public:
 	sf::Font& GetFont(const std::string& id);
 	sf::SoundBuffer& GetSound(const std::string& id);
 
-
 protected:
 	World();
 
-private:
-	
+	void Run(int frame_per_seconds = 30);
 
 	void CreateMainWindow(int width,int height, std::string name);
 
@@ -69,6 +67,7 @@ private:
 	std::unique_ptr<ECSManager> ecs;
 
 	bool m_isRunning;
+	bool m_wasRun = false;
 
 	std::vector<std::unique_ptr<Actor>> m_actors;
 	static std::shared_ptr <World> _world;
@@ -83,6 +82,7 @@ private:
 
 	friend class Actor;
 	friend class ISystem;
+	friend class GameRunner;
 };
 
 

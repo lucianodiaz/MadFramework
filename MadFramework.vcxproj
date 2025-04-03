@@ -165,7 +165,9 @@
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\MadEntry.h" />
     <ClInclude Include="include\Core\ResourceManager.h" />
+    <ClInclude Include="include\Core\Signal.h" />
     <ClInclude Include="include\Core\World.h" />
     <ClInclude Include="include\ECS\Component.h" />
     <ClInclude Include="include\ECS\Components\TransformComponent.h" />
