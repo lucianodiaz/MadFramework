@@ -14,3 +14,13 @@ Actor::Actor(float x, float y) : m_ecs(*World::GetWorld()->GetECSManager())
 Actor::~Actor()
 {
 }
+
+void Actor::Start()
+{
+	std::cout << "Actor Start" << std::endl;
+}
+
+void Actor::Update(float deltaTime)
+{
+	std::cout << "Actor Update" << std::endl;
+}

@@ -92,7 +92,7 @@ inline T& World::SpawnActor(Args && ...args)
 	static_assert(std::is_base_of<Actor, T>::value, "T must derive from Actor");
 
 	m_actors.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-
+	m_actors.back()->Start();
 	return static_cast<T&>(*m_actors.back());
 }
 

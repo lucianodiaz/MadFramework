@@ -13,6 +13,9 @@ public:
 	Entity GetEntity() const { return m_entity; }
 
 
+	virtual void Start();
+	virtual void Update(float deltaTime);
+
 	template<typename T, typename... Args>
 	void AddComponent(Args&&... args);
 
@@ -24,6 +27,7 @@ protected:
 
 	ECSManager& m_ecs;
 	Entity m_entity;
+
 
 
 	friend class World;

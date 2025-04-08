@@ -15,11 +15,13 @@ World::World() : m_isRunning(true)
 	RegisterDefaultSystems();
 	LoadResources();
 	CreateMainWindow(1920, 1080, "test");
+
+	std::cout << "App is running!.." << std::endl;
 }
 
 World::~World()
 {
-	std::cout << "World is clossing" << std::endl;
+	std::cout << "App is clossing" << std::endl;
 }
 
 void World::Run(int frame_per_seconds)
@@ -62,7 +64,7 @@ void World::CreateECSManager()
 	{
 		std::cout << "Error creating ECS!.." << std::endl;
 	}
-	std::cout << "World is running!.." << std::endl;
+
 }
 
 void World::RegisterDefaultSystems()
@@ -86,6 +88,10 @@ void World::ProcessInput()
 void World::Update(float deltaTime)
 {
 	ecs->Update(deltaTime);
+	for (auto& actor : m_actors)
+	{
+		actor->Update(deltaTime);
+	}
 }
 
 void World::Render()
@@ -115,9 +121,9 @@ void World::LoadResources()
 	{
 		m_textures.LoadFromJson("resources.json");
 		m_musics.LoadFromJson("resources.json");
-		//m_fonts.LoadFromJson("resources.json");
-		//m_sounds.LoadFromJson("resources.json");
-		//m_jsons.LoadFromJson("resources.json");
+		m_fonts.LoadFromJson("resources.json");
+		m_sounds.LoadFromJson("resources.json");
+		m_jsons.LoadFromJson("resources.json");
 	}
 	catch (const std::exception& e)
 	{

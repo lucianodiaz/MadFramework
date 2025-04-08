@@ -25,22 +25,10 @@ private:
 class Player : public Actor
 {
 public:
-    Player() {
-        auto world = World::GetWorld();
 
+    Player(float x=0, float y = 0) {
 
-        GetComponent<TransformComponent>().position.x = 0;
-        GetComponent<TransformComponent>().position.y = 0;
-
-        AddComponent<VelocityComponent>(1.0f, 0.0f);
-
-        AddComponent<SpriteComponent>(world->GetTexture("player"));
-
-        Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
-    }
-    Player(float x, float y) {
-
-		auto world = World::GetWorld();
+		//auto world = World::GetWorld();
 
     
         GetComponent<TransformComponent>().position.x = x;
@@ -48,10 +36,19 @@ public:
 
         AddComponent<VelocityComponent>(50.0f,0.0f);
 
-        AddComponent<SpriteComponent>(world->GetTexture("player"));
+        AddComponent<SpriteComponent>(World::GetWorld()->GetTexture("player"));
 
 		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
     };
+
+	void Start() override
+	{
+		std::cout << "Player Start" << std::endl;
+	}
+
+	void Update(float deltaTime) override
+	{
+	}
 
     void TakeDamage(int dmg) 
     {

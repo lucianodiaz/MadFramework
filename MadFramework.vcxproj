@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;D:\Documentos\SFML-2.6.1\include;%(AdditionalIncludeDirectories);D:\Documentos\CPP\MadFramework\MadFramework\MadFramework\vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -124,7 +124,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\Documentos\SFML-2.6.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;%(AdditionalIncludeDirectories);D:\Documentos\CPP\MadFramework\MadFramework\MadFramework\vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -149,7 +149,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\Documentos\SFML-2.6.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>if not exist "$(TargetDir)sfml-audio-d-2.dll" copy "$(SolutionDir)bin\sfml-audio-d-2.dll" "$(TargetDir)" if not exist "$(TargetDir)sfml-graphics-d-2.dll" copy "$(SolutionDir)bin\graphics-d-2.dll" "$(TargetDir)"if not exist "$(TargetDir)sfml-network-d-2.dll" copy "$(SolutionDir)bin\sfml-network-d-2.dll" "$(TargetDir)" if not exist "$(TargetDir)sfml-system-d-2.dll" copy "$(SolutionDir)bin\sfml-system-d-2.dll" "$(TargetDir)" if not exist "$(TargetDir)sfml-window-d-2.dll" copy "$(SolutionDir)bin\sfml-window-d-2.dll" "$(TargetDir)"</Command>
@@ -158,9 +158,9 @@
   <ItemGroup>
     <ClCompile Include="include\ECS\Components\SpriteComponent.h" />
     <ClCompile Include="include\ECS\Systems\RenderSystem.h" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="source\ECS\ECSManager.cpp" />
     <ClCompile Include="source\Gameplay\Actor.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="source\Core\World.cpp" />
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
@@ -180,6 +180,10 @@
     <ClInclude Include="include\MadFramework.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
+    <ClInclude Include="vendor\nlohmann\json.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
