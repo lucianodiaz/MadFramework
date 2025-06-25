@@ -17,18 +17,25 @@ public:
 	virtual void Start();
 	virtual void Update(float deltaTime);
 
+	/* Add Component eg:  AddComponent<VelocityComponent>(50.0f,0.0f)*/
 	template<typename T, typename... Args>
 	void AddComponent(Args&&... args);
 
+	/* Get Component of Actor eg:  GetComponent<TransformComponent>() */ 
 	template<typename T>
 	T& GetComponent();
 
+	/* Get GameTag of Actor is usseful to check things */
+	const std::string GetGameTag() const { return m_tag; }
+
+	void setGameTag(const std::string& tag) { m_tag = tag; }
 
 protected:
 
 	ECSManager& m_ecs;
 	Entity m_entity;
 
+	std::string m_tag= "Actor";
 
 
 	friend class World;

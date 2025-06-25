@@ -5,7 +5,7 @@
 #include <memory>
 #include <ECS/Systems/MovementSystem.h>
 #include <ECS/Systems/RenderSystem.h>
-
+#include <windows.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -14,7 +14,12 @@ World::World() : m_isRunning(true)
 	CreateECSManager();
 	RegisterDefaultSystems();
 	LoadResources();
-	CreateMainWindow(1920, 1080, "test");
+
+	char path[MAX_PATH];
+	GetModuleFileNameA(NULL, path, MAX_PATH);
+	auto WindowName = std::filesystem::path(path).stem().string();
+
+	CreateMainWindow(1920, 1080, WindowName);
 
 	std::cout << "App is running!.." << std::endl;
 }
@@ -23,6 +28,7 @@ World::~World()
 {
 	std::cout << "App is clossing" << std::endl;
 }
+
 
 void World::Run(int frame_per_seconds)
 {

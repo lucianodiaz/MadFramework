@@ -17,10 +17,9 @@ Actor::~Actor()
 
 void Actor::Start()
 {
-	std::cout << "Actor Start" << std::endl;
+	std::cout << m_tag <<" Start" << std::endl;
 }
 
 void Actor::Update(float deltaTime)
 {
-	std::cout << "Actor Update" << std::endl;
 }
