@@ -1,11 +1,13 @@
 #pragma once
+#include <MadFrameworkExport.h>
 #include <unordered_map>
 #include <string>
 #include <functional>
 #include <any>
 #include <memory>
 
-class Signal {
+
+class MAD_API Signal {
 public:
     template<typename... Args>
     using Callback = std::function<void(Args...)>;
@@ -17,13 +19,20 @@ public:
     }
 
     template<typename... Args>
-    void AddListener(const std::string& signalName, Callback<Args...> callback) {
-        m_listeners[signalName].push_back([callback](std::any& args) {
-            if (auto* tuple = std::any_cast<std::tuple<Args...>>(&args)) {
-                std::apply(callback, *tuple);
+	void AddListener(const std::string& signalName, Callback<Args...> callback) {
+		m_listeners[signalName].push_back([callback](std::any& args) 
+			{			
+              // Check if args can be cast to the expected tuple type
+			if (auto* tuple = std::any_cast<std::tuple<Args...>>(&args)) 
+            {
+				std::apply(callback, *tuple);
+			}
+            else
+            {
+                std::cout << "Args not valid for this Signal - Args excpected: "<< args.type().name() << std::endl;
             }
-            });
-    }
+			});
+	}
 
     template<typename... Args>
     void Dispatch(const std::string& signalName, Args... args) {

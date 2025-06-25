@@ -1,4 +1,5 @@
 #pragma once
+#include <MadFrameworkExport.h>
 #include <SFML/Graphics.hpp>
 #include <Gameplay/Actor.h>
 #include <Window/Window.h>
@@ -9,7 +10,7 @@
 
 class ECSManager;
 
-class World
+class MAD_API World
 {
 public:
 

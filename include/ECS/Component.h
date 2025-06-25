@@ -1,4 +1,5 @@
 #pragma once
+#include <MadFrameworkExport.h>
 #include <unordered_map>
 #include <memory>
 #include "Entity.h"
@@ -10,7 +11,7 @@ inline size_t GenerateGlobalComponentID()
     return lastID++;
 }
 
-class IComponent
+class MAD_API IComponent
 {
 public:
     virtual ~IComponent() = default;

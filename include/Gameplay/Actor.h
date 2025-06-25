@@ -1,9 +1,10 @@
 #pragma once
+
 #include <ECS/ECSManager.h>
+#include <MadFrameworkExport.h>
 
 
-
-class Actor
+class MAD_API Actor
 {
 public:
 	Actor(float x = 0, float y = 0);
