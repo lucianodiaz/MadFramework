@@ -5,6 +5,8 @@
 #include <Window/Window.h>
 #include <SFML/Audio.hpp>
 #include <nlohmann/json.hpp>
+#include <Input/Action.h>
+#include <Input/ActionMap.h>
 #include "ResourceManager.h"
 
 
@@ -20,6 +22,11 @@ public:
 	T& SpawnActor(Args&&... args);
 
 	const std::unique_ptr<ECSManager>& GetECSManager() { return ecs; };
+
+	Actor& GetActor(const Entity& entity);
+
+	const Window& GetWindow() const { return *_window; }
+
 
 	static std::shared_ptr <World> GetWorld() 
 	{
@@ -38,6 +45,8 @@ public:
 	nlohmann::json& GetJson(const std::string& id);
 	sf::Font& GetFont(const std::string& id);
 	sf::SoundBuffer& GetSound(const std::string& id);
+
+	ActionMap<int>& GetActionsMap() { return m_actionsMap; }
 
 protected:
 	World();
@@ -60,6 +69,9 @@ protected:
 
 	void LoadResources();
 
+	void LoadInputs();
+
+
 	template<typename T>
 	std::shared_ptr<T> GetSystem();
 
@@ -80,6 +92,7 @@ protected:
 	ResourceManager<sf::SoundBuffer, std::string> m_sounds;
 	ResourceManager<nlohmann::json, std::string> m_jsons;
 
+	ActionMap<int> m_actionsMap;
 
 	friend class Actor;
 	friend class ISystem;
