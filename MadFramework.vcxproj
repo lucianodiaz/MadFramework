@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;MADFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include;$(ProjectDir)source\PrivateUtils</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -156,31 +156,42 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\ECS\Components\SpriteComponent.h" />
-    <ClCompile Include="include\ECS\Systems\RenderSystem.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\ECS\Systems\CollisionSystem.cpp" />
     <ClCompile Include="source\ECS\ECSManager.cpp" />
+    <ClCompile Include="source\ECS\Systems\MovementSystem.cpp" />
+    <ClCompile Include="source\ECS\Systems\RenderSystem.cpp" />
     <ClCompile Include="source\Gameplay\Actor.cpp" />
     <ClCompile Include="source\Core\World.cpp" />
+    <ClCompile Include="source\Input\Action.cpp" />
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ECS\Components\SpriteComponent.h" />
+    <ClInclude Include="include\ECS\Components\ZIndexComponent.h" />
+    <ClInclude Include="include\ECS\Systems\RenderSystem.h" />
     <ClInclude Include="include\Core\MadEntry.h" />
     <ClInclude Include="include\Core\ResourceManager.h" />
     <ClInclude Include="include\Core\Signal.h" />
     <ClInclude Include="include\Core\World.h" />
     <ClInclude Include="include\ECS\Component.h" />
+    <ClInclude Include="include\ECS\Components\ColliderComponent.h" />
     <ClInclude Include="include\ECS\Components\TransformComponent.h" />
     <ClInclude Include="include\ECS\Components\VelocityComponent.h" />
     <ClInclude Include="include\ECS\ECSManager.h" />
     <ClInclude Include="include\ECS\Entity.h" />
     <ClInclude Include="include\ECS\System.h" />
+    <ClInclude Include="include\ECS\Systems\CollisionSystem.h" />
     <ClInclude Include="include\ECS\Systems\MovementSystem.h" />
     <ClInclude Include="include\Gameplay\Actor.h" />
+    <ClInclude Include="include\Input\Action.h" />
+    <ClInclude Include="include\Input\ActionMap.h" />
+    <ClInclude Include="include\Input\ActionTarget.h" />
     <ClInclude Include="include\MadFramework.h" />
     <ClInclude Include="include\MadFrameworkExport.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
+    <ClInclude Include="source\PrivateUtils\InternalCollisionCheck.h" />
     <ClInclude Include="vendor\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemGroup>

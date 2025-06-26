@@ -5,7 +5,7 @@
 #include <functional>
 #include <any>
 #include <memory>
-
+#include <iostream>
 
 class MAD_API Signal {
 public:
@@ -20,6 +20,7 @@ public:
 
     template<typename... Args>
 	void AddListener(const std::string& signalName, Callback<Args...> callback) {
+       
 		m_listeners[signalName].push_back([callback](std::any& args) 
 			{			
               // Check if args can be cast to the expected tuple type

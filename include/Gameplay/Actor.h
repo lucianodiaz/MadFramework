@@ -16,6 +16,7 @@ public:
 
 	virtual void Start();
 	virtual void Update(float deltaTime);
+	virtual void ProcessInput();
 
 	/* Add Component eg:  AddComponent<VelocityComponent>(50.0f,0.0f)*/
 	template<typename T, typename... Args>
@@ -28,7 +29,7 @@ public:
 	/* Get GameTag of Actor is usseful to check things */
 	const std::string GetGameTag() const { return m_tag; }
 
-	void setGameTag(const std::string& tag) { m_tag = tag; }
+	void SetGameTag(const std::string& tag) { m_tag = tag; }
 
 protected:
 
@@ -37,8 +38,15 @@ protected:
 
 	std::string m_tag= "Actor";
 
+	virtual void onCollisionEnter(Actor& actorA, Actor& actorB);
+	virtual void onTriggerEnter(Actor& actorA, Actor& actorB);
+
 
 	friend class World;
+
+private:
+
+	void AddSignalListeners();
 };
 
 template<typename T, typename ...Args>

@@ -6,6 +6,7 @@
 #include <ECS/Systems/MovementSystem.h>
 #include <ECS/Systems/RenderSystem.h>
 #include <windows.h>
+#include <ECS/Systems/CollisionSystem.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -14,7 +15,7 @@ World::World() : m_isRunning(true)
 	CreateECSManager();
 	RegisterDefaultSystems();
 	LoadResources();
-
+	LoadInputs();
 	char path[MAX_PATH];
 	GetModuleFileNameA(NULL, path, MAX_PATH);
 	auto WindowName = std::filesystem::path(path).stem().string();
@@ -77,6 +78,7 @@ void World::RegisterDefaultSystems()
 {
 	ecs->RegisterSystem<MovementSystem>(ecs);
 	ecs->RegisterSystem<RenderSystem>(ecs);
+	ecs->RegisterSystem<CollisionSystem>(ecs);
 }
 
 void World::ProcessInput()
@@ -87,6 +89,11 @@ void World::ProcessInput()
 		if (event.type == sf::Event::Closed) {
 			_window->Close();
 		}
+	}
+
+	for (auto& actor : m_actors)
+	{
+		actor->ProcessInput();
 	}
 
 }
@@ -134,6 +141,50 @@ void World::LoadResources()
 	catch (const std::exception& e)
 	{
 		std::cerr<<"error loading resources: " << e.what() << std::endl;
+	}
+}
+
+void World::LoadInputs()
+{
+
+	enum PlayerInputs 
+	{
+		Up,
+		Down,
+		Right,
+		Left,
+		LeftClick
+	};
+
+	m_actionsMap.map(PlayerInputs::Up, Action(sf::Keyboard::W));
+	m_actionsMap.map(PlayerInputs::Down, Action(sf::Keyboard::S));
+	m_actionsMap.map(PlayerInputs::Right, Action(sf::Keyboard::D));
+	m_actionsMap.map(PlayerInputs::Left, Action(sf::Keyboard::A));
+}
+
+Actor& World::GetActor(const Entity& entity)
+{
+	// TODO: Insertar una instrucción "return" aquí
+	//for (auto& actor : m_actors)
+	//{
+	//	if (actor->GetEntity() == entity)
+	//	{
+	//		return *actor;
+	//	}
+	//}
+
+	auto it = std::find_if(m_actors.begin(), m_actors.end(),
+		[&entity](const std::unique_ptr<Actor>& actor) {
+			return actor->GetEntity() == entity;
+		});
+
+	if (it != m_actors.end())
+	{
+		return **it;
+	}
+	else
+	{
+		throw std::runtime_error("Actor not found");
 	}
 }
 
