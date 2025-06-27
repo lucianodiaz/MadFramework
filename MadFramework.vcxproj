@@ -191,11 +191,13 @@
     <ClInclude Include="include\MadFrameworkExport.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
+    <ClInclude Include="source\PrivateUtils\inputPrivateUtil.h" />
     <ClInclude Include="source\PrivateUtils\InternalCollisionCheck.h" />
     <ClInclude Include="vendor\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources.json" />
+    <None Include="inputs.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

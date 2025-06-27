@@ -7,6 +7,7 @@
 #include <ECS/Systems/RenderSystem.h>
 #include <windows.h>
 #include <ECS/Systems/CollisionSystem.h>
+#include <inputPrivateUtil.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -146,33 +147,37 @@ void World::LoadResources()
 
 void World::LoadInputs()
 {
-
-	enum PlayerInputs 
+	std::ifstream file("inputs.json");
+	if (!file.is_open())
 	{
-		Up,
-		Down,
-		Right,
-		Left,
-		LeftClick
-	};
+		std::cerr << "Error opening inputs.json" << std::endl;
+		return;
+	}
 
-	m_actionsMap.map(PlayerInputs::Up, Action(sf::Keyboard::W));
-	m_actionsMap.map(PlayerInputs::Down, Action(sf::Keyboard::S));
-	m_actionsMap.map(PlayerInputs::Right, Action(sf::Keyboard::D));
-	m_actionsMap.map(PlayerInputs::Left, Action(sf::Keyboard::A));
+	nlohmann::json jsonData;
+
+	file >> jsonData;
+
+	for (auto& [actionName, binding] : jsonData.items())
+	{
+		if (StringUtil::ToLower(binding["type"]) == "keyboard")
+		{
+			auto key = GetKeyFromString(StringUtil::ToUpper(binding["value"]));
+
+			m_actionsMap.map(actionName, key);
+		}
+		else if (StringUtil::ToLower(binding["type"]) == "mouse")
+		{
+			auto mouseButton = GetMouseButtonFromString(StringUtil::ToUpper(binding["value"]));
+			m_actionsMap.map(actionName, mouseButton);
+		}
+		
+	}
+
 }
 
 Actor& World::GetActor(const Entity& entity)
 {
-	// TODO: Insertar una instrucción "return" aquí
-	//for (auto& actor : m_actors)
-	//{
-	//	if (actor->GetEntity() == entity)
-	//	{
-	//		return *actor;
-	//	}
-	//}
-
 	auto it = std::find_if(m_actors.begin(), m_actors.end(),
 		[&entity](const std::unique_ptr<Actor>& actor) {
 			return actor->GetEntity() == entity;

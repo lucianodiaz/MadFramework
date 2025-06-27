@@ -1,0 +1,30 @@
+{
+  "MoveUp": {
+    "type": "keyboard",
+    "value": "W"
+  },
+  "MoveDown": {
+    "type": "keyboard",
+    "value": "S"
+  },
+  "MoveLeft": {
+    "type": "keyboard",
+    "value": "A"
+  },
+  "MoveRight": {
+    "type": "keyboard",
+    "value": "D"
+  },
+  "Jump": {
+    "type": "keyboard",
+    "value": "Space"
+  },
+  "Crouch": {
+    "type": "keyboard",
+    "value": "ctrl"
+  },
+  "Shoot": {
+    "type": "mouse",
+    "value": "left"
+  }
+}

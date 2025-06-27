@@ -46,7 +46,7 @@ public:
 	sf::Font& GetFont(const std::string& id);
 	sf::SoundBuffer& GetSound(const std::string& id);
 
-	ActionMap<int>& GetActionsMap() { return m_actionsMap; }
+	ActionMap<std::string>& GetActionsMap() { return m_actionsMap; }
 
 protected:
 	World();
@@ -92,7 +92,7 @@ protected:
 	ResourceManager<sf::SoundBuffer, std::string> m_sounds;
 	ResourceManager<nlohmann::json, std::string> m_jsons;
 
-	ActionMap<int> m_actionsMap;
+	ActionMap<std::string> m_actionsMap;
 
 	friend class Actor;
 	friend class ISystem;

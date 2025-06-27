@@ -122,8 +122,12 @@
     <ClInclude Include="include\Input\ActionTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\PrivateUtils\inputPrivateUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources.json" />
+    <None Include="inputs.json" />
   </ItemGroup>
 </Project>
