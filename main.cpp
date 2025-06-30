@@ -103,10 +103,26 @@ public:
 
     void setInput()
 	{
-        bind("MoveUp", [this](const sf::Event&) { movingUp = true; m_animationController->Play("walk_up"); });
-		bind("MoveDown", [this](const sf::Event&) { movingDown = true; m_animationController->Play("walk_down"); });
-		bind("MoveRight", [this](const sf::Event&) { movingRight = true;  m_animationController->Play("walk_up_right"); });
-        bind("MoveLeft", [this](const sf::Event&) { movingLeft = true;  m_animationController->Play("walk_up_left"); });
+		bind("MoveUp", [this](const sf::Event&) 
+            {
+				GetComponent<VelocityComponent>().velocity.y = -100.0f;
+                m_animationController->Play("walk_up"); 
+            });
+		bind("MoveDown", [this](const sf::Event&)
+			{ 
+                GetComponent<VelocityComponent>().velocity.y = 100.0f;
+		        m_animationController->Play("walk_down");
+			});
+		bind("MoveRight", [this](const sf::Event&) 
+            { 
+                GetComponent<VelocityComponent>().velocity.x = 100.0f;
+                m_animationController->Play("walk_up_right"); 
+            });
+		bind("MoveLeft", [this](const sf::Event&) 
+            { 
+                GetComponent<VelocityComponent>().velocity.x = -100.0f;
+            m_animationController->Play("walk_up_left"); 
+            });
 		//bind("Shoot", [this](const sf::Event&) {
 		//	std::cout << "Shoot action triggered!" << std::endl;
 		//	// Aquí podrías agregar la lógica para disparar un proyectil o similar
@@ -152,7 +168,7 @@ public:
 	void Update(float deltaTime) override
 	{
 
-		if (!movingUp && !movingDown && !movingLeft && !movingRight)
+		if (GetComponent<VelocityComponent>().velocity.x == 0 && GetComponent<VelocityComponent>().velocity.y == 0)
 		{
 			m_animationController->Play("idle_down");
 		}
@@ -160,13 +176,15 @@ public:
         auto& pos = GetComponent<TransformComponent>().position;
         float speed = 200.0f; // píxeles por segundo
 
-        if (movingUp) pos.y -= speed * deltaTime;
-        if (movingDown) pos.y += speed * deltaTime;
-        if (movingLeft) pos.x -= speed * deltaTime;
-        if (movingRight) pos.x += speed * deltaTime;
+        //if (movingUp) pos.y -= speed * deltaTime;
+        //if (movingDown) pos.y += speed * deltaTime;
+        //if (movingLeft) pos.x -= speed * deltaTime;
+        //if (movingRight) pos.x += speed * deltaTime;
 
         // Reset flags si querés que se reinicien cada frame
-        movingUp = movingDown = movingLeft = movingRight = false;
+        //movingUp = movingDown = movingLeft = movingRight = false;
+
+		GetComponent<VelocityComponent>().velocity = sf::Vector2f(0.0f, 0.0f);
 	}
 
     void TakeDamage(int dmg) 
@@ -177,10 +195,10 @@ private:
 
     int m_life = 100;
 
-    bool movingRight = false;
-    bool movingLeft = false;
-    bool movingUp = false;
-    bool movingDown = false;
+    //bool movingRight = false;
+    //bool movingLeft = false;
+    //bool movingUp = false;
+    //bool movingDown = false;
 
 	std::unique_ptr<AnimationController> m_animationController;
 };

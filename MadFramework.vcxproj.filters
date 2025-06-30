@@ -140,6 +140,9 @@
     <ClInclude Include="include\Gameplay\AnimationController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ECS\Components\GravityComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources.json" />

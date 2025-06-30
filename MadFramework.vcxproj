@@ -171,6 +171,7 @@
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ECS\Components\GravityComponent.h" />
     <ClInclude Include="include\ECS\Components\SpriteAnimationComponent.h" />
     <ClInclude Include="include\ECS\Components\SpriteComponent.h" />
     <ClInclude Include="include\ECS\Components\ZIndexComponent.h" />
