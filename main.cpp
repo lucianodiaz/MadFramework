@@ -80,7 +80,7 @@ public:
 
         AddComponent<SpriteAnimationComponent>();
 
-        AddComponent<ColliderComponent>(16.0f, 32.0f,false,true);
+        AddComponent<ColliderComponent>(12.0f, 24.0f,false,true);
 
 		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
 
@@ -96,6 +96,9 @@ public:
 		m_animationController->LoadAnimation(World::GetWorld()->GetJson("player_walk_animation"));
 
 		m_animationController->Play("idle_down");
+
+        auto& sprite = GetComponent<SpriteAnimationComponent>();
+        sprite.sprite.setScale(6, 6);
     };
 
     void setInput()
@@ -125,14 +128,20 @@ public:
         auto& sprite = GetComponent<SpriteAnimationComponent>();
         auto& collider = GetComponent<ColliderComponent>();
 
+        collider.debugColor = sf::Color::Blue;
         // Centrar el collider respecto al centro del sprite
      /*   collider.offset.x = bounds.width / 2.0f;
         collider.offset.y = bounds.height / 2.0f;*/
 
+        collider.box.width *= sprite.sprite.getScale().x;
+		collider.box.height *= sprite.sprite.getScale().y;
 
-        collider.offset.x = sprite.animations[sprite.currentAnimation].spriteSizeX;
-		collider.offset.y = sprite.animations[sprite.currentAnimation].spriteSizeY;
-        sprite.sprite.setScale(1,1);
+		float centerX = sprite.animations[sprite.currentAnimation].frameRect.width / 2.0f;
+		float centerY = sprite.animations[sprite.currentAnimation].frameRect.height / 2.0f;
+
+        collider.offset.x = (centerX) * sprite.sprite.getScale().x;
+		collider.offset.y = (centerY)*sprite.sprite.getScale().y;
+    
 	}
 
 	void ProcessInput() override

@@ -44,7 +44,7 @@ void RenderSystem::Render(sf::RenderWindow& window)
 				rect.setOrigin(collider.box.width / 2.f, collider.box.height / 2.f); // otra opción
 				rect.setPosition(realPosition); // ya está centrado
 				rect.setFillColor(sf::Color::Transparent);
-				rect.setOutlineColor(sf::Color::Red);
+				rect.setOutlineColor(collider.debugColor);
 				rect.setOutlineThickness(1.0f);
 
 				window.draw(rect);
@@ -56,7 +56,7 @@ void RenderSystem::Render(sf::RenderWindow& window)
 				circle.setOrigin(collider.circle.radius, collider.circle.radius); // centrado
 				circle.setPosition(realPosition);
 				circle.setFillColor(sf::Color::Transparent);
-				circle.setOutlineColor(sf::Color::Red);
+				circle.setOutlineColor(collider.debugColor);
 				circle.setOutlineThickness(1.0f);
 
 				window.draw(circle);

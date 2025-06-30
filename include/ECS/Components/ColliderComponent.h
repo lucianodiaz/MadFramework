@@ -21,6 +21,8 @@ struct ColliderComponent : public IComponent
 		shape = ColliderShape::BOX;
 		box.width = 5;
 		box.height = 5;
+		box.scaleWidth = 5; // Default scale is 1.0, can be adjusted later
+		box.scaleHeight = 5; // Default scale is 1.0, can be adjusted later
 	};
 	// Constructor for box collider with width and height
 	ColliderComponent(float w, float h,bool trigger = false, bool debug = false)
@@ -28,6 +30,8 @@ struct ColliderComponent : public IComponent
 		shape = ColliderShape::BOX;
 		box.width = w;
 		box.height = h;
+		box.scaleWidth = w; // Default scale is 1.0, can be adjusted later
+		box.scaleHeight = h; // Default scale is 1.0, can be adjusted later
 		isTrigger = trigger;
 		debugDraw = debug;
 	}
@@ -36,6 +40,7 @@ struct ColliderComponent : public IComponent
 	{
 		shape = ColliderShape::CIRCLE;
 		circle.radius = radius;
+		circle.scaleRadius = radius; // Default scale is 1.0, can be adjusted later
 		isTrigger = trigger;
 		debugDraw = debug;
 	}
@@ -49,15 +54,20 @@ struct ColliderComponent : public IComponent
 		{
 			float width; // Width for box collider
 			float height; // Height for box collider
+			float scaleWidth; // Scale for box collider
+			float scaleHeight; // Scale for box collider
 		} box;
 
 		struct
 		{
 			float radius; // Radius for circle collider
+			float scaleRadius; // Scale for circle collider
 		} circle;
 	};
 
 	bool isTrigger = false; // Whether the collider is a trigger
 	bool isActive = true; // Whether the collider is active
 	bool debugDraw = false; // Whether to draw the collider for debugging
+
+	sf::Color debugColor = sf::Color::Red; // Color for debugging visuals
 };
