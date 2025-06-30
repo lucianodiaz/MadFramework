@@ -24,17 +24,17 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 			if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::BOX)
 			{
-				collisionDetected = AABBColision(posA, colliderA.box.width, colliderA.box.height,
+				collisionDetected = MAD::CollisionUtils::AABBColision(posA, colliderA.box.width, colliderA.box.height,
 					posB, colliderB.box.width, colliderB.box.height);
 			}
 			else if (colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::CIRCLE)
 			{
-				collisionDetected = CircleCollision(posA, colliderA.circle.radius,
+				collisionDetected = MAD::CollisionUtils::CircleCollision(posA, colliderA.circle.radius,
 					posB, colliderB.circle.radius);
 			}
 			else if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::CIRCLE)
 			{
-				collisionDetected = BoxCircleCollision(posA, colliderA.box.width, colliderA.box.height,
+				collisionDetected = MAD::CollisionUtils::BoxCircleCollision(posA, colliderA.box.width, colliderA.box.height,
 					posB, colliderB.circle.radius);
 			}
 

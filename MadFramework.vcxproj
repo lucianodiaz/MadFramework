@@ -201,6 +201,7 @@
     <ClInclude Include="include\Window\Window.h" />
     <ClInclude Include="source\PrivateUtils\inputPrivateUtil.h" />
     <ClInclude Include="source\PrivateUtils\InternalCollisionCheck.h" />
+    <ClInclude Include="source\PrivateUtils\MathUtils.h" />
     <ClInclude Include="vendor\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemGroup>

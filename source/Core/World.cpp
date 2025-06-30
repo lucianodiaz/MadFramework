@@ -213,13 +213,13 @@ void World::LoadInputs()
 	{
 		if (StringUtil::ToLower(binding["type"]) == "keyboard")
 		{
-			auto key = GetKeyFromString(StringUtil::ToUpper(binding["value"]));
+			auto key = MAD::InputUtils::GetKeyFromString(StringUtil::ToUpper(binding["value"]));
 
 			m_actionsMap.map(actionName, key);
 		}
 		else if (StringUtil::ToLower(binding["type"]) == "mouse")
 		{
-			auto mouseButton = GetMouseButtonFromString(StringUtil::ToUpper(binding["value"]));
+			auto mouseButton = MAD::InputUtils::GetMouseButtonFromString(StringUtil::ToUpper(binding["value"]));
 			m_actionsMap.map(actionName, mouseButton);
 		}
 		
