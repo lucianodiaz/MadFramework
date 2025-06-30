@@ -9,6 +9,7 @@
 #include <ECS/Systems/CollisionSystem.h>
 #include <inputPrivateUtil.h>
 #include <ECS/Systems/AnimationSystem.h>
+#include <ECS/Systems/CameraSystem.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -78,10 +79,13 @@ void World::CreateECSManager()
 
 void World::RegisterDefaultSystems()
 {
+	
 	ecs->RegisterSystem<MovementSystem>(ecs);
-	ecs->RegisterSystem<RenderSystem>(ecs);
 	ecs->RegisterSystem<CollisionSystem>(ecs);
+	ecs->RegisterSystem<CameraSystem>(ecs);
+	ecs->RegisterSystem<RenderSystem>(ecs);
 	ecs->RegisterSystem<AnimationSystem>(ecs);
+
 }
 
 void World::ProcessInput()
@@ -108,6 +112,7 @@ void World::Update(float deltaTime)
 	{
 		actor->Update(deltaTime);
 	}
+	m_timerManager.update();
 }
 
 void World::Render()

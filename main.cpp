@@ -4,6 +4,7 @@
 #include <ECS/Components/SpriteAnimationComponent.h>
 #include <Gameplay/AnimationController.h>
 #include <MathUtils.h>
+#include <ECS/Components/CameraViewComponent.h>
 
 class UI
 {
@@ -93,28 +94,31 @@ public:
 
         auto& sprite = GetComponent<SpriteAnimationComponent>();
         sprite.sprite.setScale(6, 6);
+
+
+		AddComponent<CameraViewComponent>(sf::Vector2f(x,y),sf::Vector2f(World::GetWorld()->GetWindow().GetRenderWindow().getSize()));
     };
 
     void setInput()
 	{
 		bind("MoveUp", [this](const sf::Event&) 
             {
-				GetComponent<VelocityComponent>().velocity.y = -100.0f;
+				GetComponent<VelocityComponent>().velocity.y = -m_speed;
                 m_animationController->Play("walk_up"); 
             });
 		bind("MoveDown", [this](const sf::Event&)
 			{ 
-                GetComponent<VelocityComponent>().velocity.y = 100.0f;
+                GetComponent<VelocityComponent>().velocity.y = m_speed;
 		        m_animationController->Play("walk_down");
 			});
 		bind("MoveRight", [this](const sf::Event&) 
             { 
-                GetComponent<VelocityComponent>().velocity.x = 100.0f;
+                GetComponent<VelocityComponent>().velocity.x = m_speed;
                 m_animationController->Play("walk_up_right"); 
             });
 		bind("MoveLeft", [this](const sf::Event&) 
             { 
-                GetComponent<VelocityComponent>().velocity.x = -100.0f;
+                GetComponent<VelocityComponent>().velocity.x = -m_speed;
             m_animationController->Play("walk_up_left"); 
             });
 		//bind("Shoot", [this](const sf::Event&) {
@@ -137,6 +141,7 @@ public:
 
         auto& sprite = GetComponent<SpriteAnimationComponent>();
         auto& collider = GetComponent<ColliderComponent>();
+		auto& cameraComponent = GetComponent<CameraViewComponent>();
 
         collider.debugColor = sf::Color::Blue;
 
@@ -148,7 +153,20 @@ public:
 
         collider.offset.x = (centerX) * sprite.sprite.getScale().x;
 		collider.offset.y = (centerY)*sprite.sprite.getScale().y;
+
+
+		cameraComponent.offset.x = centerX * sprite.sprite.getScale().x;
+		cameraComponent.offset.y = centerY * sprite.sprite.getScale().y;
     
+
+		auto id = World::GetWorld()->GetTimerManager().createTimer(4.0f, [this]()
+			{
+				std::cout << "Timer triggered!" << std::endl;
+				auto& cameraComponent = GetComponent<CameraViewComponent>();
+				cameraComponent.isShake = true;
+				cameraComponent.shakeEffect.duration = 1.5f; // Duration of the shake effect
+				cameraComponent.shakeEffect.intensity = 15.0f; // Intensity of the shake effect
+			},true);
 	}
 
 	void ProcessInput() override
@@ -174,7 +192,7 @@ public:
 private:
 
     int m_life = 100;
-
+    float m_speed = 160.0f;
 	std::unique_ptr<AnimationController> m_animationController;
 };
 

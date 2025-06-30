@@ -12,7 +12,6 @@ public:
 
 	sf::RenderWindow& GetRenderWindow() { return *_window; }
 
-
 	void Clear();
 
 	void Display();

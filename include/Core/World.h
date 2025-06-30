@@ -8,6 +8,7 @@
 #include <Input/Action.h>
 #include <Input/ActionMap.h>
 #include "ResourceManager.h"
+#include "TimerManager.h"
 
 
 class ECSManager;
@@ -25,7 +26,7 @@ public:
 
 	Actor& GetActor(const Entity& entity);
 
-	const Window& GetWindow() const { return *_window; }
+	Window& GetWindow() const { return *_window; }
 
 
 	static std::shared_ptr <World> GetWorld() 
@@ -55,6 +56,8 @@ public:
 	void LoadFont(const std::string& name, const std::string& path);
 
 	void LoadSound(const std::string& name, const std::string& path);
+
+	TimerManager& GetTimerManager() { return m_timerManager; }
 protected:
 	World();
 
@@ -92,6 +95,7 @@ protected:
 	std::vector<std::unique_ptr<Actor>> m_actors;
 	static std::shared_ptr <World> _world;
 
+	TimerManager m_timerManager;
 
 	ResourceManager<sf::Texture, std::string> m_textures;
 	ResourceManager<sf::Music, std::string> m_musics;

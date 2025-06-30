@@ -48,6 +48,12 @@
     <ClCompile Include="source\Gameplay\AnimationController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\ECS\Systems\CameraSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Core\TimerManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\MadFramework.h">
@@ -144,6 +150,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\PrivateUtils\MathUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ECS\Components\CameraViewComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ECS\Systems\CameraSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Core\TimerManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
