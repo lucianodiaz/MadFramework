@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -157,18 +157,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\ECS\Systems\AnimationSystem.cpp" />
     <ClCompile Include="source\ECS\Systems\CollisionSystem.cpp" />
     <ClCompile Include="source\ECS\ECSManager.cpp" />
     <ClCompile Include="source\ECS\Systems\MovementSystem.cpp" />
     <ClCompile Include="source\ECS\Systems\RenderSystem.cpp" />
     <ClCompile Include="source\Gameplay\Actor.cpp" />
-    <ClCompile Include="source\Core\World.cpp" />
+    <ClCompile Include="source\Core\World.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\Gameplay\AnimationController.cpp" />
     <ClCompile Include="source\Input\Action.cpp" />
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ECS\Components\SpriteAnimationComponent.h" />
     <ClInclude Include="include\ECS\Components\SpriteComponent.h" />
     <ClInclude Include="include\ECS\Components\ZIndexComponent.h" />
+    <ClInclude Include="include\ECS\Systems\AnimationSystem.h" />
     <ClInclude Include="include\ECS\Systems\RenderSystem.h" />
     <ClInclude Include="include\Core\MadEntry.h" />
     <ClInclude Include="include\Core\ResourceManager.h" />
@@ -184,6 +190,7 @@
     <ClInclude Include="include\ECS\Systems\CollisionSystem.h" />
     <ClInclude Include="include\ECS\Systems\MovementSystem.h" />
     <ClInclude Include="include\Gameplay\Actor.h" />
+    <ClInclude Include="include\Gameplay\AnimationController.h" />
     <ClInclude Include="include\Input\Action.h" />
     <ClInclude Include="include\Input\ActionMap.h" />
     <ClInclude Include="include\Input\ActionTarget.h" />

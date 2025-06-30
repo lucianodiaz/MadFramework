@@ -8,14 +8,15 @@
 #include <windows.h>
 #include <ECS/Systems/CollisionSystem.h>
 #include <inputPrivateUtil.h>
+#include <ECS/Systems/AnimationSystem.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
 World::World() : m_isRunning(true)
 {
+	LoadResources();
 	CreateECSManager();
 	RegisterDefaultSystems();
-	LoadResources();
 	LoadInputs();
 	char path[MAX_PATH];
 	GetModuleFileNameA(NULL, path, MAX_PATH);
@@ -80,6 +81,7 @@ void World::RegisterDefaultSystems()
 	ecs->RegisterSystem<MovementSystem>(ecs);
 	ecs->RegisterSystem<RenderSystem>(ecs);
 	ecs->RegisterSystem<CollisionSystem>(ecs);
+	ecs->RegisterSystem<AnimationSystem>(ecs);
 }
 
 void World::ProcessInput()
@@ -142,6 +144,55 @@ void World::LoadResources()
 	catch (const std::exception& e)
 	{
 		std::cerr<<"error loading resources: " << e.what() << std::endl;
+	}
+}
+
+void World::LoadTexture(const std::string& name, const std::string& path)
+{
+	try
+	{
+		m_textures.Load(name, path);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "error loading resource: " << e.what() << std::endl;
+	}
+
+}
+
+void World::LoadMusic(const std::string& name, const std::string& path)
+{
+	try
+	{
+		m_musics.Load(name, path);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "error loading resource: " << e.what() << std::endl;
+	}
+}
+
+void World::LoadFont(const std::string& name, const std::string& path)
+{
+	try
+	{
+		m_fonts.Load(name, path);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "error loading resource: " << e.what() << std::endl;
+	}
+}
+
+void World::LoadSound(const std::string& name, const std::string& path)
+{
+	try
+	{
+		m_sounds.Load(name, path);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "error loading resource: " << e.what() << std::endl;
 	}
 }
 
