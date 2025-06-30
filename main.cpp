@@ -103,10 +103,10 @@ public:
 
     void setInput()
 	{
-		bind("MoveUp", [this](const sf::Event&) { movingUp = true; });
-		bind("MoveDown", [this](const sf::Event&) { movingDown = true; });
-		bind("MoveRight", [this](const sf::Event&) { movingRight = true; });
-        bind("MoveLeft", [this](const sf::Event&) { movingLeft = true; });
+        bind("MoveUp", [this](const sf::Event&) { movingUp = true; m_animationController->Play("walk_up"); });
+		bind("MoveDown", [this](const sf::Event&) { movingDown = true; m_animationController->Play("walk_down"); });
+		bind("MoveRight", [this](const sf::Event&) { movingRight = true;  m_animationController->Play("walk_up_right"); });
+        bind("MoveLeft", [this](const sf::Event&) { movingLeft = true;  m_animationController->Play("walk_up_left"); });
 		//bind("Shoot", [this](const sf::Event&) {
 		//	std::cout << "Shoot action triggered!" << std::endl;
 		//	// Aquí podrías agregar la lógica para disparar un proyectil o similar
@@ -151,6 +151,12 @@ public:
 
 	void Update(float deltaTime) override
 	{
+
+		if (!movingUp && !movingDown && !movingLeft && !movingRight)
+		{
+			m_animationController->Play("idle_down");
+		}
+
         auto& pos = GetComponent<TransformComponent>().position;
         float speed = 200.0f; // píxeles por segundo
 

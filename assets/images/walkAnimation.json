@@ -10,7 +10,7 @@
       "frameWidth": 48,
       "frameHeight": 64,
       "frameCount": 8,
-      "frameDuration": 0.2,
+      "frameDuration": 0.1,
       "loop": true
     },
     "walk_down_left": {
@@ -21,7 +21,7 @@
       "frameWidth": 48,
       "frameHeight": 64,
       "frameCount": 8,
-      "frameDuration": 0.2,
+      "frameDuration": 0.1,
       "loop": true
     },
     "walk_up_left": {
@@ -32,7 +32,7 @@
       "frameWidth": 48,
       "frameHeight": 64,
       "frameCount": 8,
-      "frameDuration": 0.2,
+      "frameDuration": 0.1,
       "loop": true
     },
     "walk_up": {
@@ -43,7 +43,7 @@
       "frameWidth": 48,
       "frameHeight": 64,
       "frameCount": 8,
-      "frameDuration": 0.2,
+      "frameDuration": 0.1,
       "loop": true
     },
     "walk_up_right": {
@@ -54,7 +54,7 @@
       "frameWidth": 48,
       "frameHeight": 64,
       "frameCount": 8,
-      "frameDuration": 0.2,
+      "frameDuration": 0.1,
       "loop": true
     },
     "walk_down_right": {
@@ -65,7 +65,7 @@
       "frameWidth": 48,
       "frameHeight": 64,
       "frameCount": 8,
-      "frameDuration": 0.2,
+      "frameDuration": 0.1,
       "loop": true
     }
   }
