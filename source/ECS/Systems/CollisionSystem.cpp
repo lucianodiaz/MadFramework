@@ -8,6 +8,7 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 {
 	auto entities = m_ecs->GetEntitiesWithComponent<ColliderComponent, TransformComponent>();
 
+
 	for (size_t i = 0; i < entities.size(); ++i)
 	{
 		for (size_t j = i + 1; j < entities.size(); ++j)
@@ -21,6 +22,10 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 			sf::Vector2f posB = transformB.position + colliderB.offset;
 
 			bool collisionDetected = false;
+
+			std::unordered_set<ColliderComponent>& previousCollisions = m_currentCollision;
+
+			m_currentCollision.clear();
 
 			if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::BOX)
 			{
@@ -43,6 +48,9 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 				auto actorA = World::GetWorld()->GetActor(entities[i]);
 				auto actorB = World::GetWorld()->GetActor(entities[j]);
 
+				m_currentCollision.insert(colliderA);
+				m_currentCollision.insert(colliderB);
+
 				if (colliderA.isTrigger || colliderB.isTrigger)
 				{
 					Signal::GetInstance().Dispatch<Actor*, Actor*>("onTriggeredDetected", &actorA, &actorB);
@@ -54,6 +62,21 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 					Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorB, &actorA);
 				}
 			}
+
+			for (const auto& prevCollision : previousCollisions)
+			{
+
+				auto actorA = World::GetWorld()->GetActor(entities[i]);
+				auto actorB = World::GetWorld()->GetActor(entities[j]);
+
+				if (m_currentCollision.find(prevCollision) == m_currentCollision.end())
+				{
+					Signal::GetInstance().Dispatch<Actor*>("onCollisionEnded", &actorA);
+					Signal::GetInstance().Dispatch<Actor*>("onCollisionEnded", &actorB);
+				}
+			}
 		}
 	}
+
+
 }

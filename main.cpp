@@ -164,8 +164,8 @@ public:
 				std::cout << "Timer triggered!" << std::endl;
 				auto& cameraComponent = GetComponent<CameraViewComponent>();
 				cameraComponent.isShake = true;
-				cameraComponent.shakeEffect.duration = 1.5f; // Duration of the shake effect
-				cameraComponent.shakeEffect.intensity = 15.0f; // Intensity of the shake effect
+				cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
+				cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
 			},true);
 	}
 
