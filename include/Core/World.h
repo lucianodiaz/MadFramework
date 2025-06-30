@@ -48,6 +48,13 @@ public:
 
 	ActionMap<std::string>& GetActionsMap() { return m_actionsMap; }
 
+	void LoadTexture(const std::string& name, const std::string& path);
+
+	void LoadMusic(const std::string& name, const std::string& path);
+
+	void LoadFont(const std::string& name, const std::string& path);
+
+	void LoadSound(const std::string& name, const std::string& path);
 protected:
 	World();
 
