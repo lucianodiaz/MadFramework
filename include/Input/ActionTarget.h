@@ -6,7 +6,7 @@
 #include "ActionMap.h"
 
 template<typename T = int>
-class MAD_API ActionTarget
+class ActionTarget
 {
 public:
 	ActionTarget(const ActionTarget<T>&) = delete;
