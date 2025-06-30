@@ -5,16 +5,21 @@ void AnimationController::Play(const std::string& animationName, bool loop)
 {
 	if (m_animationComponent.animations.find(animationName) != m_animationComponent.animations.end())
 	{
-		m_animationComponent.currentAnimation = animationName;
-		auto& animationData = m_animationComponent.animations[animationName];
-		animationData.isLooping = loop;
-		animationData.isPlaying = true;
-		animationData.isPaused = false;
-		animationData.elapsedTime = 0.0f;
-		animationData.currentFrame = 0;
 
-		m_animationComponent.texture = animationData.texture;
-		m_animationComponent.sprite.setTexture(m_animationComponent.texture);
+		if (m_animationComponent.currentAnimation != animationName)
+		{
+			m_animationComponent.currentAnimation = animationName;
+			auto& animationData = m_animationComponent.animations[animationName];
+			animationData.isLooping = loop;
+			animationData.isPlaying = true;
+			animationData.isPaused = false;
+			animationData.elapsedTime = 0.0f;
+			animationData.currentFrame = 0;
+
+			m_animationComponent.texture = animationData.texture;
+			m_animationComponent.sprite.setTexture(m_animationComponent.texture);
+		}
+
 	}
 }
 
