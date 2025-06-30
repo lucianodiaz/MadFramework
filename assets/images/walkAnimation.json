@@ -1,0 +1,72 @@
+{
+  "name": "WalkAnimation",
+  "src": "assets/images/walk.png",
+  "animations": {
+    "walk_down": {
+      "startX": 0,
+      "startY": 0,
+      "spriteSizeX": 16,
+      "spriteSizeY": 32,
+      "frameWidth": 48,
+      "frameHeight": 64,
+      "frameCount": 8,
+      "frameDuration": 0.2,
+      "loop": true
+    },
+    "walk_down_left": {
+      "startX": 0,
+      "startY": 64,
+      "spriteSizeX": 16,
+      "spriteSizeY": 32,
+      "frameWidth": 48,
+      "frameHeight": 64,
+      "frameCount": 8,
+      "frameDuration": 0.2,
+      "loop": true
+    },
+    "walk_up_left": {
+      "startX": 0,
+      "startY": 128,
+      "spriteSizeX": 16,
+      "spriteSizeY": 32,
+      "frameWidth": 48,
+      "frameHeight": 64,
+      "frameCount": 8,
+      "frameDuration": 0.2,
+      "loop": true
+    },
+    "walk_up": {
+      "startX": 0,
+      "startY": 192,
+      "spriteSizeX": 16,
+      "spriteSizeY": 32,
+      "frameWidth": 48,
+      "frameHeight": 64,
+      "frameCount": 8,
+      "frameDuration": 0.2,
+      "loop": true
+    },
+    "walk_up_right": {
+      "startX": 0,
+      "startY": 256,
+      "spriteSizeX": 16,
+      "spriteSizeY": 32,
+      "frameWidth": 48,
+      "frameHeight": 64,
+      "frameCount": 8,
+      "frameDuration": 0.2,
+      "loop": true
+    },
+    "walk_down_right": {
+      "startX": 0,
+      "startY": 320,
+      "spriteSizeX": 16,
+      "spriteSizeY": 32,
+      "frameWidth": 48,
+      "frameHeight": 64,
+      "frameCount": 8,
+      "frameDuration": 0.2,
+      "loop": true
+    }
+  }
+}

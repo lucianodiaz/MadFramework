@@ -3,6 +3,7 @@
     {"src": "assets/music/theme.ogg", "id": "theme_music", "type": "music"},
     {"src": "assets/font/awesomeFont.ttf", "id": "my_font", "type": "font"},
     {"src": "assets/sounds/click.wav", "id": "click_sound", "type": "sound"},
-    {"src": "assets/data/level1.json", "id": "level1_data", "type": "json"}
-
+    {"src": "assets/data/level1.json", "id": "level1_data", "type": "json"},
+    {"src":  "assets/images/idleAnimation.json", "id": "player_idle_animation","type": "json"},
+    {"src":  "assets/images/walkAnimation.json", "id": "player_walk_animation","type": "json"}
 ]
