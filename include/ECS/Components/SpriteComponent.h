@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+
+
 struct SpriteComponent : public IComponent
 {
 	SpriteComponent(sf::Texture& _texture)
@@ -9,6 +11,7 @@ struct SpriteComponent : public IComponent
 		texture = _texture;
 		sprite.setTexture(texture);
 	}
+
 	sf::Texture texture;
 	sf::Sprite sprite;
 };
