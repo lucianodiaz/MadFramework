@@ -3,6 +3,7 @@
 #include <Input/ActionTarget.h>
 #include <ECS/Components/SpriteAnimationComponent.h>
 #include <Gameplay/AnimationController.h>
+#include <MathUtils.h>
 
 class UI
 {
@@ -57,8 +58,6 @@ public:
 
 	void Update(float deltaTime) override
 	{
-      /*  GetComponent<TransformComponent>().position.x = sf::Mouse::getPosition().x -200;
-        GetComponent<TransformComponent>().position.y = sf::Mouse::getPosition().y -200;*/
 	}
 };
 
@@ -68,15 +67,10 @@ public:
 
     Player(float x=0, float y = 0) : ActionTarget(World::GetWorld()->GetActionsMap()) {
 
-		//auto world = World::GetWorld();
-
-    
         GetComponent<TransformComponent>().position.x = x;
         GetComponent<TransformComponent>().position.y = y;
 
         AddComponent<VelocityComponent>(0.0f,0.0f);
-
-        //AddComponent<SpriteComponent>(World::GetWorld()->GetTexture("player"));
 
         AddComponent<SpriteAnimationComponent>();
 
@@ -145,9 +139,6 @@ public:
         auto& collider = GetComponent<ColliderComponent>();
 
         collider.debugColor = sf::Color::Blue;
-        // Centrar el collider respecto al centro del sprite
-     /*   collider.offset.x = bounds.width / 2.0f;
-        collider.offset.y = bounds.height / 2.0f;*/
 
         collider.box.width *= sprite.sprite.getScale().x;
 		collider.box.height *= sprite.sprite.getScale().y;
@@ -168,21 +159,10 @@ public:
 	void Update(float deltaTime) override
 	{
 
-		if (GetComponent<VelocityComponent>().velocity.x == 0 && GetComponent<VelocityComponent>().velocity.y == 0)
+		if (!MAD::MathUtils::IsMoving(GetComponent<VelocityComponent>().velocity))
 		{
 			m_animationController->Play("idle_down");
 		}
-
-        auto& pos = GetComponent<TransformComponent>().position;
-        float speed = 200.0f; // píxeles por segundo
-
-        //if (movingUp) pos.y -= speed * deltaTime;
-        //if (movingDown) pos.y += speed * deltaTime;
-        //if (movingLeft) pos.x -= speed * deltaTime;
-        //if (movingRight) pos.x += speed * deltaTime;
-
-        // Reset flags si querés que se reinicien cada frame
-        //movingUp = movingDown = movingLeft = movingRight = false;
 
 		GetComponent<VelocityComponent>().velocity = sf::Vector2f(0.0f, 0.0f);
 	}
@@ -194,11 +174,6 @@ public:
 private:
 
     int m_life = 100;
-
-    //bool movingRight = false;
-    //bool movingLeft = false;
-    //bool movingUp = false;
-    //bool movingDown = false;
 
 	std::unique_ptr<AnimationController> m_animationController;
 };
