@@ -8,22 +8,28 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 {
 	auto entities = m_ecs->GetEntitiesWithComponent<ColliderComponent, TransformComponent>();
 
-
-	for (size_t i = 0; i < entities.size(); ++i)
+	if (entities.size() < 2) return; // No need to check collisions if less than 2 entities
+	for (size_t i = 0; i < 70; ++i)
 	{
-		for (size_t j = i + 1; j < entities.size(); ++j)
+		for (size_t j = i + 1; j < 70; ++j)
 		{
+			auto actorA = World::GetWorld()->GetActor(entities[i]);
+			auto actorB = World::GetWorld()->GetActor(entities[j]);
+
+			if (actorA.GetGameTag() == actorB.GetGameTag()) continue;
 			auto& transformA = m_ecs->GetComponent<TransformComponent>(entities[i]);
 			auto& colliderA = m_ecs->GetComponent<ColliderComponent>(entities[i]);
 			auto& transformB = m_ecs->GetComponent<TransformComponent>(entities[j]);
 			auto& colliderB = m_ecs->GetComponent<ColliderComponent>(entities[j]);
+
+			
 
 			sf::Vector2f posA = transformA.position + colliderA.offset;
 			sf::Vector2f posB = transformB.position + colliderB.offset;
 
 			bool collisionDetected = false;
 
-			std::unordered_set<ColliderComponent>& previousCollisions = m_currentCollision;
+			std::unordered_set<Entity>& previousCollisions = m_currentCollision;
 
 			m_currentCollision.clear();
 
@@ -45,11 +51,10 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 			if (collisionDetected)
 			{
-				auto actorA = World::GetWorld()->GetActor(entities[i]);
-				auto actorB = World::GetWorld()->GetActor(entities[j]);
+				
 
-				m_currentCollision.insert(colliderA);
-				m_currentCollision.insert(colliderB);
+				m_currentCollision.insert(entities[i]);
+				m_currentCollision.insert(entities[j]);
 
 				if (colliderA.isTrigger || colliderB.isTrigger)
 				{
