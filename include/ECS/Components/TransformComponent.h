@@ -11,6 +11,10 @@ struct TransformComponent : public IComponent
 		rotation = 0;
 	}
 
+	TransformComponent(sf::Vector2f pos) : position(pos), rotation(0) 
+	{
+	}
+
 	TransformComponent(float x, float y):rotation(0) {
 		position.x = x;
 		position.y = y;

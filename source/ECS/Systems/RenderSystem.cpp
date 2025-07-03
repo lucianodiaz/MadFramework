@@ -2,7 +2,23 @@
 #include <ECS/Components/TransformComponent.h>
 #include <ECS/Components/ColliderComponent.h>
 #include <ECS/Components/SpriteAnimationComponent.h>
+#include <ECS/Components/CameraViewComponent.h>
 
+
+
+
+RenderSystem::RenderSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
+{
+	
+		Signal::GetInstance().AddListener
+		(
+			"onFPSUpdate",
+			static_cast<std::function<void(int)>>([this](int fps)
+				{
+					fpsText.setString("FPS: " +  std::to_string(fps));
+				})
+		);
+}
 
 void RenderSystem::Render(sf::RenderWindow& window)
 {
@@ -43,7 +59,7 @@ void RenderSystem::Render(sf::RenderWindow& window)
 				rect.setSize(sf::Vector2f(collider.box.width, collider.box.height));
 				rect.setOrigin(collider.box.width / 2.f, collider.box.height / 2.f); // otra opción
 				rect.setPosition(realPosition); // ya está centrado
-				rect.setFillColor(sf::Color::Transparent);
+				rect.setFillColor(sf::Color::Color(collider.debugColor.r, collider.debugColor.g, collider.debugColor.b,60));
 				rect.setOutlineColor(collider.debugColor);
 				rect.setOutlineThickness(1.0f);
 
@@ -63,6 +79,27 @@ void RenderSystem::Render(sf::RenderWindow& window)
 			}
 		}
 	}
+
+
+	
+	if (World::GetWorld()->IsShowFPS())
+	{
+		fpsText.setFont(World::GetWorld()->GetFont("default"));
+		fpsText.setCharacterSize(24);
+		fpsText.setFillColor(sf::Color::White);
+
+		for (auto entity : m_ecs->GetEntitiesWithComponent<CameraViewComponent>())
+		{
+			auto camera = m_ecs->GetComponent<CameraViewComponent>(entity);
+			sf::Vector2f center = camera.cameraView.getCenter();
+			sf::Vector2f size = camera.cameraView.getSize();
+			fpsText.setPosition((center.x + size.x / 2.f) - (fpsText.getGlobalBounds().width *1.2), (center.y - size.y / 2.f) - (fpsText.getGlobalBounds().height/2)+10.f);
+		}
+		//fpsText.setPosition(150.f, 100.f);
+		/*fpsText.setString(std::to_string(World::GetWorld()->GetTimerManager().GetFPS()));*/
+		window.draw(fpsText);
+	}
+
 }
 
 void RenderSystem::UpdateEntities(float deltaTime)

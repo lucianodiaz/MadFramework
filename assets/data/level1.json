@@ -93,11 +93,11 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"MiniDungeon_background_tileset.json"
+         "source":"data/MiniDungeon_background_tileset.json"
         }, 
         {
          "firstgid":29,
-         "source":"MiniDungeon_walls_tileset.json"
+         "source":"data/MiniDungeon_walls_tileset.json"
         }],
  "tilewidth":16,
  "type":"map",

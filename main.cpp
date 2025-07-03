@@ -93,7 +93,7 @@ public:
 		m_animationController->Play("idle_down");
 
         auto& sprite = GetComponent<SpriteAnimationComponent>();
-        sprite.sprite.setScale(6, 6);
+        sprite.sprite.setScale(1, 1);
 
 
 		AddComponent<CameraViewComponent>(sf::Vector2f(x,y),sf::Vector2f(World::GetWorld()->GetWindow().GetRenderWindow().getSize()));
@@ -158,15 +158,15 @@ public:
 		cameraComponent.offset.x = centerX * sprite.sprite.getScale().x;
 		cameraComponent.offset.y = centerY * sprite.sprite.getScale().y;
     
-
-		auto id = World::GetWorld()->GetTimerManager().createTimer(4.0f, [this]()
+		cameraComponent.zoom = 0.2f;
+		auto id = World::GetWorld()->GetTimerManager().createTimer(5.0f, [this]()
 			{
 				std::cout << "Timer triggered!" << std::endl;
 				auto& cameraComponent = GetComponent<CameraViewComponent>();
 				cameraComponent.isShake = true;
 				cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
 				cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
-			},true);
+			},false);
 	}
 
 	void ProcessInput() override
@@ -192,7 +192,7 @@ public:
 private:
 
     int m_life = 100;
-    float m_speed = 160.0f;
+    float m_speed = 60.0f;
 	std::unique_ptr<AnimationController> m_animationController;
 };
 
@@ -203,9 +203,19 @@ public:
     {
         auto ui = new UI();
 
-        auto& player = World::GetWorld()->SpawnActor<Player>(20.0f, 100.0f);
+        auto& player = World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
 
-        World::GetWorld()->SpawnActor<CosmicBall>();
+		World::GetWorld()->GetTilemapManager().LoadTilemap("level_1", World::GetWorld()->GetJson("level1"));
+		World::GetWorld()->GetTilemapManager().SetCurrentMap("level_1");
+
+		//more 100 entity crash collision system
+		//more 500 entity crash render system
+		//for (int i = 0; i < 500; i++)
+		//{
+			//World::GetWorld()->SpawnActor<CosmicBall>();
+		//}
+        
+
 
         auto sound = World::GetWorld();
 

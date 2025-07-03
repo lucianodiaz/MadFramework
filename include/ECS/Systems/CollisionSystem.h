@@ -17,6 +17,6 @@ protected:
 	void UpdateEntities(float deltaTime) override;
 
 
-	std::unordered_set<ColliderComponent> m_currentCollision;
+	std::unordered_set<Entity> m_currentCollision;
 	std::unique_ptr<ECSManager>& m_ecs;
 };

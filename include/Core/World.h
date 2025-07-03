@@ -9,6 +9,7 @@
 #include <Input/ActionMap.h>
 #include "ResourceManager.h"
 #include "TimerManager.h"
+#include "TilemapManager.h"
 
 
 class ECSManager;
@@ -58,6 +59,16 @@ public:
 	void LoadSound(const std::string& name, const std::string& path);
 
 	TimerManager& GetTimerManager() { return m_timerManager; }
+
+	void ShowFPS(bool show) { m_showFPS = show; }
+
+	const bool IsShowFPS() const { return m_showFPS; }
+
+	TilemapManager& GetTilemapManager() { return m_tilemapManager; }
+
+	const std::string& AssetsPath() { return m_defaultAssetsPath; }
+
+	
 protected:
 	World();
 
@@ -92,6 +103,9 @@ protected:
 	bool m_isRunning;
 	bool m_wasRun = false;
 
+	bool m_showFPS = true;
+	TilemapManager m_tilemapManager;
+
 	std::vector<std::unique_ptr<Actor>> m_actors;
 	static std::shared_ptr <World> _world;
 
@@ -105,9 +119,16 @@ protected:
 
 	ActionMap<std::string> m_actionsMap;
 
+
+
 	friend class Actor;
 	friend class ISystem;
 	friend class GameRunner;
+
+	private:
+	const std::string m_internalAssetPath = "mad/internalAssets/";
+	const std::string m_defaultAssetsPath = "assets/";
+	void LoadInternalAssets();
 };
 
 

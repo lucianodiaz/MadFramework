@@ -10,15 +10,18 @@
 #include <inputPrivateUtil.h>
 #include <ECS/Systems/AnimationSystem.h>
 #include <ECS/Systems/CameraSystem.h>
+#include <Core/Signal.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
 World::World() : m_isRunning(true)
 {
+	LoadInternalAssets();
 	LoadResources();
 	CreateECSManager();
 	RegisterDefaultSystems();
 	LoadInputs();
+
 	char path[MAX_PATH];
 	GetModuleFileNameA(NULL, path, MAX_PATH);
 	auto WindowName = std::filesystem::path(path).stem().string();
@@ -39,12 +42,14 @@ void World::Run(int frame_per_seconds)
 	m_wasRun = true;
 
 	sf::Clock clock;
+	sf::Clock fpsClock; 
+	int frameCount = 0; 
 
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
 	sf::Time TimerPerFrame = sf::seconds(1.f / frame_per_seconds);
 
-
+	Signal::GetInstance().Dispatch("onFPSUpdate", frame_per_seconds);
 	while (_window->IsOpen())
 	{
 		ProcessInput();
@@ -57,7 +62,21 @@ void World::Run(int frame_per_seconds)
 			repaint = true;
 			Update(TimerPerFrame.asSeconds());
 		}
-		if (repaint)Render();
+		if (repaint)
+		{
+			Render();
+			frameCount++;
+		}
+
+		//Only for debug
+		if (fpsClock.getElapsedTime().asSeconds() >= 1.f)
+		{
+			//std::cout << "FPS: " << frameCount << std::endl;
+			Signal::GetInstance().Dispatch("onFPSUpdate", frameCount);
+			frameCount = 0;
+			fpsClock.restart();
+			
+		}
 	}
 }
 
@@ -119,6 +138,7 @@ void World::Render()
 {
 	_window->Clear();
 
+	m_tilemapManager.Draw(_window->GetRenderWindow());
 	ecs->Draw(_window->GetRenderWindow());
 
 	_window->Display();
@@ -230,6 +250,13 @@ void World::LoadInputs()
 		
 	}
 
+}
+
+void World::LoadInternalAssets()
+{
+
+	m_fonts.Load("default", m_internalAssetPath + "default.ttf");
+	m_textures.Load("splash", m_internalAssetPath + "splash.jpg");
 }
 
 Actor& World::GetActor(const Entity& entity)
