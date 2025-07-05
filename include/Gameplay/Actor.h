@@ -39,7 +39,7 @@ protected:
 	std::string m_tag= "Actor";
 
 	virtual void onCollisionEnter(Actor& actorA, Actor& actorB);
-	virtual void onTriggerEnter(Actor& actorA, Actor& actorB);
+	virtual void onCollisionExit(Actor& actorA);
 
 
 	friend class World;

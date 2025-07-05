@@ -28,6 +28,7 @@ struct ColliderComponent : public IComponent
 	ColliderComponent(float w, float h,bool trigger = false, bool debug = false)
 	{
 		shape = ColliderShape::BOX;
+
 		box.width = w;
 		box.height = h;
 		box.scaleWidth = w; // Default scale is 1.0, can be adjusted later

@@ -75,7 +75,7 @@ public:
 
         AddComponent<SpriteAnimationComponent>();
 
-        AddComponent<ColliderComponent>(12.0f, 24.0f,false,true);
+        AddComponent<ColliderComponent>(10.0f, 20.0f,false,true);
 
 		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
 

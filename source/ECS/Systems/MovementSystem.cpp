@@ -12,10 +12,11 @@ void MovementSystem::UpdateEntities(float deltaTime)
 		{
 			auto& velocityComponent = m_ecs->GetComponent<VelocityComponent>(entity);
 
-			/*transform.position.x += velocityComponent.velocity.x * deltaTime;
-			transform.position.y += velocityComponent.velocity.y * deltaTime;*/
+			auto nextPosition = transform.position + velocityComponent.velocity * deltaTime;
 
-			transform.position += velocityComponent.velocity * deltaTime;
+			transform.isDirty = nextPosition != transform.position; // Check if the position has changed
+
+			transform.position = nextPosition;
 		}
 
 	}

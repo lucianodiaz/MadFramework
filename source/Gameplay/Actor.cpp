@@ -37,7 +37,7 @@ void Actor::onCollisionEnter(Actor& actorA, Actor& actorB)
 {
 }
 
-void Actor::onTriggerEnter(Actor& actorA, Actor& actorB)
+void Actor::onCollisionExit(Actor& actorA)
 {
 }
 
@@ -54,14 +54,13 @@ void Actor::AddSignalListeners()
                 }
             }));
 
-    Signal::GetInstance().AddListener<Actor*, Actor*>("onTriggeredDetected",
-        static_cast<std::function<void(Actor*, Actor*)>>([this](Actor* actorA, Actor* actorB)
+    Signal::GetInstance().AddListener<Actor*>("onCollisionEnded",
+        static_cast<std::function<void(Actor*)>>([this](Actor* actorA)
             {
-                if (actorA->GetEntity() == m_entity || actorB->GetEntity() == m_entity)
-                {
-                    std::cout << "Collision detected with " << (actorA->GetEntity() == m_entity ? actorB->GetGameTag() : actorA->GetGameTag()) << std::endl;
+              
+                    std::cout << "Collision ended with " << (actorA->GetGameTag()) << std::endl;
 
-                    onTriggerEnter(*actorA, *actorB);
-                }
+                    onCollisionExit(*actorA);
+                
             }));
 }

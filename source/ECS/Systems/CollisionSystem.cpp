@@ -4,34 +4,70 @@
 #include <Gameplay/Actor.h>
 #include <Core/World.h>
 
+CollisionSystem::CollisionSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
+{
+	m_quadTree = std::make_unique<QuadTree>(0, sf::FloatRect(0, 0, 800,600), m_ecs);
+}
+
 void CollisionSystem::UpdateEntities(float deltaTime)
 {
+	auto width = World::GetWorld()->GetWindow().GetRenderWindow().getSize().x;
+	auto height = World::GetWorld()->GetWindow().GetRenderWindow().getSize().y;
+	
+	m_quadTree->SetBounds( sf::FloatRect(0, 0, width, height)); // Update the bounds of the QuadTree to match the window size
+
 	auto entities = m_ecs->GetEntitiesWithComponent<ColliderComponent, TransformComponent>();
 
-	if (entities.size() < 2) return; // No need to check collisions if less than 2 entities
-	for (size_t i = 0; i < 70; ++i)
+	std::unordered_set<Entity>& previousCollisions = m_currentCollision;
+
+	m_currentCollision.clear();
+
+	m_quadTree->Clear();
+
+	for (const auto& entity : entities)
 	{
-		for (size_t j = i + 1; j < 70; ++j)
+		auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
+		if (transform.isDirty)
 		{
-			auto actorA = World::GetWorld()->GetActor(entities[i]);
-			auto actorB = World::GetWorld()->GetActor(entities[j]);
+			m_quadTree->Insert(entity);
+			transform.isDirty = false;
+		}
+	}
+
+	std::unordered_set<std::pair<Entity, Entity>, PairHash> checkedPairs;
+
+	for (auto& entityA : entities)
+	{
+		auto nearby = m_quadTree->Retrieve(entityA);
+
+		for (Entity entityB : nearby)
+		{
+			if (entityA == entityB) continue;
+
+			Entity minID = std::min(entityA, entityB);
+			Entity maxID = std::max(entityA, entityB);
+
+			std::pair<Entity, Entity> pairkKey = { minID, maxID };
+
+			if (checkedPairs.contains(pairkKey)) continue;
+
+			checkedPairs.insert(pairkKey);
+			
+			auto actorA = World::GetWorld()->GetActor(entityA);
+			auto actorB = World::GetWorld()->GetActor(entityB);
 
 			if (actorA.GetGameTag() == actorB.GetGameTag()) continue;
-			auto& transformA = m_ecs->GetComponent<TransformComponent>(entities[i]);
-			auto& colliderA = m_ecs->GetComponent<ColliderComponent>(entities[i]);
-			auto& transformB = m_ecs->GetComponent<TransformComponent>(entities[j]);
-			auto& colliderB = m_ecs->GetComponent<ColliderComponent>(entities[j]);
 
-			
+
+			auto& transformA = m_ecs->GetComponent<TransformComponent>(entityA);
+			auto& colliderA = m_ecs->GetComponent<ColliderComponent>(entityA);
+			auto& transformB = m_ecs->GetComponent<TransformComponent>(entityB);
+			auto& colliderB = m_ecs->GetComponent<ColliderComponent>(entityB);
 
 			sf::Vector2f posA = transformA.position + colliderA.offset;
 			sf::Vector2f posB = transformB.position + colliderB.offset;
 
 			bool collisionDetected = false;
-
-			std::unordered_set<Entity>& previousCollisions = m_currentCollision;
-
-			m_currentCollision.clear();
 
 			if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::BOX)
 			{
@@ -51,37 +87,19 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 			if (collisionDetected)
 			{
-				
 
-				m_currentCollision.insert(entities[i]);
-				m_currentCollision.insert(entities[j]);
+				m_currentCollision.insert(entityA);
+				m_currentCollision.insert(entityB);
 
-				if (colliderA.isTrigger || colliderB.isTrigger)
-				{
-					Signal::GetInstance().Dispatch<Actor*, Actor*>("onTriggeredDetected", &actorA, &actorB);
-					Signal::GetInstance().Dispatch<Actor*, Actor*>("onTriggeredDetected", &actorB, &actorA);
-				}
-				else
-				{
-					Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorA, &actorB);
-					Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorB, &actorA);
-				}
-			}
+			
+				Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorA, &actorB);
+				Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorB, &actorA);
 
-			for (const auto& prevCollision : previousCollisions)
-			{
+				//Stop Entity when is colliding with something
 
-				auto actorA = World::GetWorld()->GetActor(entities[i]);
-				auto actorB = World::GetWorld()->GetActor(entities[j]);
 
-				if (m_currentCollision.find(prevCollision) == m_currentCollision.end())
-				{
-					Signal::GetInstance().Dispatch<Actor*>("onCollisionEnded", &actorA);
-					Signal::GetInstance().Dispatch<Actor*>("onCollisionEnded", &actorB);
-				}
 			}
 		}
 	}
-
 
 }

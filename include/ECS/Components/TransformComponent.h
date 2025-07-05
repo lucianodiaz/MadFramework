@@ -28,4 +28,5 @@ struct TransformComponent : public IComponent
 	}
 	sf::Vector2f position;
 	float rotation{};
+	bool isDirty{ true }; // Flag to indicate if the transform has changed since the last update
 };

@@ -117,7 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;MADFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include;$(ProjectDir)source\PrivateUtils</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\Core\QuadTree.cpp" />
     <ClCompile Include="source\Core\TilemapLoader.cpp" />
     <ClCompile Include="source\Core\TilemapManager.cpp" />
     <ClCompile Include="source\Core\TimerManager.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="include\MadFrameworkExport.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
+    <ClInclude Include="include\Core\QuadTree.h" />
     <ClInclude Include="source\PrivateUtils\inputPrivateUtil.h" />
     <ClInclude Include="source\PrivateUtils\InternalCollisionCheck.h" />
     <ClInclude Include="source\PrivateUtils\MathUtils.h" />

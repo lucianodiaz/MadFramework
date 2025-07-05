@@ -95,8 +95,6 @@ void RenderSystem::Render(sf::RenderWindow& window)
 			sf::Vector2f size = camera.cameraView.getSize();
 			fpsText.setPosition((center.x + size.x / 2.f) - (fpsText.getGlobalBounds().width *1.2), (center.y - size.y / 2.f) - (fpsText.getGlobalBounds().height/2)+10.f);
 		}
-		//fpsText.setPosition(150.f, 100.f);
-		/*fpsText.setString(std::to_string(World::GetWorld()->GetTimerManager().GetFPS()));*/
 		window.draw(fpsText);
 	}
 
