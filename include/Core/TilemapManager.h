@@ -8,7 +8,7 @@ class TilemapManager
 public:
 	TilemapManager();
 
-	void LoadTilemap(const std::string& mapName, const nlohmann::json& levelData);
+	void LoadTilemap(const std::string& mapName, const std::string idLevelName);
 	void SetCurrentMap(const std::string& mapName);
 	void Draw(sf::RenderWindow& window);
 	const std::string& GetCurrentMap() const { return m_currentMap; }

@@ -99,43 +99,71 @@ void QuadTree::Split()
 	int x = m_bounds.getPosition().x;
 	int y = m_bounds.getPosition().y;
 
-	m_nodes[0] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(x + subWidth, y, subWidth, subHeight),m_ecs);
-	m_nodes[1] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(x, y, subWidth, subHeight), m_ecs);
-	m_nodes[2] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(x, y + subHeight, subWidth, subHeight), m_ecs);
-	m_nodes[3] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(x + subWidth, y + subHeight, subWidth, subHeight), m_ecs);
+	m_nodes[0] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(static_cast<float>(x) + subWidth, static_cast<float>(y), subWidth, subHeight),m_ecs);
+	m_nodes[1] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(static_cast<float>(x), static_cast<float>(y), subWidth, subHeight), m_ecs);
+	m_nodes[2] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(static_cast<float>(x), static_cast<float>(y) + subHeight, subWidth, subHeight), m_ecs);
+	m_nodes[3] = std::make_unique<QuadTree>(level + 1, sf::FloatRect(static_cast<float>(x) + subWidth, static_cast<float>(y) + subHeight, subWidth, subHeight), m_ecs);
 }
 
-int QuadTree::GetIndex(const Entity& entity) const
-{
+int QuadTree::GetIndex(const Entity& entity) const {
 	int index = -1;
 	double verticalMidpoint = m_bounds.getPosition().x + (m_bounds.width / 2);
 	double horizontalMidpoint = m_bounds.getPosition().y + (m_bounds.height / 2);
 
 	auto& collider = m_ecs->GetComponent<ColliderComponent>(entity);
 	auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
-	
 
-	bool topQuadrant = transform.position.y < horizontalMidpoint &&
-		transform.position.y + collider.box.height < horizontalMidpoint;
+	// Compute AABB for the collider
+	sf::FloatRect aabb;
+	if (collider.shape == ColliderShape::BOX) {
+		aabb = sf::FloatRect(
+			transform.position.x + collider.offset.x - collider.box.width / 2,
+			transform.position.y + collider.offset.y - collider.box.height / 2,
+			collider.box.width,
+			collider.box.height
+		);
+	}
+	else if (collider.shape == ColliderShape::CIRCLE) {
+		aabb = sf::FloatRect(
+			transform.position.x + collider.offset.x - collider.circle.radius,
+			transform.position.y + collider.offset.y - collider.circle.radius,
+			collider.circle.radius * 2,
+			collider.circle.radius * 2
+		);
+	}
+	else if (collider.shape == ColliderShape::POLYGON) {
+		// Compute AABB from transformed polygon vertices
+		float minX = std::numeric_limits<float>::max();
+		float maxX = std::numeric_limits<float>::lowest();
+		float minY = std::numeric_limits<float>::max();
+		float maxY = std::numeric_limits<float>::lowest();
 
-	bool bottomQuadrant = transform.position.y > horizontalMidpoint;
+		// Transform vertices to world space
+		for (const auto& point : collider.polygon.points) {
+			sf::Vector2f worldPoint = transform.position + collider.offset + point;
+			minX = std::min(minX, worldPoint.x);
+			maxX = std::max(maxX, worldPoint.x);
+			minY = std::min(minY, worldPoint.y);
+			maxY = std::max(maxY, worldPoint.y);
+		}
+		aabb = sf::FloatRect(minX, minY, maxX - minX, maxY - minY);
+	}
 
-	if (transform.position.x < verticalMidpoint &&
-		transform.position.x + collider.box.width < verticalMidpoint) // Left
-	{
+	bool topQuadrant = aabb.top < horizontalMidpoint && aabb.top + aabb.height < horizontalMidpoint;
+	bool bottomQuadrant = aabb.top > horizontalMidpoint;
+
+	if (aabb.left < verticalMidpoint && aabb.left + aabb.width < verticalMidpoint) {
 		if (topQuadrant)
 			index = 1; // Top Left
 		else if (bottomQuadrant)
 			index = 2; // Bottom Left
 	}
-	else if (transform.position.x > verticalMidpoint) // Right
-	{
+	else if (aabb.left > verticalMidpoint) {
 		if (topQuadrant)
 			index = 0; // Top Right
 		else if (bottomQuadrant)
 			index = 3; // Bottom Right
 	}
-
 
 	return index;
 }

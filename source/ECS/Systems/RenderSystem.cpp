@@ -77,6 +77,20 @@ void RenderSystem::Render(sf::RenderWindow& window)
 
 				window.draw(circle);
 			}
+			else if (collider.shape == ColliderShape::POLYGON)
+			{
+				sf::ConvexShape polygon;
+				polygon.setPointCount(collider.polygon.points.size());
+				for (size_t i = 0; i < collider.polygon.points.size(); ++i)
+				{
+					polygon.setPoint(i, collider.polygon.points[i] + realPosition);
+				}
+				polygon.setFillColor(sf::Color::Transparent);
+				polygon.setOutlineColor(collider.debugColor);
+				polygon.setOutlineThickness(1.0f);
+
+				window.draw(polygon);
+			}
 		}
 	}
 

@@ -44,7 +44,7 @@ public:
         GetComponent<TransformComponent>().position.x = x;
         GetComponent<TransformComponent>().position.y = y;
 
-        AddComponent<ColliderComponent>(50.0f, true, true);
+		AddComponent<ColliderComponent>(10.0f, false, true);
 
 		SetGameTag("CosmicBall");
     }
@@ -71,11 +71,15 @@ public:
         GetComponent<TransformComponent>().position.x = x;
         GetComponent<TransformComponent>().position.y = y;
 
-        AddComponent<VelocityComponent>(0.0f,0.0f);
+        AddComponent<VelocityComponent>(0.0f,0.0f, m_speed);
 
         AddComponent<SpriteAnimationComponent>();
 
-        AddComponent<ColliderComponent>(10.0f, 20.0f,false,true);
+		//AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
+		//	 {-5, -10}, {5, -10}, {5, 10}, {-5, 10}
+		//}, false, true);
+
+		AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
 
 		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
 
@@ -103,22 +107,22 @@ public:
 	{
 		bind("MoveUp", [this](const sf::Event&) 
             {
-				GetComponent<VelocityComponent>().velocity.y = -m_speed;
+				GetComponent<VelocityComponent>().velocity.y = -1.0f;
                 m_animationController->Play("walk_up"); 
             });
 		bind("MoveDown", [this](const sf::Event&)
 			{ 
-                GetComponent<VelocityComponent>().velocity.y = m_speed;
+                GetComponent<VelocityComponent>().velocity.y = 1.0f;
 		        m_animationController->Play("walk_down");
 			});
 		bind("MoveRight", [this](const sf::Event&) 
             { 
-                GetComponent<VelocityComponent>().velocity.x = m_speed;
+                GetComponent<VelocityComponent>().velocity.x = 1.0f;
                 m_animationController->Play("walk_up_right"); 
             });
 		bind("MoveLeft", [this](const sf::Event&) 
             { 
-                GetComponent<VelocityComponent>().velocity.x = -m_speed;
+                GetComponent<VelocityComponent>().velocity.x = -1.0f;
             m_animationController->Play("walk_up_left"); 
             });
 		//bind("Shoot", [this](const sf::Event&) {
@@ -183,6 +187,8 @@ public:
 		}
 
 		GetComponent<VelocityComponent>().velocity = sf::Vector2f(0.0f, 0.0f);
+
+
 	}
 
     void TakeDamage(int dmg) 
@@ -204,19 +210,15 @@ public:
         auto ui = new UI();
 
         auto& player = World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
+		auto& cosmicBall = World::GetWorld()->SpawnActor<CosmicBall>(100.0f, 100.0f);
 
-		World::GetWorld()->GetTilemapManager().LoadTilemap("level_1", World::GetWorld()->GetJson("level1"));
-		World::GetWorld()->GetTilemapManager().SetCurrentMap("level_1");
-
-		//more 100 entity crash collision system
-		//more 500 entity crash render system
-		//for (int i = 0; i < 500; i++)
-		//{
-			//World::GetWorld()->SpawnActor<CosmicBall>();
-		//}
+		World::GetWorld()->GetTilemapManager().LoadTilemap("first_scene", "level1");
+		World::GetWorld()->GetTilemapManager().SetCurrentMap("first_scene");
         
+		Actor spawnPoint = World::GetWorld()->GetActorByTag("spawn");
 
-
+		player.SetPosition(spawnPoint.GetPosition());
+		cosmicBall.SetPosition(spawnPoint.GetPosition());
         auto sound = World::GetWorld();
 
         player.TakeDamage(10);

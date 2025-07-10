@@ -1,7 +1,6 @@
 #pragma once
 #include <MadFrameworkExport.h>
 #include <SFML/Graphics.hpp>
-#include <Gameplay/Actor.h>
 #include <Window/Window.h>
 #include <SFML/Audio.hpp>
 #include <nlohmann/json.hpp>
@@ -10,9 +9,10 @@
 #include "ResourceManager.h"
 #include "TimerManager.h"
 #include "TilemapManager.h"
-
+#include <ECS/ECSManager.h>
 
 class ECSManager;
+class Actor;
 
 class MAD_API World
 {
@@ -26,6 +26,10 @@ public:
 	const std::unique_ptr<ECSManager>& GetECSManager() { return ecs; };
 
 	Actor& GetActor(const Entity& entity);
+
+	Actor& GetActorByTag(const std::string& tag);
+
+	std::vector<Actor> GetActorsByTag(const std::string& tag);
 
 	Window& GetWindow() const { return *_window; }
 

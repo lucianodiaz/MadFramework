@@ -1,8 +1,9 @@
 #include <Core/TilemapLoader.h>
 #include <Core/World.h>
 #include <ECS/Components/ColliderComponent.h>
-
 #include <ECS/Components/TransformComponent.h>
+#include <Gameplay/Actor.h>
+
 void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& levelData)
 {
 
@@ -16,6 +17,19 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 			l.height = layer["height"];
 			l.data = layer["data"].get<std::vector<int>>();
 			m_layers[mapName].push_back(l);
+		}
+
+		if (layer["type"] == "objectgroup")
+		{
+
+			for (const auto& object : layer["objects"])
+			{
+				float x = object["x"];
+				float y = object["y"];
+				std::string name = object["name"];
+				auto& actor = World::GetWorld()->SpawnActor<Actor>(x, y);
+				actor.SetGameTag(name);
+			}
 		}
 	}
 
@@ -70,6 +84,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 					collider.width = obj["width"];
 					collider.height = obj["height"];
 					tileSet.colliderByTileID[id] = collider;
+					collider.top += tileSet.tileHeight; // Adjust the top position to match the tile's origin
 				}
 				m_tileSetTextures[id] = &tileSet.texture; // Store the texture pointer for each tile ID
 			}
@@ -102,37 +117,53 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 						sf::Vertex* quad = &vertexArray[tileIndex * 4];
 
 						// Posiciones
-						quad[0].position = sf::Vector2f(x * tileSet.tileWidth, y * tileSet.tileHeight);
-						quad[1].position = sf::Vector2f((x + 1) * tileSet.tileWidth, y * tileSet.tileHeight);
-						quad[2].position = sf::Vector2f((x + 1) * tileSet.tileWidth, (y + 1) * tileSet.tileHeight);
-						quad[3].position = sf::Vector2f(x * tileSet.tileWidth, (y + 1) * tileSet.tileHeight);
+						quad[0].position = sf::Vector2f(static_cast<float>(x) * tileSet.tileWidth, static_cast<float>(y) * tileSet.tileHeight);
+						quad[1].position = sf::Vector2f((static_cast<float>(x) + 1) * tileSet.tileWidth, static_cast<float>(y) * tileSet.tileHeight);
+						quad[2].position = sf::Vector2f((static_cast<float>(x) + 1) * tileSet.tileWidth, (static_cast<float>(y) + 1) * tileSet.tileHeight);
+						quad[3].position = sf::Vector2f(static_cast<float>(x) * tileSet.tileWidth, (static_cast<float>(y) + 1) * tileSet.tileHeight);
 
 						// Coordenadas UV
-						quad[0].texCoords = sf::Vector2f(tu * tileSet.tileWidth, tv * tileSet.tileHeight);
-						quad[1].texCoords = sf::Vector2f((tu + 1) * tileSet.tileWidth, tv * tileSet.tileHeight);
-						quad[2].texCoords = sf::Vector2f((tu + 1) * tileSet.tileWidth, (tv + 1) * tileSet.tileHeight);
-						quad[3].texCoords = sf::Vector2f(tu * tileSet.tileWidth, (tv + 1) * tileSet.tileHeight);
+						quad[0].texCoords = sf::Vector2f(static_cast<float>(tu) * tileSet.tileWidth, static_cast<float>(tv) * tileSet.tileHeight);
+						quad[1].texCoords = sf::Vector2f((static_cast<float>(tu) + 1) * tileSet.tileWidth, static_cast<float>(tv) * tileSet.tileHeight);
+						quad[2].texCoords = sf::Vector2f((static_cast<float>(tu) + 1) * tileSet.tileWidth, (static_cast<float>(tv) + 1) * tileSet.tileHeight);
+						quad[3].texCoords = sf::Vector2f(static_cast<float>(tu) * tileSet.tileWidth, (static_cast<float>(tv) + 1) * tileSet.tileHeight);
 
 
-						// Si hay colision, agregarla al mapa de colisiones
-						if (tileSet.colliderByTileID.find(tileID) != tileSet.colliderByTileID.end())
-						{
-							auto rect = tileSet.colliderByTileID.at(tileID);
+						//// Si hay colision, agregarla al mapa de colisiones
+						//if (tileSet.colliderByTileID.find(tileID) != tileSet.colliderByTileID.end()) {
+						//	auto rect = tileSet.colliderByTileID.at(tileID);
 
-							float worldX = x * tileSet.tileWidth + rect.left;
-							float worldY = y * tileSet.tileHeight + rect.top;
 
-							auto& tileActor = World::GetWorld()->SpawnActor<Actor>(worldX,worldY);
-							tileActor.SetGameTag("TilemapCollider");
-							tileActor.AddComponent<ColliderComponent>(rect.width, rect.height, false, true);
+						//	float worldX = x * tileSet.tileWidth + rect.left;
+						//	float worldY = (y * tileSet.tileHeight + rect.top);
 
-							auto& collider = tileActor.GetComponent<ColliderComponent>();
-							auto& transform = tileActor.GetComponent<TransformComponent>();
-					
-							//center collider 
-							collider.offset.x = rect.width / 2.f;
-							collider.offset.y = rect.height / 2.f;
-						}
+						//	auto& tileActor = World::GetWorld()->SpawnActor<Actor>(worldX, worldY);
+						//	tileActor.SetGameTag("TilemapCollider");
+						//	tileActor.AddComponent<ColliderComponent>(rect.width, rect.height, false, true);
+
+						//	// The collider.offset here would only be needed if the ColliderComponent itself uses it for internal calculations.
+						//	// If it's just for debug drawing, we'll handle it in RenderSystem.
+						//	// auto& collider = tileActor.GetComponent<ColliderComponent>();
+						//	 // auto& transform = tileActor.GetComponent<TransformComponent>();
+
+						//	ColliderComponent& collider = tileActor.GetComponent<ColliderComponent>();
+
+						//	auto& transform = tileActor.GetComponent<TransformComponent>();
+						//	auto centerX = rect.width / 2.f;
+						//	auto centerY = rect.height / 2.f;
+
+						//	collider.offset.x = centerX;
+						//	collider.offset.y += centerY;
+						//	collider.isStatic = true;
+
+						//	// Update polygon points for the collider
+						//	collider.polygon.points = {
+						//		{-rect.width / 2, -rect.height / 2}, // Top-left
+						//		{rect.width / 2, -rect.height / 2}, // Top-right
+						//		{rect.width / 2, rect.height / 2}, // Bottom-right
+						//		{-rect.width / 2, rect.height / 2} // Bottom-left
+						//	};
+						//}
 
 					}
 				}

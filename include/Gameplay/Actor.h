@@ -1,7 +1,11 @@
 #pragma once
 
+#include <Core/World.h>
 #include <ECS/ECSManager.h>
+#include <ECS/Components/TransformComponent.h>
 #include <MadFrameworkExport.h>
+#include <MadFramework.h>
+
 
 
 class MAD_API Actor
@@ -17,6 +21,12 @@ public:
 	virtual void Start();
 	virtual void Update(float deltaTime);
 	virtual void ProcessInput();
+
+
+	template<typename ...Args>
+	void SetPosition(Args& ... args);
+
+	sf::Vector2f& GetPosition();
 
 	/* Add Component eg:  AddComponent<VelocityComponent>(50.0f,0.0f)*/
 	template<typename T, typename... Args>
@@ -48,6 +58,12 @@ private:
 
 	void AddSignalListeners();
 };
+
+template<typename ...Args>
+inline void Actor::SetPosition(Args & ...args)
+{
+	m_ecs.GetComponent<TransformComponent>(m_entity).setPosition(std::forward<Args>(args)...);
+}
 
 template<typename T, typename ...Args>
 inline void Actor::AddComponent(Args && ...args)

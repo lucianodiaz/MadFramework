@@ -11,6 +11,7 @@
 #include <ECS/Systems/AnimationSystem.h>
 #include <ECS/Systems/CameraSystem.h>
 #include <Core/Signal.h>
+#include <Gameplay/Actor.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -274,6 +275,33 @@ Actor& World::GetActor(const Entity& entity)
 	{
 		throw std::runtime_error("Actor not found");
 	}
+}
+
+Actor& World::GetActorByTag(const std::string& tag)
+{
+	// TODO: Insertar una instrucción "return" aquí
+	auto it = std::find_if(m_actors.begin(), m_actors.end(),
+		[&tag](const std::unique_ptr<Actor>& actor) {
+			return actor->GetGameTag() == tag;
+		});
+
+	return it != m_actors.end() ? **it : throw std::runtime_error("Actor with tag '" + tag + "' not found");
+}
+
+std::vector<Actor> World::GetActorsByTag(const std::string& tag)
+{
+	
+	std::vector<Actor> actorsWithTag;
+
+	for (auto& actor : m_actors)
+	{
+		if (actor->GetGameTag() == tag)
+		{
+			actorsWithTag.push_back(*actor);
+		}
+	}
+
+	return actorsWithTag;
 }
 
 sf::Texture& World::GetTexture(const std::string& id)

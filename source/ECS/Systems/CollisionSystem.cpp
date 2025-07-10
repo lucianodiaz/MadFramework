@@ -18,7 +18,7 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 	auto entities = m_ecs->GetEntitiesWithComponent<ColliderComponent, TransformComponent>();
 
-	std::unordered_set<Entity>& previousCollisions = m_currentCollision;
+	auto& previousCollisions = m_currentCollision;
 
 	m_currentCollision.clear();
 
@@ -66,12 +66,13 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 			sf::Vector2f posA = transformA.position + colliderA.offset;
 			sf::Vector2f posB = transformB.position + colliderB.offset;
+			sf::Vector2f mtv;
 
 			bool collisionDetected = false;
 
-			if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::BOX)
+		/*	if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::BOX)
 			{
-				collisionDetected = MAD::CollisionUtils::AABBColision(posA, colliderA.box.width, colliderA.box.height,
+				collisionDetected = MAD::CollisionUtils::AABBCollision(posA, colliderA.box.width, colliderA.box.height,
 					posB, colliderB.box.width, colliderB.box.height);
 			}
 			else if (colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::CIRCLE)
@@ -83,13 +84,32 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 			{
 				collisionDetected = MAD::CollisionUtils::BoxCircleCollision(posA, colliderA.box.width, colliderA.box.height,
 					posB, colliderB.circle.radius);
+			}*/
+
+			//We'll gonna use SAT Collision for every shape whiout cirlces, circles will be handled separately
+
+			if (colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::CIRCLE)
+			{
+				collisionDetected = MAD::CollisionUtils::CircleCollision(posA, colliderA.circle.radius,
+					posB, colliderB.circle.radius,mtv);
+			}
+			else if(colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::POLYGON)
+			{
+				collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(colliderA, transformA, colliderB, transformB, mtv);
+			}
+			else if (colliderA.shape == ColliderShape::POLYGON && colliderB.shape == ColliderShape::CIRCLE)
+			{
+				collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(colliderB, transformB, colliderA, transformA, mtv);
+			}
+			else
+			{
+				collisionDetected = MAD::CollisionUtils::SATCollision(colliderA, transformA, colliderB, transformB, mtv);
 			}
 
 			if (collisionDetected)
 			{
 
-				m_currentCollision.insert(entityA);
-				m_currentCollision.insert(entityB);
+				m_currentCollision.insert(pairkKey);
 
 			
 				Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorA, &actorB);
@@ -97,6 +117,9 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 				//Stop Entity when is colliding with something
 
+
+				transformA.position += mtv;
+				transformB.position -= mtv;
 
 			}
 		}

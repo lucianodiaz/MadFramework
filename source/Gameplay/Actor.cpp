@@ -1,7 +1,4 @@
 #include "Gameplay/Actor.h"
-#include <ECS/Components/TransformComponent.h>
-#include <Core/World.h>
-#include <MadFramework.h>
 
 
 
@@ -31,6 +28,12 @@ void Actor::Update(float deltaTime)
 
 void Actor::ProcessInput()
 {
+}
+
+sf::Vector2f& Actor::GetPosition()
+{
+    // TODO: Insertar una instrucción "return" aquí
+	return m_ecs.GetComponent<TransformComponent>(m_entity).position;
 }
 
 void Actor::onCollisionEnter(Actor& actorA, Actor& actorB)

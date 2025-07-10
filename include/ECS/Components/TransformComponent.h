@@ -26,6 +26,11 @@ struct TransformComponent : public IComponent
 		position.y = y;
 		rotation = rot;
 	}
+
+
+	void setPosition(const sf::Vector2f& pos) { position = pos; };
+	void setPosition(float x, float y) { position.x = x; position.y = y; };
+
 	sf::Vector2f position;
 	float rotation{};
 	bool isDirty{ true }; // Flag to indicate if the transform has changed since the last update
