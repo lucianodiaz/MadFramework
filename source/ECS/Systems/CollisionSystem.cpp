@@ -117,9 +117,9 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 				//Stop Entity when is colliding with something
 
-
-				transformA.position += mtv;
-				transformB.position -= mtv;
+				if(!colliderA.isStatic && !colliderA.isTrigger) transformA.position += mtv;
+				
+				if(!colliderB.isStatic && !colliderB.isTrigger) transformB.position -= mtv;
 
 			}
 		}

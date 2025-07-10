@@ -55,6 +55,7 @@ public:
 
 		auto& collider = GetComponent<ColliderComponent>();
 
+		collider.isStatic = true;
 	}
 
 	void Update(float deltaTime) override
