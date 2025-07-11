@@ -70,22 +70,6 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 			bool collisionDetected = false;
 
-		/*	if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::BOX)
-			{
-				collisionDetected = MAD::CollisionUtils::AABBCollision(posA, colliderA.box.width, colliderA.box.height,
-					posB, colliderB.box.width, colliderB.box.height);
-			}
-			else if (colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::CIRCLE)
-			{
-				collisionDetected = MAD::CollisionUtils::CircleCollision(posA, colliderA.circle.radius,
-					posB, colliderB.circle.radius);
-			}
-			else if (colliderA.shape == ColliderShape::BOX && colliderB.shape == ColliderShape::CIRCLE)
-			{
-				collisionDetected = MAD::CollisionUtils::BoxCircleCollision(posA, colliderA.box.width, colliderA.box.height,
-					posB, colliderB.circle.radius);
-			}*/
-
 			//We'll gonna use SAT Collision for every shape whiout cirlces, circles will be handled separately
 
 			if (colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::CIRCLE)
