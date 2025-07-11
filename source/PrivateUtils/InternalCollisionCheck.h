@@ -64,11 +64,6 @@ namespace MAD
 		bool SATCollision(const ColliderComponent& colliderA, const TransformComponent& transformA,
 			const ColliderComponent& colliderB, const TransformComponent& transformB, sf::Vector2f& mtv)
 		{
-			if ((colliderA.shape != ColliderShape::POLYGON && colliderA.shape != ColliderShape::BOX) || (colliderB.shape != ColliderShape::POLYGON && colliderB.shape != ColliderShape::BOX))
-			{
-				return false; // SAT is typically used for polygons, so we can skip if not polygons
-			}
-
 			auto verticesA = getTransformedVertices(colliderA, transformA);
 			auto verticesB = getTransformedVertices(colliderB, transformB);
 
