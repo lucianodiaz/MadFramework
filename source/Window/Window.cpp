@@ -2,7 +2,7 @@
 
 Window::Window(int w, int h, std::string& title) :
 	_width(w),_height(h),_title(title),
-	_window(std::make_unique<sf::RenderWindow>(sf::VideoMode(_width,_height),_title,sf::Style::Titlebar | sf::Style::Close))
+	_window(std::make_unique<sf::RenderWindow>(sf::VideoMode(_width,_height),_title,sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize))
 {
 }
 
