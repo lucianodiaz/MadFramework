@@ -84,7 +84,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 					collider.width = obj["width"];
 					collider.height = obj["height"];
 					tileSet.colliderByTileID[id] = collider;
-					collider.top += tileSet.tileHeight; // Adjust the top position to match the tile's origin
+					//collider.top += tileSet.tileHeight; // Adjust the top position to match the tile's origin
 				}
 				m_tileSetTextures[id] = &tileSet.texture; // Store the texture pointer for each tile ID
 			}
@@ -129,41 +129,28 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 						quad[3].texCoords = sf::Vector2f(static_cast<float>(tu) * tileSet.tileWidth, (static_cast<float>(tv) + 1) * tileSet.tileHeight);
 
 
-						//// Si hay colision, agregarla al mapa de colisiones
-						//if (tileSet.colliderByTileID.find(tileID) != tileSet.colliderByTileID.end()) {
-						//	auto rect = tileSet.colliderByTileID.at(tileID);
+						// Si hay colision, agregarla al mapa de colisiones
+						if (tileSet.colliderByTileID.find(tileID) != tileSet.colliderByTileID.end()) {
+							auto rect = tileSet.colliderByTileID.at(tileID);
 
 
-						//	float worldX = x * tileSet.tileWidth + rect.left;
-						//	float worldY = (y * tileSet.tileHeight + rect.top);
+							float worldX = x * tileSet.tileWidth + rect.left;
+							float worldY = (y * tileSet.tileHeight + rect.top);
 
-						//	auto& tileActor = World::GetWorld()->SpawnActor<Actor>(worldX, worldY);
-						//	tileActor.SetGameTag("TilemapCollider");
-						//	tileActor.AddComponent<ColliderComponent>(rect.width, rect.height, false, true);
+							auto& tileActor = World::GetWorld()->SpawnActor<Actor>(worldX, worldY);
+							tileActor.SetGameTag("TilemapCollider");
+							tileActor.AddComponent<ColliderComponent>(rect.width, rect.height, false, true);
 
-						//	// The collider.offset here would only be needed if the ColliderComponent itself uses it for internal calculations.
-						//	// If it's just for debug drawing, we'll handle it in RenderSystem.
-						//	// auto& collider = tileActor.GetComponent<ColliderComponent>();
-						//	 // auto& transform = tileActor.GetComponent<TransformComponent>();
+							ColliderComponent& collider = tileActor.GetComponent<ColliderComponent>();
 
-						//	ColliderComponent& collider = tileActor.GetComponent<ColliderComponent>();
+							auto& transform = tileActor.GetComponent<TransformComponent>();
+							auto centerX = rect.width / 2.f;
+							auto centerY = rect.height / 2.f;
 
-						//	auto& transform = tileActor.GetComponent<TransformComponent>();
-						//	auto centerX = rect.width / 2.f;
-						//	auto centerY = rect.height / 2.f;
-
-						//	collider.offset.x = centerX;
-						//	collider.offset.y += centerY;
-						//	collider.isStatic = true;
-
-						//	// Update polygon points for the collider
-						//	collider.polygon.points = {
-						//		{-rect.width / 2, -rect.height / 2}, // Top-left
-						//		{rect.width / 2, -rect.height / 2}, // Top-right
-						//		{rect.width / 2, rect.height / 2}, // Bottom-right
-						//		{-rect.width / 2, rect.height / 2} // Bottom-left
-						//	};
-						//}
+							collider.offset.x = centerX;
+							collider.offset.y = centerY;
+							collider.isStatic = true;
+						}
 
 					}
 				}

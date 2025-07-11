@@ -62,73 +62,76 @@ namespace MAD
 
 
 		bool SATCollision(const ColliderComponent& colliderA, const TransformComponent& transformA,
-			const ColliderComponent& colliderB, const TransformComponent& transformB, sf::Vector2f& mtv)
-		{
+			const ColliderComponent& colliderB, const TransformComponent& transformB, sf::Vector2f& mtv) {
+			// Check if both are polygons
+			if (colliderA.shape != ColliderShape::POLYGON || colliderB.shape != ColliderShape::POLYGON) {
+				return false; // SAT is only for polygons
+			}
+
 			auto verticesA = getTransformedVertices(colliderA, transformA);
 			auto verticesB = getTransformedVertices(colliderB, transformB);
+
+			if (verticesA.size() < 3 || verticesB.size() < 3) {
+				return false; // Not a valid polygon
+			}
 
 			float minOverlap = std::numeric_limits<float>::max();
 			sf::Vector2f minAxis;
 
-			//test axes from polygon A
-			for (size_t i = 0; i < verticesA.size(); ++i)
-			{
+			// Test axes from polygon A
+			for (size_t i = 0; i < verticesA.size(); ++i) {
 				sf::Vector2f p1 = verticesA[i];
 				sf::Vector2f p2 = verticesA[(i + 1) % verticesA.size()];
 				sf::Vector2f axis = getEdgeNormal(p1, p2);
 				float len = std::sqrt(axis.x * axis.x + axis.y * axis.y);
-
-				if (len > 0) axis /= len; // Normalize the axis
+				if (len < 0.0001f) continue; // Skip near-zero length edges
+				axis /= len; // Normalize the axis
 
 				Projection projectionA = projectPolygon(verticesA, axis);
 				Projection projectionB = projectPolygon(verticesB, axis);
 
-				if (!projectionOverlap(projectionA, projectionB))
-				{
-					return false;
+				if (!projectionOverlap(projectionA, projectionB)) {
+					return false; // Separating axis found
 				}
 
 				float overlap = std::min(projectionA.max, projectionB.max) - std::max(projectionA.min, projectionB.min);
-
-				if (overlap < minOverlap)
-				{
+				if (overlap < minOverlap) {
 					minOverlap = overlap;
 					minAxis = axis;
 				}
 			}
 
-			//test axes from polygon B
-			for (size_t i = 0; i < verticesB.size(); ++i)
-			{
+			// Test axes from polygon B
+			for (size_t i = 0; i < verticesB.size(); ++i) {
 				sf::Vector2f p1 = verticesB[i];
 				sf::Vector2f p2 = verticesB[(i + 1) % verticesB.size()];
 				sf::Vector2f axis = getEdgeNormal(p1, p2);
 				float len = std::sqrt(axis.x * axis.x + axis.y * axis.y);
-
-				if (len > 0) axis /= len; // Normalize the axis
+				if (len < 0.0001f) continue; // Skip near-zero length edges
+				axis /= len; // Normalize the axis
 
 				Projection projectionA = projectPolygon(verticesA, axis);
 				Projection projectionB = projectPolygon(verticesB, axis);
 
-				if (!projectionOverlap(projectionA, projectionB))
-				{
-					return false;
+				if (!projectionOverlap(projectionA, projectionB)) {
+					return false; // Separating axis found
 				}
 
 				float overlap = std::min(projectionA.max, projectionB.max) - std::max(projectionA.min, projectionB.min);
-
-				if (overlap < minOverlap)
-				{
+				if (overlap < minOverlap) {
 					minOverlap = overlap;
 					minAxis = axis;
 				}
 			}
 
 			// Calculate the minimum translation vector (MTV)
-
-			sf::Vector2f direction = transformB.position - transformA.position;
-			if (direction.x * minAxis.x + direction.y * minAxis.y < 0) {
-				minAxis = -minAxis; // Ensure MTV points from A to B
+			// Ensure MTV points from A to B (move A out of B)
+			sf::Vector2f centerA = transformA.position + colliderA.offset;
+			sf::Vector2f centerB = transformB.position + colliderB.offset;
+			sf::Vector2f direction = centerB - centerA;
+			float dot = direction.x * minAxis.x + direction.y * minAxis.y;
+			if (dot < 0) {
+				minAxis = -minAxis; // Reverse direction if needed
 			}
 			mtv = minAxis * minOverlap;
 
@@ -138,9 +141,16 @@ namespace MAD
 		// Circle-Polygon collision
 		bool CirclePolygonCollision(const ColliderComponent& circleCollider, const TransformComponent& circleTransform,
 			const ColliderComponent& polyCollider, const TransformComponent& polyTransform,
-			sf::Vector2f& mtv) 
-		{
+			sf::Vector2f& mtv) {
+			if (circleCollider.shape != ColliderShape::CIRCLE || polyCollider.shape != ColliderShape::POLYGON) {
+				return false;
+			}
+
 			auto vertices = getTransformedVertices(polyCollider, polyTransform);
+			if (vertices.size() < 3) {
+				return false; // Not a valid polygon
+			}
+
 			sf::Vector2f circleCenter = circleTransform.position + circleCollider.offset;
 			float radius = circleCollider.circle.radius;
 
@@ -153,7 +163,8 @@ namespace MAD
 				sf::Vector2f p2 = vertices[(i + 1) % vertices.size()];
 				sf::Vector2f axis = getEdgeNormal(p1, p2);
 				float len = std::sqrt(axis.x * axis.x + axis.y * axis.y);
-				if (len > 0) axis /= len;
+				if (len < 0.0001f) continue;
+				axis /= len;
 
 				Projection projPoly = projectPolygon(vertices, axis);
 				float circleDot = circleCenter.x * axis.x + circleCenter.y * axis.y;
@@ -182,7 +193,8 @@ namespace MAD
 			}
 			sf::Vector2f axis = circleCenter - closestVertex;
 			float len = std::sqrt(axis.x * axis.x + axis.y * axis.y);
-			if (len > 0) axis /= len;
+			if (len < 0.0001f) return false; // Avoid division by zero
+			axis /= len;
 
 			Projection projPoly = projectPolygon(vertices, axis);
 			float circleDot = circleCenter.x * axis.x + circleCenter.y * axis.y;
@@ -198,12 +210,13 @@ namespace MAD
 				minAxis = axis;
 			}
 
-			// Compute MTV direction
-			sf::Vector2f direction = circleCenter - closestVertex;
+			// Compute MTV direction (move circle out of polygon)
+			sf::Vector2f direction = closestVertex - circleCenter; // From circle to polygon
 			if (direction.x * minAxis.x + direction.y * minAxis.y < 0) {
 				minAxis = -minAxis;
 			}
 			mtv = minAxis * minOverlap;
+
 			return true;
 		}
 

@@ -84,6 +84,7 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 			else if (colliderA.shape == ColliderShape::POLYGON && colliderB.shape == ColliderShape::CIRCLE)
 			{
 				collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(colliderB, transformB, colliderA, transformA, mtv);
+				mtv = -mtv; // Reverse MTV for correct direction
 			}
 			else
 			{
@@ -101,9 +102,40 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 				//Stop Entity when is colliding with something
 
-				if(!colliderA.isStatic && (!colliderA.isTrigger && !colliderB.isTrigger)) transformA.position += mtv;
-				
-				if(!colliderB.isStatic && (!colliderB.isTrigger && !colliderA.isTrigger)) transformB.position -= mtv;
+				//if(!colliderA.isStatic && (!colliderA.isTrigger && !colliderB.isTrigger)) transformA.position += mtv;
+				//
+				//if(!colliderB.isStatic && (!colliderB.isTrigger && !colliderA.isTrigger)) transformB.position -= mtv;
+
+				if (!colliderA.isStatic && !colliderB.isStatic && !colliderA.isTrigger && !colliderB.isTrigger)
+				{
+					// Both dynamic: split the MTV
+					transformA.position += mtv * 0.5f;
+					transformB.position -= mtv * 0.5f;
+				}
+				else if (!colliderA.isStatic && colliderB.isStatic && !colliderA.isTrigger) 
+				{
+					// A is dynamic (e.g., player), B is static (e.g., tile): move A out
+					transformA.position -= mtv;
+					auto& velocityA = m_ecs->GetComponent<VelocityComponent>(entityA);
+					if (std::abs(mtv.x) > std::abs(mtv.y)) {
+						velocityA.velocity.x = 0.0f;
+					}
+					else {
+						velocityA.velocity.y = 0.0f;
+					}
+				}
+				else if (!colliderB.isStatic && colliderA.isStatic && !colliderB.isTrigger)
+				{
+					// B is dynamic, A is static: move B out
+					transformB.position += mtv;
+					auto& velocityB = m_ecs->GetComponent<VelocityComponent>(entityB);
+					if (std::abs(mtv.x) > std::abs(mtv.y)) {
+						velocityB.velocity.x = 0.0f;
+					}
+					else {
+						velocityB.velocity.y = 0.0f;
+					}
+				}
 
 			}
 		}
