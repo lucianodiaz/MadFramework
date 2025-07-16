@@ -5,6 +5,7 @@
 #include <Gameplay/AnimationController.h>
 #include <MathUtils.h>
 #include <ECS/Components/CameraViewComponent.h>
+#include <Transitions/FadeTransition.h>
 
 class UI
 {
@@ -44,8 +45,11 @@ public:
         GetComponent<TransformComponent>().position.x = x;
         GetComponent<TransformComponent>().position.y = y;
 
-		AddComponent<ColliderComponent>(10.0f, false, true);
-
+		AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
+			{0, -20}, { 19, -6 }, { 12, 16 }, { -12, 16 }, { -19, -6 }
+		}, false, true);
+		//AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
+		AddComponent<VelocityComponent>(0,0);
 		SetGameTag("CosmicBall");
     }
 
@@ -60,6 +64,11 @@ public:
 
 	void Update(float deltaTime) override
 	{
+		auto& velocityComp = GetComponent<VelocityComponent>();
+
+		//velocityComp.velocity.x += cos(60) * deltaTime;
+		//velocityComp.velocity.y -= sin(60) * deltaTime;
+
 	}
 };
 
@@ -80,7 +89,7 @@ public:
 		//	 {-5, -10}, {5, -10}, {5, 10}, {-5, 10}
 		//}, false, true);
 
-		AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
+		AddComponent<ColliderComponent>(10.0f,20.f, false, true);
 
 		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
 
@@ -190,6 +199,8 @@ public:
 		GetComponent<VelocityComponent>().velocity = sf::Vector2f(0.0f, 0.0f);
 
 
+
+
 	}
 
     void TakeDamage(int dmg) 
@@ -203,26 +214,103 @@ private:
 	std::unique_ptr<AnimationController> m_animationController;
 };
 
+
+class SecondLevelScene : public IScene
+{
+public :
+
+	SecondLevelScene() {}
+
+	void OnLoad() override 
+	{
+		auto& player = World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
+	};
+
+	void OnUnload() override {};
+
+	void OnSceneEnter() override {
+		
+
+		World::GetWorld()->GetTimerManager().createTimer(3.0f, [this]()
+			{
+				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(Fade::In, 3.0f), nullptr);
+			}
+		, false);
+	}
+
+	void OnSceneExit() override {};
+
+	void Update(float deltaTime) override {};
+
+	bool CanTransition() const override { return false; };
+
+	void Draw(sf::RenderWindow& window) override {}; //maybe this it can be deleted
+};
+
+class FirstLevelScene : public IScene
+{
+public:
+	FirstLevelScene()
+	{
+		
+	}
+
+
+	void OnLoad() override {
+	
+		
+		player = &World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
+		cosmicBall = &World::GetWorld()->SpawnActor<CosmicBall>(100.0f, 100.0f);
+		World::GetWorld()->TilemapManager().LoadTilemap("first_scene", "level1");
+
+	};
+
+	void OnUnload() override {};
+
+	void OnSceneEnter() override {
+		auto ui = new UI();
+
+	
+		World::GetWorld()->TilemapManager().SetCurrentMap("first_scene");
+
+		Actor spawnPoint = World::GetWorld()->GetActorByTag("spawn");
+
+		player->SetPosition(spawnPoint.GetPosition());
+		cosmicBall->SetPosition(spawnPoint.GetPosition());
+		auto sound = World::GetWorld();
+
+		player->TakeDamage(10);
+
+		World::GetWorld()->GetTimerManager().createTimer(10.0f, [this]() 
+			{
+				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level2", std::make_unique<FadeTransition>(Fade::In, 3.0f), nullptr);
+			}
+		, false);
+
+		
+	};
+
+	void OnSceneExit() override {};
+
+	void Update(float deltaTime) override {};
+
+	bool CanTransition() const override { return true; };
+
+	void Draw(sf::RenderWindow& window) override {}; //maybe this it can be deleted
+
+private:
+	Player* player;
+	CosmicBall* cosmicBall;
+};
+
 class Game
 {
 public:
     Game()
     {
-        auto ui = new UI();
-
-        auto& player = World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
-		auto& cosmicBall = World::GetWorld()->SpawnActor<CosmicBall>(100.0f, 100.0f);
-
-		World::GetWorld()->GetTilemapManager().LoadTilemap("first_scene", "level1");
-		World::GetWorld()->GetTilemapManager().SetCurrentMap("first_scene");
-        
-		Actor spawnPoint = World::GetWorld()->GetActorByTag("spawn");
-
-		player.SetPosition(spawnPoint.GetPosition());
-		cosmicBall.SetPosition(spawnPoint.GetPosition());
-        auto sound = World::GetWorld();
-
-        player.TakeDamage(10);
+		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
+		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
     }
 };
 

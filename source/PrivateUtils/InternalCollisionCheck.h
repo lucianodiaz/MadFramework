@@ -54,7 +54,7 @@ namespace MAD
 			{
 				float x = vertex.x * collider.box.scaleWidth * cosR - vertex.y * collider.box.scaleHeight * sinR;
 				float y = vertex.x * collider.box.scaleWidth * sinR + vertex.y * collider.box.scaleHeight * cosR;
-				transformedVertices.push_back(transform.position + collider.offset + sf::Vector2f(x, y));
+				transformedVertices.emplace_back(transform.position + collider.offset + sf::Vector2f(x, y));
 			}
 
 			return transformedVertices;

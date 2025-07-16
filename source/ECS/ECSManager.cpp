@@ -5,7 +5,7 @@ Entity ECSManager::CreateEntity()
 {
     Entity entity = m_entities.size();
 
-    m_entities.push_back(entity);
+    m_entities.emplace_back(entity);
 
     m_entityComponentMasks[entity].reset();
 

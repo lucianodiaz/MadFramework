@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\Core\QuadTree.cpp" />
+    <ClCompile Include="source\Core\SceneManager.cpp" />
     <ClCompile Include="source\Core\TilemapLoader.cpp" />
     <ClCompile Include="source\Core\TilemapManager.cpp" />
     <ClCompile Include="source\Core\TimerManager.cpp" />
@@ -172,10 +173,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="source\Gameplay\AnimationController.cpp" />
+    <ClCompile Include="source\Gameplay\SplashScreenFramework.cpp" />
     <ClCompile Include="source\Input\Action.cpp" />
+    <ClCompile Include="source\Transitions\FadeTransition.cpp" />
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\IScene.h" />
+    <ClInclude Include="include\Core\ISceneTransition.h" />
+    <ClInclude Include="include\Core\SceneManager.h" />
     <ClInclude Include="include\Core\TilemapLoader.h" />
     <ClInclude Include="include\Core\TilemapManager.h" />
     <ClInclude Include="include\Core\TimerManager.h" />
@@ -202,11 +208,13 @@
     <ClInclude Include="include\ECS\Systems\MovementSystem.h" />
     <ClInclude Include="include\Gameplay\Actor.h" />
     <ClInclude Include="include\Gameplay\AnimationController.h" />
+    <ClInclude Include="include\Gameplay\SplashScreenFramework.h" />
     <ClInclude Include="include\Input\Action.h" />
     <ClInclude Include="include\Input\ActionMap.h" />
     <ClInclude Include="include\Input\ActionTarget.h" />
     <ClInclude Include="include\MadFramework.h" />
     <ClInclude Include="include\MadFrameworkExport.h" />
+    <ClInclude Include="include\Transitions\FadeTransition.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
     <ClInclude Include="include\Core\QuadTree.h" />

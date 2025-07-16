@@ -12,6 +12,9 @@
 #include <ECS/Systems/CameraSystem.h>
 #include <Core/Signal.h>
 #include <Gameplay/Actor.h>
+#include <Gameplay/SplashScreenFramework.h>
+#include <Transitions/FadeTransition.h>
+#include <Core/TilemapManager.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -19,8 +22,8 @@ World::World() : m_isRunning(true)
 {
 	LoadInternalAssets();
 	LoadResources();
-	CreateECSManager();
-	RegisterDefaultSystems();
+	//CreateECSManager();
+	/*RegisterDefaultSystems();*/
 	LoadInputs();
 
 	char path[MAX_PATH];
@@ -28,6 +31,10 @@ World::World() : m_isRunning(true)
 	auto WindowName = std::filesystem::path(path).stem().string();
 
 	CreateMainWindow(1920, 1080, WindowName);
+
+	auto splashScene = std::make_unique<SplashScreenFramework>(2.0f);
+	m_sceneManager.AddScene("mad_splash_screen_01", std::move(splashScene));
+	
 
 	std::cout << "App is running!.." << std::endl;
 }
@@ -51,6 +58,12 @@ void World::Run(int frame_per_seconds)
 	sf::Time TimerPerFrame = sf::seconds(1.f / frame_per_seconds);
 
 	Signal::GetInstance().Dispatch("onFPSUpdate", frame_per_seconds);
+
+
+	//I guess I will call Splash screen Here for one reason
+	m_sceneManager.ChangeSceneWithTransition("mad_splash_screen_01", std::make_unique<FadeTransition>(Fade::In, 1.0f), std::make_unique<FadeTransition>(Fade::Out, 1.0f));
+	//m_sceneManager.ChangeSceneWithTransition("splash_screen")
+
 	while (_window->IsOpen())
 	{
 		ProcessInput();
@@ -88,23 +101,23 @@ void World::CreateMainWindow(int width, int height, std::string name)
 
 void World::CreateECSManager()
 {
-	ecs = std::make_unique<ECSManager>();
+	/*ecs = std::make_unique<ECSManager>();
 
 	if (!ecs)
 	{
 		std::cout << "Error creating ECS!.." << std::endl;
-	}
+	}*/
 
 }
 
 void World::RegisterDefaultSystems()
 {
 	
-	ecs->RegisterSystem<MovementSystem>(ecs);
-	ecs->RegisterSystem<CollisionSystem>(ecs);
-	ecs->RegisterSystem<CameraSystem>(ecs);
-	ecs->RegisterSystem<RenderSystem>(ecs);
-	ecs->RegisterSystem<AnimationSystem>(ecs);
+	/*m_sceneManager.GetECSManager()->RegisterSystem<MovementSystem>(ecs);
+	m_sceneManager.GetECSManager()->RegisterSystem<CollisionSystem>(ecs);
+	m_sceneManager.GetECSManager()->RegisterSystem<CameraSystem>(ecs);
+	m_sceneManager.GetECSManager()->RegisterSystem<RenderSystem>(ecs);
+	m_sceneManager.GetECSManager()->RegisterSystem<AnimationSystem>(ecs);*/
 
 }
 
@@ -127,32 +140,32 @@ void World::ProcessInput()
 
 void World::Update(float deltaTime)
 {
-	ecs->Update(deltaTime);
+
+	m_sceneManager.Update(deltaTime);
+
+	m_sceneManager.GetECSManager()->Update(deltaTime); //update systems
+
 	for (auto& actor : m_actors)
 	{
-		actor->Update(deltaTime);
+		actor->Update(deltaTime); //update entities
 	}
-	m_timerManager.update();
+
+	m_timerManager.update(); //update TimerManager
 }
 
 void World::Render()
 {
 	_window->Clear();
 
-	m_tilemapManager.Draw(_window->GetRenderWindow());
-	ecs->Draw(_window->GetRenderWindow());
+	
+
+	//m_tilemapManager.Draw(_window->GetRenderWindow());
+
+	//ecs->Draw(_window->GetRenderWindow());
+
+	m_sceneManager.Draw(_window->GetRenderWindow());
 
 	_window->Display();
-}
-
-void World::Draw()
-{
-	auto renderSystem = GetSystem<RenderSystem>();
-	if (renderSystem)
-	{
-		renderSystem->Render(_window->GetRenderWindow());
-	}
-
 }
 
 void World::LoadResources()
@@ -222,6 +235,12 @@ void World::LoadSound(const std::string& name, const std::string& path)
 	}
 }
 
+TilemapManager& World::TilemapManager()
+{
+	// TODO: Insertar una instrucción "return" aquí
+	return m_sceneManager.GetTilemapManager();
+}
+
 void World::LoadInputs()
 {
 	std::ifstream file("inputs.json");
@@ -258,6 +277,14 @@ void World::LoadInternalAssets()
 
 	m_fonts.Load("default", m_internalAssetPath + "default.ttf");
 	m_textures.Load("splash", m_internalAssetPath + "splash.jpg");
+}
+
+const std::unique_ptr<ECSManager>& World::GetECSManager()
+{
+	// TODO: Insertar una instrucción "return" aquí
+
+	return m_sceneManager.GetECSManager();
+
 }
 
 Actor& World::GetActor(const Entity& entity)
@@ -297,7 +324,7 @@ std::vector<Actor> World::GetActorsByTag(const std::string& tag)
 	{
 		if (actor->GetGameTag() == tag)
 		{
-			actorsWithTag.push_back(*actor);
+			actorsWithTag.emplace_back(*actor);
 		}
 	}
 

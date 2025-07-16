@@ -8,11 +8,11 @@
 #include <Input/ActionMap.h>
 #include "ResourceManager.h"
 #include "TimerManager.h"
-#include "TilemapManager.h"
-#include <ECS/ECSManager.h>
+#include "SceneManager.h"
 
 class ECSManager;
 class Actor;
+
 
 class MAD_API World
 {
@@ -23,7 +23,7 @@ public:
 	template<typename T, typename... Args>
 	T& SpawnActor(Args&&... args);
 
-	const std::unique_ptr<ECSManager>& GetECSManager() { return ecs; };
+	const std::unique_ptr<ECSManager>& GetECSManager();
 
 	Actor& GetActor(const Entity& entity);
 
@@ -68,9 +68,11 @@ public:
 
 	const bool IsShowFPS() const { return m_showFPS; }
 
-	TilemapManager& GetTilemapManager() { return m_tilemapManager; }
+	TilemapManager& TilemapManager();
 
 	const std::string& AssetsPath() { return m_defaultAssetsPath; }
+
+	SceneManager& GetSceneManager() { return m_sceneManager; }
 
 	
 protected:
@@ -90,8 +92,6 @@ protected:
 
 	void Render();
 
-	void Draw();
-
 	void LoadResources();
 
 	void LoadInputs();
@@ -102,18 +102,19 @@ protected:
 
 	std::unique_ptr<Window> _window;
 
-	std::unique_ptr<ECSManager> ecs;
+	//std::unique_ptr<ECSManager> ecs;
 
 	bool m_isRunning;
 	bool m_wasRun = false;
 
-	bool m_showFPS = true;
-	TilemapManager m_tilemapManager;
+	bool m_showFPS = false;
 
 	std::vector<std::unique_ptr<Actor>> m_actors;
 	static std::shared_ptr <World> _world;
 
 	TimerManager m_timerManager;
+
+	SceneManager m_sceneManager;
 
 	ResourceManager<sf::Texture, std::string> m_textures;
 	ResourceManager<sf::Music, std::string> m_musics;
@@ -149,7 +150,7 @@ inline T& World::SpawnActor(Args && ...args)
 template<typename T>
 inline std::shared_ptr<T> World::GetSystem()
 {
-	for (auto& system : ecs->GetSystems())
+	for (auto& system : m_sceneManager.GetECSManager()->GetSystems())
 	{
 		if (auto castedSystem = std::dynamic_pointer_cast<T>(system))
 		{

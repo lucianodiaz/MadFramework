@@ -16,7 +16,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 			l.width = layer["width"];
 			l.height = layer["height"];
 			l.data = layer["data"].get<std::vector<int>>();
-			m_layers[mapName].push_back(l);
+			m_layers[mapName].emplace_back(l);
 		}
 
 		if (layer["type"] == "objectgroup")
@@ -63,7 +63,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 		sf::VertexArray layerVA;
 		layerVA.setPrimitiveType(sf::Quads);
 		layerVA.resize(tileSet.tileCount * 4); // Each tile has 4 vertices
-		m_Vertexlayers.push_back(layerVA);
+		m_Vertexlayers.emplace_back(layerVA);
 
 		World::GetWorld()->LoadTexture( tileSet.textureName, srcAsset + tileSet.source);
 
@@ -89,7 +89,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 				m_tileSetTextures[id] = &tileSet.texture; // Store the texture pointer for each tile ID
 			}
 		}
-		m_tileSets[mapName].push_back(tileSet);
+		m_tileSets[mapName].emplace_back(tileSet);
 	}
 
 	for (const auto & [mapName, layers] : m_layers) {
@@ -139,7 +139,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 
 							auto& tileActor = World::GetWorld()->SpawnActor<Actor>(worldX, worldY);
 							tileActor.SetGameTag("TilemapCollider");
-							tileActor.AddComponent<ColliderComponent>(rect.width, rect.height, false, true);
+							tileActor.AddComponent<ColliderComponent>(rect.width, rect.height, false, false);
 
 							ColliderComponent& collider = tileActor.GetComponent<ColliderComponent>();
 

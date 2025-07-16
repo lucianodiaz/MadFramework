@@ -95,7 +95,7 @@ template<typename T, typename ...Args>
 void ECSManager::RegisterSystem(Args && ...args)
 {
     auto system = std::make_shared<T>(std::forward<Args>(args)...);
-    m_systems.push_back(system);
+    m_systems.emplace_back(system);
 }
 
 template<typename... Components>
@@ -107,7 +107,7 @@ inline std::vector<Entity> ECSManager::GetEntitiesWithComponent()
 	{
 		if ((HasComponent<Components>(entity) && ...))
 		{
-			entitiesWithComponent.push_back(entity);
+			entitiesWithComponent.emplace_back(entity);
 		}
 	}
 

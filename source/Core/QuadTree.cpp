@@ -35,7 +35,7 @@ void QuadTree::Insert(const Entity& entity)
 			return;
 		}
 	}
-	m_objects.push_back(entity);
+	m_objects.emplace_back(entity);
 
 	if (m_objects.size() > MAX_OBJECTS && level < MAX_LEVELS)
 	{

@@ -21,7 +21,7 @@ public:
     template<typename... Args>
 	void AddListener(const std::string& signalName, Callback<Args...> callback) {
        
-		m_listeners[signalName].push_back([callback](std::any& args) 
+		m_listeners[signalName].emplace_back([callback](std::any& args) 
 			{			
               // Check if args can be cast to the expected tuple type
 			if (auto* tuple = std::any_cast<std::tuple<Args...>>(&args)) 
