@@ -203,6 +203,12 @@
     <ClInclude Include="include\Transitions\FadeTransition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Utils\EasingFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Animation\Tween.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources.json" />

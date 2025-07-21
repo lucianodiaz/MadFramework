@@ -1,6 +1,6 @@
 #pragma once
-#define _USE_MATH_DEFINES
 #include <cmath>
+#include <corecrt_math_defines.h>
 
 // Easing functions for animations
 namespace MAD::Easings
@@ -186,19 +186,15 @@ namespace MAD::Easings
 
 	inline float easeInOutElastic(float t)
 	{
-		constexpr float c5 = (2 * M_PI) / 4.5f;
-		if (t == 0 || t == 1)
+		constexpr float c5 = (2.0f * M_PI) / 4.5f;
+		if (t == 0 || t == 1.0f)
 			return t;
 		if (t < 0.5f)
-			return -(std::pow(2, 20 * t - 10) * std::sin((20 * t - 11.125f) * c5)) / 2;
+			return -(std::pow(2.0f, 20.0f * t - 10.0f) * std::sin((20.0f * t - 11.125f) * c5)) / 2.0f;
 		else
-			return (std::pow(2, -20 * t + 10) * std::sin((20 * t - 11.125f) * c5)) / 2 + 1;
+			return (std::pow(2.0f, -20.0f * t + 10.0f) * std::sin((20.0f * t - 11.125f) * c5)) / 2.0f + 1.0f;
 	}
 
-	inline float easeInBounce(float t)
-	{
-		return 1 - easeOutBounce(1 - t);
-	}
 
 	inline float easeOutBounce(float t)
 	{
@@ -228,11 +224,18 @@ namespace MAD::Easings
 		}
 	}
 
+
+	inline float easeInBounce(float t)
+	{
+		return 1 - MAD::Easings::easeOutBounce(1 - t);
+	}
+
+
 	inline float easeInOutBounce(float t)
 	{
 		return t < 0.5f 
-			? (1 - easeOutBounce(1 - 2 * t)) / 2 
-			: (1 + easeOutBounce(2 * t - 1)) / 2;
+			? (1 - MAD::Easings::easeOutBounce(1 - 2 * t)) / 2 
+			: (1 + MAD::Easings::easeOutBounce(2 * t - 1)) / 2;
 	}
 
 

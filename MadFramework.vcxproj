@@ -179,6 +179,7 @@
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Animation\Tween.h" />
     <ClInclude Include="include\Core\IScene.h" />
     <ClInclude Include="include\Core\ISceneTransition.h" />
     <ClInclude Include="include\Core\SceneManager.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="include\MadFramework.h" />
     <ClInclude Include="include\MadFrameworkExport.h" />
     <ClInclude Include="include\Transitions\FadeTransition.h" />
+    <ClInclude Include="include\Utils\EasingFunctions.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
     <ClInclude Include="include\Core\QuadTree.h" />
