@@ -231,7 +231,7 @@ public :
 	void OnSceneEnter() override {
 		
 
-		World::GetWorld()->GetTimerManager().createTimer(3.0f, [this]()
+		World::GetWorld()->GetTimerManager().createTimer(10.0f, [this]()
 			{
 				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(Fade::In, 3.0f), nullptr);
 			}
@@ -258,7 +258,7 @@ public:
 
 	void OnLoad() override {
 	
-		
+		auto ui = new UI();
 		player = &World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
 		cosmicBall = &World::GetWorld()->SpawnActor<CosmicBall>(100.0f, 100.0f);
 		World::GetWorld()->TilemapManager().LoadTilemap("first_scene", "level1");
@@ -268,7 +268,7 @@ public:
 	void OnUnload() override {};
 
 	void OnSceneEnter() override {
-		auto ui = new UI();
+		
 
 	
 		World::GetWorld()->TilemapManager().SetCurrentMap("first_scene");
@@ -310,7 +310,8 @@ public:
     {
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
+		World::GetWorld()->GetSceneManager().ChangeScene("level1");
+		//World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
     }
 };
 

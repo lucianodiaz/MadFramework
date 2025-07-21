@@ -9,16 +9,21 @@ class IScene
 public:
 	IScene() {};
 
+	/* this is call when you add a new Scene this call only once*/
 	virtual void OnLoad() = 0;
+
 	virtual void OnUnload() = 0;
 
+	/*this call every time you enter in scene*/
 	virtual void OnSceneEnter() = 0;
+
+	/*this is call every time you change scene*/
 	virtual void OnSceneExit() = 0;
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw(sf::RenderWindow& window) = 0;
 
-
+	
 	virtual bool CanTransition() const = 0;
 
 	virtual ~IScene() {};

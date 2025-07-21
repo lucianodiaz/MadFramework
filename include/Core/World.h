@@ -82,9 +82,9 @@ protected:
 
 	void CreateMainWindow(int width,int height, std::string name);
 
-	void CreateECSManager();
+	//void CreateECSManager();
 
-	void RegisterDefaultSystems();
+	//void RegisterDefaultSystems();
 
 	void ProcessInput();
 

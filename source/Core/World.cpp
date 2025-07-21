@@ -32,7 +32,7 @@ World::World() : m_isRunning(true)
 
 	CreateMainWindow(1920, 1080, WindowName);
 
-	auto splashScene = std::make_unique<SplashScreenFramework>(2.0f);
+	auto splashScene = std::make_unique<SplashScreenFramework>(2.5f);
 	m_sceneManager.AddScene("mad_splash_screen_01", std::move(splashScene));
 	
 
@@ -62,7 +62,7 @@ void World::Run(int frame_per_seconds)
 
 	//I guess I will call Splash screen Here for one reason
 	m_sceneManager.ChangeSceneWithTransition("mad_splash_screen_01", std::make_unique<FadeTransition>(Fade::In, 1.0f), std::make_unique<FadeTransition>(Fade::Out, 1.0f));
-	//m_sceneManager.ChangeSceneWithTransition("splash_screen")
+
 
 	while (_window->IsOpen())
 	{
@@ -99,27 +99,27 @@ void World::CreateMainWindow(int width, int height, std::string name)
 	_window = std::make_unique<Window>(width, height, name);
 }
 
-void World::CreateECSManager()
-{
-	/*ecs = std::make_unique<ECSManager>();
+//void World::CreateECSManager()
+//{
+//	/*ecs = std::make_unique<ECSManager>();
+//
+//	if (!ecs)
+//	{
+//		std::cout << "Error creating ECS!.." << std::endl;
+//	}*/
+//
+//}
 
-	if (!ecs)
-	{
-		std::cout << "Error creating ECS!.." << std::endl;
-	}*/
-
-}
-
-void World::RegisterDefaultSystems()
-{
-	
-	/*m_sceneManager.GetECSManager()->RegisterSystem<MovementSystem>(ecs);
-	m_sceneManager.GetECSManager()->RegisterSystem<CollisionSystem>(ecs);
-	m_sceneManager.GetECSManager()->RegisterSystem<CameraSystem>(ecs);
-	m_sceneManager.GetECSManager()->RegisterSystem<RenderSystem>(ecs);
-	m_sceneManager.GetECSManager()->RegisterSystem<AnimationSystem>(ecs);*/
-
-}
+//void World::RegisterDefaultSystems()
+//{
+//	
+//	/*m_sceneManager.GetECSManager()->RegisterSystem<MovementSystem>(ecs);
+//	m_sceneManager.GetECSManager()->RegisterSystem<CollisionSystem>(ecs);
+//	m_sceneManager.GetECSManager()->RegisterSystem<CameraSystem>(ecs);
+//	m_sceneManager.GetECSManager()->RegisterSystem<RenderSystem>(ecs);
+//	m_sceneManager.GetECSManager()->RegisterSystem<AnimationSystem>(ecs);*/
+//
+//}
 
 void World::ProcessInput()
 {
@@ -276,7 +276,7 @@ void World::LoadInternalAssets()
 {
 
 	m_fonts.Load("default", m_internalAssetPath + "default.ttf");
-	m_textures.Load("splash", m_internalAssetPath + "splash.jpg");
+	m_textures.Load("splash", m_internalAssetPath + "splash.png");
 }
 
 const std::unique_ptr<ECSManager>& World::GetECSManager()

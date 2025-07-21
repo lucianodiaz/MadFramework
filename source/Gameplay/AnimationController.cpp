@@ -73,19 +73,15 @@ void AnimationController::LoadAnimation(const nlohmann::json& animationData)
 	for (auto& name : nameAnimationData.items())
 	{
 		nameAnimation = name.value();
-		// Assuming World::GetWorld()->LoadTexture is a method to load textures
-		// World::GetWorld()->LoadTexture(name, nameAnimationData);
 	}
 	for (auto& src : srcFilePathData.items())
 	{
 
 		srcFilePath = src.value();
-		// Load the texture from the file path
-		// Assuming World::GetWorld()->LoadTexture is a method to load textures
-		 World::GetWorld()->LoadTexture(nameAnimation, srcFilePath);
-	}
 
-	//World::GetWorld()->LoadTexture(nameAnimation, srcFilePath);
+		World::GetWorld()->LoadTexture(nameAnimation, srcFilePath);
+
+	}
 
 	auto& animations = animationData["animations"];
 
