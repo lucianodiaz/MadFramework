@@ -10,13 +10,13 @@ public:
 	TimerManager() = default;
 
 
-	int createTimer(float duration, std::function<void()> callback, bool loop = false);
+	int CreateTimer(float duration, std::function<void()> callback, bool loop = false);
 
-	bool isTimerExpired(int timerID);
+	bool IsTimerExpired(int timerID);
 
-	void removeTimer(int timerID);
+	void RemoveTimer(int timerID);
 
-	void update();
+	void Update();
 
 private:
 	std::set<int> _timersToRemove;

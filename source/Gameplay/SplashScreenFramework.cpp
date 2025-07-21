@@ -29,7 +29,7 @@ void SplashScreenFramework::OnSceneEnter()
 
 	m_SplashLogo.setPosition((windowWidth / 2) - (spriteWidth / 2), (windowHeight/2) - (spriteHeight/2));
 
-	m_IdTimerToEnd = World::GetWorld()->GetTimerManager().createTimer(m_duration, [this]() {
+	m_IdTimerToEnd = World::GetWorld()->GetTimerManager().CreateTimer(m_duration, [this]() {
 
 			m_isSplashEnd = true;
 		}, false);

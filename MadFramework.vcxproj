@@ -162,6 +162,7 @@
     <ClCompile Include="source\Core\TilemapLoader.cpp" />
     <ClCompile Include="source\Core\TilemapManager.cpp" />
     <ClCompile Include="source\Core\TimerManager.cpp" />
+    <ClCompile Include="source\Core\TweenManager.cpp" />
     <ClCompile Include="source\ECS\Systems\CameraSystem.cpp" />
     <ClCompile Include="source\ECS\Systems\AnimationSystem.cpp" />
     <ClCompile Include="source\ECS\Systems\CollisionSystem.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="include\Core\TilemapLoader.h" />
     <ClInclude Include="include\Core\TilemapManager.h" />
     <ClInclude Include="include\Core\TimerManager.h" />
+    <ClInclude Include="include\Core\TweenManager.h" />
     <ClInclude Include="include\ECS\Components\CameraViewComponent.h" />
     <ClInclude Include="include\ECS\Components\GravityComponent.h" />
     <ClInclude Include="include\ECS\Components\SpriteAnimationComponent.h" />

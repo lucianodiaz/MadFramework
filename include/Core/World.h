@@ -9,6 +9,7 @@
 #include "ResourceManager.h"
 #include "TimerManager.h"
 #include "SceneManager.h"
+#include "TweenManager.h"
 
 class ECSManager;
 class Actor;
@@ -63,6 +64,7 @@ public:
 	void LoadSound(const std::string& name, const std::string& path);
 
 	TimerManager& GetTimerManager() { return m_timerManager; }
+	TweenManager& GetTweenManager() { return m_tweenManager; }
 
 	void ShowFPS(bool show) { m_showFPS = show; }
 
@@ -115,6 +117,8 @@ protected:
 	TimerManager m_timerManager;
 
 	SceneManager m_sceneManager;
+
+	TweenManager m_tweenManager;
 
 	ResourceManager<sf::Texture, std::string> m_textures;
 	ResourceManager<sf::Music, std::string> m_musics;

@@ -149,8 +149,8 @@ void World::Update(float deltaTime)
 	{
 		actor->Update(deltaTime); //update entities
 	}
-
-	m_timerManager.update(); //update TimerManager
+	m_tweenManager.Update(deltaTime); //update TweenManager
+	m_timerManager.Update(); //update TimerManager
 }
 
 void World::Render()

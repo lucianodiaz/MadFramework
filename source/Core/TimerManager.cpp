@@ -8,7 +8,7 @@
  * @loop true this timer called indefinitly
  * @return a ID of this timer
  */
-int TimerManager::createTimer(float duration, std::function<void()> callback, bool loop)
+int TimerManager::CreateTimer(float duration, std::function<void()> callback, bool loop)
 {
     int timerID = nextTimerID++;
 
@@ -17,7 +17,7 @@ int TimerManager::createTimer(float duration, std::function<void()> callback, bo
     return timerID;
 }
 
-bool TimerManager::isTimerExpired(int timerID)
+bool TimerManager::IsTimerExpired(int timerID)
 {
     if (timers.find(timerID) != timers.end())
     {
@@ -26,19 +26,19 @@ bool TimerManager::isTimerExpired(int timerID)
     return false;
 }
 
-void TimerManager::removeTimer(int timerID)
+void TimerManager::RemoveTimer(int timerID)
 {
     _timersToRemove.insert(timerID);
 }
 
-void TimerManager::update() {
+void TimerManager::Update() {
     //std::set<int> timersToRemove;
 
     for (auto it = timers.begin(); it != timers.end(); ++it) {
         int timerID = it->first;
         TimerInfo& timerInfo = it->second;
 
-        if (isTimerExpired(timerID)) {
+        if (IsTimerExpired(timerID)) {
             if (timerInfo.callback) {
                 timerInfo.callback();
             }
@@ -53,7 +53,7 @@ void TimerManager::update() {
         int timerID = it->first;
         TimerInfo& timerInfo = it->second;
 
-        if (isTimerExpired(timerID) && !timerInfo.loop) {
+        if (IsTimerExpired(timerID) && !timerInfo.loop) {
             _timersToRemove.insert(timerID);
         }
     }

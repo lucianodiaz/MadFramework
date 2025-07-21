@@ -1,14 +1,22 @@
 #pragma once
 #include <functional>
 
+class ITween {
+public:
+	virtual ~ITween() = default;
+	virtual void update(float deltaTime) = 0;
+	virtual bool isFinished() const = 0;
+	virtual std::uint32_t GetId() const = 0;
+};
+
 template<typename T>
-class Tween
+class Tween : public ITween
 {
 public:
 	// Constructor for Tween with a reference to the input value
 
-	Tween(T* InputValue, T start, T end, float duration, std::function<float(float)> easingFunc)
-		: m_inputValue(InputValue), m_startValue(start), m_endValue(end), m_duration(duration), m_easingFunc(easingFunc), m_id(0) { }
+	Tween(T* InputValue, T start, T end, float duration, std::function<float(float)> easingFunc, std::uint32_t id)
+		: m_inputValue(InputValue), m_startValue(start), m_endValue(end), m_duration(duration), m_easingFunc(easingFunc), m_id(id) { }
 
 private:
 	T* m_inputValue; // Reference to the input value that will be updated
@@ -20,7 +28,11 @@ private:
 
 	std::uint32_t m_id;
 public:
-	void update(float deltaTime);
+	void update(float deltaTime) override;
+
+	bool isFinished()  const override { return m_elapsedTime >= m_duration; }
+
+	std::uint32_t GetId() const override { return m_id; }
 };
 
 template<typename T>

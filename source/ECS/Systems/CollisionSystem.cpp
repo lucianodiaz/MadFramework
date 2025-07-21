@@ -109,8 +109,8 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 				if (!colliderA.isStatic && !colliderB.isStatic && !colliderA.isTrigger && !colliderB.isTrigger)
 				{
 					// Both dynamic: split the MTV
-					transformA.position += mtv * 0.5f;
-					transformB.position -= mtv * 0.5f;
+					transformA.position -= mtv * 0.5f;
+					transformB.position += mtv * 0.5f;
 				}
 				else if (!colliderA.isStatic && colliderB.isStatic && !colliderA.isTrigger) 
 				{
