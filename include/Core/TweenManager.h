@@ -12,7 +12,7 @@ public:
 	// Add methods for managing tweens, such as adding, updating, and removing tweens  
 
 	template<typename T>  
-	std::uint32_t CreateTween(T* OutputValue,T StartValue, T endValue, float duration, std::function<float(float)> easingFunc);  
+	std::uint32_t CreateTween(T* OutputValue,T StartValue, T endValue, float duration, std::function<float(float)> easingFunc = MAD::Easings::Linear, std::function<void(void)> onComplete=nullptr);  
 	void Update(float deltaTime);  
 	
 	template<typename T>
@@ -26,9 +26,9 @@ private:
 };
 
 template<typename T>
-inline std::uint32_t TweenManager::CreateTween(T* OutputValue, T StartValue, T endValue, float duration, std::function<float(float)> easingFunc)
+inline std::uint32_t TweenManager::CreateTween(T* OutputValue, T StartValue, T endValue, float duration, std::function<float(float)> easingFunc, std::function<void(void)> onComplete)
 {
-	std::unique_ptr<Tween<T>> tween = std::make_unique<Tween<T>>(OutputValue, StartValue, endValue, duration, easingFunc,m_tweens.size());
+	std::unique_ptr<Tween<T>> tween = std::make_unique<Tween<T>>(OutputValue, StartValue, endValue, duration, easingFunc,m_tweens.size(),onComplete);
 	std::uint32_t tweenId = tween->GetId();
 	m_tweensToAdd.emplace_back(std::move(tween));
 	return tweenId;
