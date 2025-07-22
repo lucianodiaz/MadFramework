@@ -5,10 +5,6 @@
 #include <ECS/Components/TransformComponent.h>
 #include <ECS/Components/VelocityComponent.h>
 #include <ECS/Components/SpriteComponent.h>
-#include <ECS/Components/CameraViewComponent.h>
-#include <ECS/Components/SpriteAnimationComponent.h>
-#include <ECS/Components/ZIndexComponent.h>
-
 #include <ECS/Component.h>
 #include <ECS/System.h>
 #include <Core/Signal.h>

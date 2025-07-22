@@ -6,18 +6,15 @@ public:
 	virtual ~ITween() = default;
 	virtual void update(float deltaTime) = 0;
 	virtual bool isFinished() const = 0;
-	virtual void Start() = 0;
 	virtual void Pause() = 0;
 	virtual void Resume() = 0;
 	virtual std::uint32_t GetId() const = 0;
-	
+	std::function<void(void)> m_onCompleteTween;
 
 protected:
 	bool m_isLooping = false; // Flag to indicate if the tween should loop
 	bool m_isPaused = false; // Flag to indicate if the tween is paused
 	bool m_yoyo = false; // Flag to indicate if the tween should yoyo (reverse direction on completion)
-	bool m_isRunning = false; // Flag to indicate if the tween is currently running
-
 };
 
 template<typename T>
@@ -27,7 +24,10 @@ public:
 	// Constructor for Tween with a reference to the input value
 
 	Tween(T* InputValue, T start, T end, float duration, std::function<float(float)> easingFunc, std::uint32_t id, std::function<void(void)> onCompleteTween = nullptr)
-		: m_inputValue(InputValue), m_startValue(start), m_endValue(end), m_duration(duration), m_easingFunc(easingFunc), m_id(id), m_onCompleteTween(onCompleteTween) { }
+		: m_inputValue(InputValue), m_startValue(start), m_endValue(end), m_duration(duration), m_easingFunc(easingFunc), m_id(id) 
+	{
+		m_onCompleteTween = onCompleteTween;
+	}
 
 private:
 	T* m_inputValue; // Reference to the input value that will be updated
@@ -36,7 +36,7 @@ private:
 	float m_duration;
 	float m_elapsedTime = 0.0f;
 	std::function<float(float)> m_easingFunc;
-	std::function<void(void)> m_onCompleteTween;
+	
 	std::uint32_t m_id;
 public:
 	void update(float deltaTime) override;
@@ -44,17 +44,14 @@ public:
 	bool isFinished()  const override { return m_elapsedTime >= m_duration; }
 
 	std::uint32_t GetId() const override { return m_id; }
-
-	void Start() override { m_isRunning = true; m_elapsedTime = 0.0f; }
 	void Pause() override { m_isPaused = true; }
-	void Resume() override { m_isPaused = false; if (m_elapsedTime < m_duration) m_isRunning = true; }
+	void Resume() override { m_isPaused = false; }
+
 };
 
 template<typename T>
 inline void Tween<T>::update(float deltaTime)
 {
-
-	if (!m_isRunning) return;
 	if (m_isPaused) return;
 
 	if (m_elapsedTime < m_duration)

@@ -1,15 +1,15 @@
 #pragma once
+#include <MadFrameworkExport.h>
+#include <SFML/Graphics.hpp>
+#include <Window/Window.h>
+#include <SFML/Audio.hpp>
+#include <nlohmann/json.hpp>
+#include <Input/Action.h>
+#include <Input/ActionMap.h>
 #include "ResourceManager.h"
 #include "TimerManager.h"
 #include "SceneManager.h"
 #include "TweenManager.h"
-#include <MadFrameworkExport.h>
-#include <Input/Action.h>
-#include <Input/ActionMap.h>
-#include <nlohmann/json.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <Window/Window.h>
 
 class ECSManager;
 class Actor;

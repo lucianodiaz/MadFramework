@@ -14,6 +14,20 @@ void TweenManager::Update(float deltaTime)
 	}
 	m_tweensToAdd.clear();
 
+
+	for (auto& tween : m_tweens)
+	{
+		if (tween->isFinished())
+		{
+			if (tween->m_onCompleteTween)
+			{
+				tween->m_onCompleteTween();
+			}
+		}
+		
+	}
+
+
 	m_tweens.remove_if([](const std::unique_ptr<ITween>& tween) {
 		return tween->isFinished();
 		});

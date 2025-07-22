@@ -6,6 +6,8 @@
 #include <MathUtils.h>
 #include <ECS/Components/CameraViewComponent.h>
 #include <Transitions/FadeTransition.h>
+#include <Utils/EasingFunctions.h>
+
 
 class UI
 {
@@ -45,10 +47,11 @@ public:
         GetComponent<TransformComponent>().position.x = x;
         GetComponent<TransformComponent>().position.y = y;
 
-		AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
+		/*AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
 			{0, -20}, { 19, -6 }, { 12, 16 }, { -12, 16 }, { -19, -6 }
-		}, false, true);
-		//AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
+		}, false, true);*/
+		//AddComponent<ColliderComponent>(10.0f, false, true);
+		AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
 		AddComponent<VelocityComponent>(0,0);
 		SetGameTag("CosmicBall");
     }
@@ -59,7 +62,7 @@ public:
 
 		auto& collider = GetComponent<ColliderComponent>();
 
-		collider.isStatic = true;
+		collider.isStatic = false;
 	}
 
 	void Update(float deltaTime) override
@@ -173,13 +176,13 @@ public:
 		cameraComponent.offset.y = centerY * sprite.sprite.getScale().y;
     
 		cameraComponent.zoom = 0.2f;
-		auto id = World::GetWorld()->GetTimerManager().createTimer(5.0f, [this]()
+		auto id = World::GetWorld()->GetTimerManager().CreateTimer(5.0f, [this]()
 			{
 				std::cout << "Timer triggered!" << std::endl;
 				auto& cameraComponent = GetComponent<CameraViewComponent>();
-				cameraComponent.isShake = true;
-				cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
-				cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
+				//cameraComponent.isShake = true;
+				//cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
+				//cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
 			},false);
 	}
 
@@ -231,7 +234,7 @@ public :
 	void OnSceneEnter() override {
 		
 
-		World::GetWorld()->GetTimerManager().createTimer(10.0f, [this]()
+		World::GetWorld()->GetTimerManager().CreateTimer(10.0f, [this]()
 			{
 				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(Fade::In, 3.0f), nullptr);
 			}
@@ -281,18 +284,25 @@ public:
 
 		player->TakeDamage(10);
 
-		World::GetWorld()->GetTimerManager().createTimer(10.0f, [this]() 
-			{
-				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level2", std::make_unique<FadeTransition>(Fade::In, 3.0f), nullptr);
-			}
-		, false);
+		sf::Vector2f& position = cosmicBall->GetPosition();
 
-		
+		auto tweenID =  World::GetWorld()->GetTweenManager().CreateTween<sf::Vector2f>(&position, position, sf::Vector2f(position.x, position.y + 30.0f), 3.0f, MAD::Easings::easeOutBounce, [this]() 
+			{
+				sf::Vector2f& position = cosmicBall->GetPosition();
+				World::GetWorld()->GetTweenManager().CreateTween<sf::Vector2f>(&position, position, sf::Vector2f(position.x, position.y + 30.0f), 3.0f, MAD::Easings::easeOutBounce);
+			});
+
+		//auto tween = World::GetWorld()->GetTweenManager().GetTween<sf::Vector2f>(tweenID);
+
+		//tween.Start();
+
 	};
 
 	void OnSceneExit() override {};
 
-	void Update(float deltaTime) override {};
+	void Update(float deltaTime) override 
+	{
+	};
 
 	bool CanTransition() const override { return true; };
 
@@ -310,8 +320,8 @@ public:
     {
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeScene("level1");
-		//World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
+		//World::GetWorld()->GetSceneManager().ChangeScene("level1");
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
     }
 };
 

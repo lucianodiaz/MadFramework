@@ -3,6 +3,7 @@
 #include <memory>
 #include <list>  
 #include <Animation/Tween.h>  
+#include <Utils/EasingFunctions.h>
 
 class TweenManager  
 {  
@@ -16,7 +17,7 @@ public:
 	void Update(float deltaTime);  
 	
 	template<typename T>
-	T& GetTween(std::uint32_t id);
+	Tween<T>& GetTween(std::uint32_t id);
 
 private:
 	void RemoveTween(std::uint32_t id);
@@ -35,14 +36,38 @@ inline std::uint32_t TweenManager::CreateTween(T* OutputValue, T StartValue, T e
 }
 
 template<typename T>
-inline T& TweenManager::GetTween(std::uint32_t id)
+inline Tween<T>& TweenManager::GetTween(std::uint32_t id)
 {
-	// TODO: Insertar una instrucción "return" aquí
 	for (const auto& tween : m_tweens)
 	{
-		if (tween->getId() == id)
+		if (tween->GetId() == id)
 		{
-			return static_cast<T&>(*tween);
+			// Cast to Tween<T>* first, then dereference to return a reference
+			Tween<T>* tweenPtr = dynamic_cast<Tween<T>*>(tween.get());
+			if (tweenPtr)
+			{
+				return *tweenPtr;
+			}
 		}
 	}
+	//return nullptr;
+	// TODO: Insertar una instrucción "return" aquí
 }
+
+//template<typename T>
+//inline Tween<T>& TweenManager::GetTween(std::uint32_t id)
+//{
+//	for (const auto& tween : m_tweens)
+//	{
+//		if (tween->GetId() == id)
+//		{
+//			// Cast to Tween<T>* first, then dereference to return a reference
+//			Tween<T>* tweenPtr = dynamic_cast<Tween<T>*>(tween.get());
+//			if (tweenPtr)
+//			{
+//				return *tweenPtr;
+//			}
+//		}
+//	}
+//	//throw std::runtime_error("Tween with ID " + std::to_string(id) + " not found or type mismatch");
+//}
