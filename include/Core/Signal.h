@@ -51,8 +51,18 @@ public:
     }
 
     template<typename... Args>
-    void RemoveListener(const std::string& signalName, Callback<Args...> callback) {
-        // Implementar si usás ID para callback (actualmente no se puede comparar lambdas)
+    void RemoveListener(const std::string& signalName) {
+
+		/*if (m_listeners.find(signalName) != m_listeners.end)
+        {
+            m_listeners.erase(signalName);
+        }
+        else
+        {
+			std::cout << "Signal not found: " << signalName << std::endl;
+        }*/
+
+        m_listeners.erase(signalName);
     }
 
 private:

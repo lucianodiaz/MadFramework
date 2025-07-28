@@ -15,18 +15,20 @@ public:
     UI()
 	{
 
-		Signal::GetInstance().AddListener<int>("PlayerHealth",
-            static_cast<std::function<void(int)>>([this](int health) 
-            {
-			updateHealthPlayer(health);
-			}));
+
+		auto funcUpdateHealth = [this](int health) 
+		{
+				updateHealthPlayer(health);
+		};
 
 
-        Signal::GetInstance().AddListener<std::string,int>("SendText",
-            static_cast<std::function<void(std::string,int)>>([this](std::string text, int life)
-            {
-            std::cout << "Text: " << text << " "<< "My life is: " << life << std::endl;
-            }));
+		auto funcSendText = [this](const std::string& text, int life) 
+		{
+			std::cout << "Text: " << text << " Life: " << life << std::endl;
+		};
+
+		Signal::GetInstance().AddListener<int>("PlayerHealth", funcUpdateHealth);
+		Signal::GetInstance().AddListener<std::string, int>("SendText", funcSendText);
     }
 
 private:
@@ -96,7 +98,7 @@ public:
 
 		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
 
-        Signal::GetInstance().Dispatch<>("SendText", "Hello world!",m_life);
+        Signal::GetInstance().Dispatch<std::string,int>("SendText", "Hello world!",m_life);
 
         SetGameTag("Player");
 
