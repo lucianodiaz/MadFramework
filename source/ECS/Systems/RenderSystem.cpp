@@ -98,7 +98,7 @@ void RenderSystem::Render(sf::RenderWindow& window)
 	
 	if (World::GetWorld()->IsShowFPS())
 	{
-		fpsText.setFont(World::GetWorld()->GetFont("default"));
+		fpsText.setFont(World::GetWorld()->GetFont("defaultFont"));
 		fpsText.setCharacterSize(24);
 		fpsText.setFillColor(sf::Color::White);
 

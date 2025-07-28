@@ -275,7 +275,7 @@ void World::LoadInputs()
 void World::LoadInternalAssets()
 {
 
-	m_fonts.Load("default", m_internalAssetPath + "default.ttf");
+	m_fonts.Load("defaultFont", m_internalAssetPath + "default.ttf");
 	m_textures.Load("splash", m_internalAssetPath + "splash.png");
 }
 
