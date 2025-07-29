@@ -177,6 +177,8 @@
     <ClCompile Include="source\Gameplay\SplashScreenFramework.cpp" />
     <ClCompile Include="source\Input\Action.cpp" />
     <ClCompile Include="source\Transitions\FadeTransition.cpp" />
+    <ClCompile Include="source\UI\Label.cpp" />
+    <ClCompile Include="source\UI\Widget.cpp" />
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +220,8 @@
     <ClInclude Include="include\MadFramework.h" />
     <ClInclude Include="include\MadFrameworkExport.h" />
     <ClInclude Include="include\Transitions\FadeTransition.h" />
+    <ClInclude Include="include\UI\Label.h" />
+    <ClInclude Include="include\UI\Widget.h" />
     <ClInclude Include="include\Utils\EasingFunctions.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />
     <ClInclude Include="include\Window\Window.h" />
