@@ -230,7 +230,7 @@
     <ClInclude Include="include\UI\Label.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="include\UI\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
