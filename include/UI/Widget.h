@@ -18,9 +18,9 @@ public:
 	virtual Widget* GetParent() const;
 
 protected:
-	virtual bool processEvent(const sf::Event& event, const sf::Vector2f& parent_position);
-	virtual void processEvents(const sf::Vector2f& parent_position);
-	virtual void updateShape();
+	virtual bool ProcessEvent(const sf::Event& event, const sf::Vector2f& parent_position);
+	virtual void ProcessEvents(const sf::Vector2f& parent_position);
+	virtual void UpdateShape();
 
 
 	Widget* m_parent;

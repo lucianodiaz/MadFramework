@@ -26,11 +26,11 @@ const sf::Vector2f& Widget::GetPosition() const
 	return m_position;
 }
 
-bool Widget::processEvent(const sf::Event& event, const sf::Vector2f& parent_position)
+bool Widget::ProcessEvent(const sf::Event& event, const sf::Vector2f& parent_position)
 {
 	return false;
 }
-void Widget::processEvents(const sf::Vector2f& parent_position)
+void Widget::ProcessEvents(const sf::Vector2f& parent_position)
 {
 }
 
@@ -39,10 +39,10 @@ Widget* Widget::GetParent() const
 	return m_parent;
 }
 
-void Widget::updateShape()
+void Widget::UpdateShape()
 {
 	if (m_parent)
 	{
-		m_parent->updateShape();
+		m_parent->UpdateShape();
 	}
 }

@@ -26,25 +26,25 @@ Label::~Label()
 void Label::SetText(const std::string& text)
 {
 	m_text.setString(text);
-	updateShape();
+	UpdateShape();
 }
 
 void Label::SetFont(const sf::Font& font)
 {
 	m_text.setFont(font);
-	updateShape();
+	UpdateShape();
 }
 
 void Label::SetCharacterSize(unsigned int size)
 {
 	m_text.setCharacterSize(size);
-	updateShape();
+	UpdateShape();
 }
 
 void Label::SetColor(const sf::Color& color)
 {
 	m_text.setFillColor(color);
-	updateShape();
+	UpdateShape();
 }
 
 const std::string& Label::GetText() const
