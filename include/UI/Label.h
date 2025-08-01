@@ -17,6 +17,8 @@ public:
 
 	const std::string& GetText() const;
 
+	unsigned int GetCharacterSize() const { return m_text.getCharacterSize(); }
+
 	virtual sf::Vector2f GetSize() const override;
 
 private:

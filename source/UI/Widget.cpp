@@ -39,6 +39,11 @@ Widget* Widget::GetParent() const
 	return m_parent;
 }
 
+void Widget::SetParent(Widget* parent)
+{
+	m_parent = parent;
+}
+
 void Widget::UpdateShape()
 {
 	if (m_parent)

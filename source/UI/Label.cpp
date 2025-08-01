@@ -44,7 +44,7 @@ void Label::SetCharacterSize(unsigned int size)
 void Label::SetColor(const sf::Color& color)
 {
 	m_text.setFillColor(color);
-	UpdateShape();
+	//UpdateShape();
 }
 
 const std::string& Label::GetText() const

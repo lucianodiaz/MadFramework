@@ -17,7 +17,14 @@ public:
 
 	virtual Widget* GetParent() const;
 
+	virtual void SetParent(Widget* parent);
+
 protected:
+	friend class Container;
+	friend class VerticalLayout;
+	//friend class HorizontalLayout;
+	//frind class GridLayout;
+
 	virtual bool ProcessEvent(const sf::Event& event, const sf::Vector2f& parent_position);
 	virtual void ProcessEvents(const sf::Vector2f& parent_position);
 	virtual void UpdateShape();
