@@ -9,14 +9,13 @@
 
 const std::unique_ptr<ECSManager>& SceneManager::GetECSManager()
 {
-	// TODO: Insertar una instrucción "return" aquí
+	
 	return m_scenes[m_currentSceneName]->ecs;
 }
 
 
 TilemapManager& SceneManager::GetTilemapManager()
 {
-	// TODO: Insertar una instrucción "return" aquí
 	return m_scenes[m_currentSceneName]->m_tilemapManager;
 }
 

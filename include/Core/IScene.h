@@ -14,7 +14,7 @@ public:
 
 	virtual void OnUnload() = 0;
 
-	/*this call every time you enter in scene*/
+	/*this call every time you enter in scene in game engines this is call "OnBegin" "Start"*/
 	virtual void OnSceneEnter() = 0;
 
 	/*this is call every time you change scene*/
