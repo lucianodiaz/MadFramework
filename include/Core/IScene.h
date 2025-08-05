@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <ECS/ECSManager.h>
 #include <Core/TilemapManager.h>
+#include <UI/UserWidget.h>
 
 
 class IScene
@@ -22,17 +23,18 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw(sf::RenderWindow& window) = 0;
-
 	
 	virtual bool CanTransition() const = 0;
 
 	virtual ~IScene() {};
 
 	friend class SceneManager;
+
+	//std::vector<std::unique_ptr<GUIScene>>& GetGUIScenes() { return m_guiScenes; }
 private:
 
 	std::unique_ptr<ECSManager> ecs;
 	TilemapManager m_tilemapManager;
-
+	std::vector<std::shared_ptr<UserWidget>> m_userWidgets;
 
 };

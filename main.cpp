@@ -7,37 +7,86 @@
 #include <ECS/Components/CameraViewComponent.h>
 #include <Transitions/FadeTransition.h>
 #include <Utils/EasingFunctions.h>
+#include <UI/Label.h>
+#include <UI/Button.h>
+#include <UI/CanvasPanel.h>
 
 
-class UI
+class UI : public UserWidget
 {
 public:
-    UI()
+	UI()
 	{
-
-
-		auto funcUpdateHealth = [this](int health) 
-		{
+		auto funcUpdateHealth = [this](int health)
+			{
 				updateHealthPlayer(health);
-		};
+			};
 
 
-		auto funcSendText = [this](const std::string& text, int life) 
-		{
-			std::cout << "Text: " << text << " Life: " << life << std::endl;
-		};
+		auto funcSendText = [this](const std::string& text, int life)
+			{
+				std::cout << "Text: " << text << " Life: " << life << std::endl;
+			};
 
 		Signal::GetInstance().AddListener<int>("PlayerHealth", funcUpdateHealth);
 		Signal::GetInstance().AddListener<std::string, int>("SendText", funcSendText);
-    }
+
+		InitGUI();
+	} 
+
+	void OnConstruct() override
+	{
+		
+
+	}
+
+	void Update(float deltaTime) override
+	{
+		
+	}
+
 
 private:
+
+	void InitGUI()
+	{
+
+		m_canvas = CreateWidget<CanvasPanel>();
+
+		m_button = CreateWidget<Button>();
+		m_button->SetFitToContent(true);
+		m_button->SetAnchor(Anchor::CenterLeft);
+		m_button->SetPosition(100.0f,m_button->GetGlobalPosition().y);
+		m_healthLabel = CreateWidget<Label>("SHAKE CAMERA!!!");
+		m_button->AddChild(m_healthLabel);
+		m_healthLabel->SetOutlineThickness(2.0f);
+		m_healthLabel->SetFillColor(sf::Color::Black);
+		m_healthLabel->SetOutlineColor(sf::Color::White);
+
+		m_button->OnClick = [this]()
+		{
+			sf::Sound clickSound;
+			clickSound.setBuffer(World::GetWorld()->GetSound("click_sound"));
+			
+			clickSound.play();
+			Signal::GetInstance().Dispatch("ShakeCamera");
+		};
+	}
 
     void updateHealthPlayer(int health) 
     {
 		std::cout << "Player health: " << health << std::endl;
+		if (m_healthLabel)
+		{
+			m_healthLabel->SetText("Health: " + std::to_string(health));
+		}
     }
 
+	std::shared_ptr<Label> m_healthLabel = nullptr;
+
+	std::shared_ptr<Button> m_button = nullptr; // Example button, if needed
+
+	std::shared_ptr<CanvasPanel> m_canvas = nullptr;
 };
 
 
@@ -49,11 +98,11 @@ public:
         GetComponent<TransformComponent>().position.x = x;
         GetComponent<TransformComponent>().position.y = y;
 
-		/*AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
-			{0, -20}, { 19, -6 }, { 12, 16 }, { -12, 16 }, { -19, -6 }
-		}, false, true);*/
-		//AddComponent<ColliderComponent>(10.0f, false, true);
-		AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
+		//AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
+		//	{0, -20}, { 19, -6 }, { 12, 16 }, { -12, 16 }, { -19, -6 }
+		//}, false, true);
+		AddComponent<ColliderComponent>(10.0f, false, true);
+		//AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
 		AddComponent<VelocityComponent>(0,0);
 		SetGameTag("CosmicBall");
     }
@@ -95,10 +144,6 @@ public:
 		//}, false, true);
 
 		AddComponent<ColliderComponent>(10.0f,20.f, false, true);
-
-		Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
-
-        Signal::GetInstance().Dispatch<std::string,int>("SendText", "Hello world!",m_life);
 
         SetGameTag("Player");
 
@@ -182,10 +227,35 @@ public:
 			{
 				std::cout << "Timer triggered!" << std::endl;
 				auto& cameraComponent = GetComponent<CameraViewComponent>();
-				//cameraComponent.isShake = true;
-				//cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
-				//cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
+				cameraComponent.isShake = true;
+				cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
+				cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
+
+
+				
+				//Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);
+
+				//Signal::GetInstance().Dispatch<std::string, int>("SendText", "Hello world!", m_life);
+
 			},false);
+
+
+		Signal::GetInstance().AddListener(
+			"ShakeCamera",
+			std::function<void()>([this]() {
+				ShakeCamera();
+				}));
+
+		
+
+	}
+
+	void ShakeCamera()
+	{
+		auto& cameraComponent = GetComponent<CameraViewComponent>();
+		cameraComponent.isShake = true;
+		cameraComponent.shakeEffect.duration = 0.5f; // Duration of the shake effect
+		cameraComponent.shakeEffect.intensity = 10.0f; // Intensity of the shake effect
 	}
 
 	void ProcessInput() override
@@ -203,20 +273,23 @@ public:
 
 		GetComponent<VelocityComponent>().velocity = sf::Vector2f(0.0f, 0.0f);
 
-
+		//Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life);|
 
 
 	}
 
+	
     void TakeDamage(int dmg) 
     {
-        Signal::GetInstance().Dispatch<int>("PlayerHealth", m_life- dmg);
+		World::GetWorld()->GetTweenManager().CreateTween<int>(&m_life, m_life, m_life - dmg, 0.1f, MAD::Easings::Linear);
+        
     }
 private:
 
     int m_life = 100;
     float m_speed = 60.0f;
 	std::unique_ptr<AnimationController> m_animationController;
+
 };
 
 
@@ -263,7 +336,7 @@ public:
 
 	void OnLoad() override {
 	
-		auto ui = new UI();
+		//auto ui = new UI();
 		player = &World::GetWorld()->SpawnActor<Player>(20.0f, 130.0f);
 		cosmicBall = &World::GetWorld()->SpawnActor<CosmicBall>(100.0f, 100.0f);
 		World::GetWorld()->TilemapManager().LoadTilemap("first_scene", "level1");
@@ -275,7 +348,7 @@ public:
 	void OnSceneEnter() override {
 		
 
-	
+		m_ui = World::GetWorld()->CreateGUI<UI>();
 		World::GetWorld()->TilemapManager().SetCurrentMap("first_scene");
 
 		Actor spawnPoint = World::GetWorld()->GetActorByTag("spawn");
@@ -284,19 +357,15 @@ public:
 		cosmicBall->SetPosition(spawnPoint.GetPosition());
 		auto sound = World::GetWorld();
 
-		player->TakeDamage(10);
-
 		sf::Vector2f& position = cosmicBall->GetPosition();
 
 		auto tweenID =  World::GetWorld()->GetTweenManager().CreateTween<sf::Vector2f>(&position, position, sf::Vector2f(position.x, position.y + 30.0f), 3.0f, MAD::Easings::easeOutBounce, [this]() 
 			{
 				sf::Vector2f& position = cosmicBall->GetPosition();
 				World::GetWorld()->GetTweenManager().CreateTween<sf::Vector2f>(&position, position, sf::Vector2f(position.x, position.y + 30.0f), 3.0f, MAD::Easings::easeOutBounce);
+
+				player->TakeDamage(10);
 			});
-
-		//auto tween = World::GetWorld()->GetTweenManager().GetTween<sf::Vector2f>(tweenID);
-
-		//tween.Start();
 
 	};
 
@@ -313,6 +382,7 @@ public:
 private:
 	Player* player;
 	CosmicBall* cosmicBall;
+	std::shared_ptr<UI> m_ui = nullptr; // Pointer to the UI instance, if needed
 };
 
 class Game

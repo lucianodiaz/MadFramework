@@ -21,6 +21,10 @@ public:
 
 	virtual ~World();
 
+
+	template<typename T>
+	std::shared_ptr<T>& CreateGUI();
+
 	template<typename T, typename... Args>
 	T& SpawnActor(Args&&... args);
 
@@ -140,6 +144,16 @@ protected:
 	void LoadInternalAssets();
 };
 
+
+template<typename T>
+inline std::shared_ptr<T>&  World::CreateGUI()
+{
+    static_assert(std::is_base_of<UserWidget, T>::value, "T must derive from UserWidget");
+
+	std::shared_ptr<T> userWidget = std::make_shared<T>();
+	m_sceneManager.AddUserWidget(userWidget);
+    return userWidget;
+}
 
 template<typename T, typename ...Args>
 inline T& World::SpawnActor(Args && ...args)

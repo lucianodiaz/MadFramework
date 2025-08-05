@@ -1,35 +1,61 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 
-class Widget : public sf::Drawable
+enum class Anchor
+{
+	TopLeft, TopCenter, TopRight,
+	CenterLeft, Center, CenterRight,
+	BottomLeft, BottomCenter, BottomRight
+};
+
+class Widget : public std::enable_shared_from_this<Widget>
 {
 public:
-	Widget(Widget* parent = nullptr);
+	Widget();
 	virtual ~Widget();
 
 	void SetPosition(float x, float y);
-	void SetPosition(const sf::Vector2f& position);
+	void SetPosition(sf::Vector2f position);
 
-	const sf::Vector2f& GetPosition() const;
+	void SetParent(std::shared_ptr<Widget> parent);
+
+	void SetFitToContent(bool fit) { m_fitToContent = fit; }
+
+	void AddChild(std::shared_ptr<Widget> child);
+
+	void SetAnchor(Anchor anchor);
+
+	Anchor GetAnchor() const { return m_anchor; }
+
+	sf::Vector2f GetGlobalPosition()const;
+	sf::Vector2f& GetLocalPosition() { return m_position; }
+	std::shared_ptr<Widget>& GetParent() { return m_parent; }
 
 	virtual sf::Vector2f GetSize() const = 0;
 
-	virtual Widget* GetParent() const;
+	void Update(float deltaTime);
+	virtual void Draw(sf::RenderWindow& window) = 0;
 
-	virtual void SetParent(Widget* parent);
+	void Hide();
+	void Show();
+	bool IsVisible() const;
 
 protected:
-	friend class Container;
-	friend class VerticalLayout;
-	//friend class HorizontalLayout;
-	//frind class GridLayout;
-
-	virtual bool ProcessEvent(const sf::Event& event, const sf::Vector2f& parent_position);
-	virtual void ProcessEvents(const sf::Vector2f& parent_position);
+	
+	
+	virtual void ProcessInput(const sf::Event& event) {};
 	virtual void UpdateShape();
 
 
-	Widget* m_parent;
 	sf::Vector2f m_position;
+	std::vector<std::shared_ptr<Widget>> m_children;
+	std::shared_ptr<Widget> m_parent;
+	bool m_visible;
+	bool m_fitToContent = false; // Flag to check if the widget should fit to its content
+
+	Anchor m_anchor = Anchor::TopLeft; // Default anchor position
+
+	friend class UserWidget; // Allow UserWidget to access private members
 };

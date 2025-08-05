@@ -5,9 +5,6 @@
 #include <unordered_map>
 #include "ISceneTransition.h"
 
-
-
-
 class SceneManager
 {
 public:
@@ -24,8 +21,16 @@ public:
 
 	void Draw(sf::RenderWindow& window);
 
+	void ProcessInput(sf::Event& event);
+
 	const std::unique_ptr<ECSManager>& GetECSManager();
 	TilemapManager& GetTilemapManager();
+protected:
+	friend class World;
+
+	template<typename T>
+	void AddUserWidget(std::shared_ptr<T> userWidget);
+
 private:
 	std::unordered_map<std::string, std::unique_ptr<IScene>> m_scenes;
 
@@ -48,3 +53,14 @@ private:
 
 	bool m_isSplashScreen = false;
 };
+
+template<typename T>
+inline void SceneManager::AddUserWidget(std::shared_ptr<T> userWidget)
+{
+	static_assert(std::is_base_of<UserWidget, T>::value, "T must derive from UserWidget");
+	if (m_currentScene)
+	{
+		m_currentScene->m_userWidgets.emplace_back(userWidget);
+		m_currentScene->m_userWidgets.back()->OnConstruct();
+	}
+}

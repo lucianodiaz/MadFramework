@@ -131,6 +131,8 @@ void World::ProcessInput()
 		}
 	}
 
+	m_sceneManager.ProcessInput(event);
+
 	for (auto& actor : m_actors)
 	{
 		actor->ProcessInput();

@@ -1,13 +1,12 @@
 #include <UI/Widget.h>
 
-
-Widget::Widget(Widget* parent) : m_parent(parent), m_position(0.f, 0.f)
+Widget::Widget() : m_position(0, 0), m_visible(true)
 {
+	m_children.clear();
 }
 
 Widget::~Widget()
 {
-
 }
 
 void Widget::SetPosition(float x, float y)
@@ -16,32 +15,55 @@ void Widget::SetPosition(float x, float y)
 	m_position.y = y;
 }
 
-void Widget::SetPosition(const sf::Vector2f& position)
+void Widget::SetPosition(sf::Vector2f position)
 {
 	m_position = position;
 }
 
-const sf::Vector2f& Widget::GetPosition() const
+void Widget::SetParent(std::shared_ptr<Widget> parent)
 {
+	m_parent = parent;
+}
+
+void Widget::AddChild(std::shared_ptr<Widget> child)
+{
+	if (child != m_parent)
+	{
+		m_children.push_back(child);
+		child->SetParent(shared_from_this());
+		UpdateShape();
+	}
+
+}
+
+void Widget::SetAnchor(Anchor anchor)
+{
+	m_anchor = anchor;
+	UpdateShape();
+}
+
+sf::Vector2f Widget::GetGlobalPosition() const
+{
+	if (m_parent)
+	{
+		return m_parent->GetGlobalPosition() + m_position;
+	}
 	return m_position;
 }
 
-bool Widget::ProcessEvent(const sf::Event& event, const sf::Vector2f& parent_position)
+void Widget::Hide()
 {
-	return false;
-}
-void Widget::ProcessEvents(const sf::Vector2f& parent_position)
-{
+	m_visible = false;
 }
 
-Widget* Widget::GetParent() const
+void Widget::Show()
 {
-	return m_parent;
+	m_visible = true;
 }
 
-void Widget::SetParent(Widget* parent)
+bool Widget::IsVisible() const
 {
-	m_parent = parent;
+	return m_visible;
 }
 
 void Widget::UpdateShape()

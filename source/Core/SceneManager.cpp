@@ -97,12 +97,19 @@ void SceneManager::ChangeSceneWithTransition(const std::string& nextScene, std::
 	
 	}
 
-
-
-
 }
 
-
+void SceneManager::ProcessInput(sf::Event& event)
+{
+	if (m_currentScene)
+	{
+		for (auto& userWidget : m_currentScene->m_userWidgets)
+		{
+			userWidget->ProcessInput(event);
+		}
+		
+	}
+}
 void SceneManager::Update(float deltaTime)
 {
 
@@ -200,7 +207,12 @@ void SceneManager::Update(float deltaTime)
 
 	if (m_currentScene)
 	{
+		for (auto& guiScene : m_currentScene->m_userWidgets)
+		{
+			guiScene->Update(deltaTime);
+		}
 		m_currentScene->Update(deltaTime);
+
 	}
 }
 
@@ -212,6 +224,15 @@ void SceneManager::Draw(sf::RenderWindow& window)
 		m_currentScene->m_tilemapManager.Draw(window);
 		m_currentScene->ecs->Draw(window);
 		m_currentScene->Draw(window);
+		for (auto& userWidget : m_currentScene->m_userWidgets)
+		{
+			sf::View uiView;
+			uiView.setSize(window.getSize().x , window.getSize().y);
+			uiView.setCenter(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+			window.setView(uiView);
+			userWidget->Draw(window);
+		}
+
 	}
 	if (m_currentTransition)
 	{

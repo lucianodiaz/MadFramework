@@ -1,22 +1,12 @@
 #include <UI/Label.h>
 #include <Core/World.h>
-#include <Core/Signal.h>
 
-Label::Label(const std::string& text, Widget* parent)
-	: Widget(parent)
+Label::Label(const std::string& text)
 {
+	SetPosition(0, 0);
 	SetText(text);
-	sf::Font defaultFont = World::GetWorld()->GetFont("defaultFont");
-	SetFont(defaultFont);
-	SetColor(sf::Color::White);
-}
 
-Label::Label(const std::string& text, const sf::Font& font, Widget* parent)
-	: Widget(parent)
-{
-	SetText(text);
-	SetFont(font);
-	SetColor(sf::Color::White);
+	SetFont(World::GetWorld()->GetFont("defaultFont"));
 }
 
 Label::~Label()
@@ -29,10 +19,26 @@ void Label::SetText(const std::string& text)
 	UpdateShape();
 }
 
-void Label::SetFont(const sf::Font& font)
+const std::string& Label::GetText() const
 {
-	m_text.setFont(font);
-	UpdateShape();
+	return m_text.getString();
+}
+
+void Label::SetFillColor(const sf::Color& color)
+{
+	m_text.setFillColor(color);
+	
+}
+
+void Label::SetOutlineColor(const sf::Color& color)
+{
+	m_text.setOutlineColor(color);
+}
+
+void Label::SetOutlineThickness(float thickness)
+{
+	m_text.setOutlineThickness(thickness);
+	
 }
 
 void Label::SetCharacterSize(unsigned int size)
@@ -41,27 +47,33 @@ void Label::SetCharacterSize(unsigned int size)
 	UpdateShape();
 }
 
-void Label::SetColor(const sf::Color& color)
+void Label::SetFont(const sf::Font& font)
 {
-	m_text.setFillColor(color);
-	//UpdateShape();
-}
-
-const std::string& Label::GetText() const
-{
-	return m_text.getString();
+	m_text.setFont(font);
+	UpdateShape();
 }
 
 sf::Vector2f Label::GetSize() const
 {
 	sf::FloatRect rect = m_text.getLocalBounds();
 
-
 	return sf::Vector2f(rect.width, rect.height);
 }
 
-void Label::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Label::Draw(sf::RenderWindow& window)
 {
-	states.transform.translate(m_position);
-	target.draw(m_text, states);
+	if (!m_visible)
+		return;
+	sf::RenderStates states;
+	sf::Vector2f position;
+	if(m_parent)
+	{
+		position = m_parent->GetGlobalPosition() + m_position;
+	}
+	else
+	{
+		position = m_position;
+	}
+	states.transform.translate(position);
+	window.draw(m_text, states);
 }

@@ -78,25 +78,19 @@
     <ClCompile Include="source\UI\Widget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\UI\UserWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\UI\Label.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\UI\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\UI\TextButton.cpp">
+    <ClCompile Include="source\UI\Panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\UI\Container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\UI\Frame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\UI\Layout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\UI\VerticalLayout.cpp">
+    <ClCompile Include="source\UI\CanvasPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,25 +236,19 @@
     <ClInclude Include="include\UI\Widget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\UserWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\UI\Label.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\TextButton.h">
+    <ClInclude Include="include\UI\Panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\Container.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\Layout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\Frame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\VerticalLayout.h">
+    <ClInclude Include="include\UI\CanvasPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
