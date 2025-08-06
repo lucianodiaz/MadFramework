@@ -30,7 +30,7 @@ public:
 	Anchor GetAnchor() const { return m_anchor; }
 
 	sf::Vector2f GetGlobalPosition()const;
-	sf::Vector2f& GetLocalPosition() { return m_position; }
+	sf::Vector2f& GetOffsetFromAnchor() { return m_offsetFromAnchor; }
 	std::shared_ptr<Widget>& GetParent() { return m_parent; }
 
 	virtual sf::Vector2f GetSize() const = 0;
@@ -41,7 +41,7 @@ public:
 	void Hide();
 	void Show();
 	bool IsVisible() const;
-
+	sf::Vector2f m_computedPosition; // Computed position based on the anchor and offset
 protected:
 	
 	
@@ -49,7 +49,9 @@ protected:
 	virtual void UpdateShape();
 
 
-	sf::Vector2f m_position;
+	sf::Vector2f m_offsetFromAnchor; // Offset from the anchor position
+
+
 	std::vector<std::shared_ptr<Widget>> m_children;
 	std::shared_ptr<Widget> m_parent;
 	bool m_visible;

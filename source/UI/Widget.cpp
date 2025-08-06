@@ -1,7 +1,9 @@
 #include <UI/Widget.h>
 
-Widget::Widget() : m_position(0, 0), m_visible(true)
+Widget::Widget() : m_visible(true)
 {
+	m_computedPosition = sf::Vector2f(0.0f, 0.0f);
+	m_offsetFromAnchor = sf::Vector2f(0.0f, 0.0f);
 	m_children.clear();
 }
 
@@ -11,13 +13,14 @@ Widget::~Widget()
 
 void Widget::SetPosition(float x, float y)
 {
-	m_position.x = x;
-	m_position.y = y;
+	m_offsetFromAnchor = sf::Vector2f(x, y);
+	UpdateShape();
 }
 
 void Widget::SetPosition(sf::Vector2f position)
 {
-	m_position = position;
+	m_offsetFromAnchor = position;
+	UpdateShape();
 }
 
 void Widget::SetParent(std::shared_ptr<Widget> parent)
@@ -46,9 +49,9 @@ sf::Vector2f Widget::GetGlobalPosition() const
 {
 	if (m_parent)
 	{
-		return m_parent->GetGlobalPosition() + m_position;
+		return m_parent->GetGlobalPosition() + m_computedPosition;
 	}
-	return m_position;
+	return m_computedPosition;
 }
 
 void Widget::Hide()

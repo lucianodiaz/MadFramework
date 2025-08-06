@@ -68,11 +68,11 @@ void Label::Draw(sf::RenderWindow& window)
 	sf::Vector2f position;
 	if(m_parent)
 	{
-		position = m_parent->GetGlobalPosition() + m_position;
+		position = m_parent->GetGlobalPosition() + m_computedPosition;
 	}
 	else
 	{
-		position = m_position;
+		position = m_computedPosition;
 	}
 	states.transform.translate(position);
 	window.draw(m_text, states);

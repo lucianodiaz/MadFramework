@@ -9,14 +9,16 @@ Button::Button() : OnClick(DefaultOnClickFunction), m_state(None)
 	SetPosition(0, 0);
 	m_renderTexture.create(100, 50); // Default size, can be changed later
 	m_shape.setSize(sf::Vector2f(100, 50)); // Default size, can be changed later
-	//m_renderTexture.clear(sf::Color::Transparent);
-
 	m_shape.setFillColor(m_normalColor);
 	m_shape.setOutlineThickness(2.0f);
 	m_shape.setOutlineColor(sf::Color::Black);
 
 	m_renderTexture.draw(m_shape);
 	m_renderTexture.display();
+	const sf::Texture& texture = m_renderTexture.getTexture();
+
+	m_sprite.setTextureRect(sf::IntRect(m_shape.getPosition().x, m_shape.getPosition().y, m_shape.getSize().x, m_shape.getSize().y));
+	m_sprite.setTexture(texture);
 }
 
 Button::~Button()
@@ -37,18 +39,27 @@ void Button::Draw(sf::RenderWindow& window)
 	sf::Vector2f position;
 	if (m_parent)
 	{
-		position = m_parent->GetGlobalPosition() + m_position;
+		position = m_parent->GetGlobalPosition() + m_computedPosition;
 	}
 	else
 	{
-		position = m_position;
+		position = m_computedPosition;
 	}
 	if (!m_imageSetted)
 	{
 
-		//const sf::Texture& texture = m_renderTexture.getTexture();
-		//
-		////m_sprite.setTexture(texture);
+		m_renderTexture.create(100, 50); // Default size, can be changed later
+		m_shape.setSize(sf::Vector2f(100, 50)); // Default size, can be changed later
+		m_shape.setFillColor(m_normalColor);
+		m_shape.setOutlineThickness(2.0f);
+		m_shape.setOutlineColor(sf::Color::Black);
+
+		m_renderTexture.draw(m_shape);
+		m_renderTexture.display();
+		const sf::Texture& texture = m_renderTexture.getTexture();
+
+		m_sprite.setTextureRect(sf::IntRect(m_shape.getPosition().x, m_shape.getPosition().y, m_shape.getSize().x, m_shape.getSize().y));
+		m_sprite.setTexture(texture);
 	
 	}
 

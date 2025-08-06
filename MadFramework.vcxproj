@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\UI\CanvasPanel.cpp" />
+    <ClCompile Include="source\UI\Image.cpp" />
     <ClCompile Include="source\UI\Panel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\Core\QuadTree.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="include\Transitions\FadeTransition.h" />
     <ClInclude Include="include\UI\Button.h" />
     <ClInclude Include="include\UI\CanvasPanel.h" />
+    <ClInclude Include="include\UI\Image.h" />
     <ClInclude Include="include\UI\Panel.h" />
     <ClInclude Include="include\UI\UserWidget.h" />
     <ClInclude Include="include\UI\Label.h" />

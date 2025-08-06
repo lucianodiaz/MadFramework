@@ -10,6 +10,7 @@
 #include <UI/Label.h>
 #include <UI/Button.h>
 #include <UI/CanvasPanel.h>
+#include <UI/Image.h>
 
 
 class UI : public UserWidget
@@ -55,13 +56,19 @@ private:
 
 		m_button = CreateWidget<Button>();
 		m_button->SetFitToContent(true);
-		m_button->SetAnchor(Anchor::CenterLeft);
-		m_button->SetPosition(100.0f,m_button->GetGlobalPosition().y);
-		m_healthLabel = CreateWidget<Label>("SHAKE CAMERA!!!");
-		m_button->AddChild(m_healthLabel);
+		m_button->SetAnchor(Anchor::Center);
+		m_button->SetPosition(0.0f,100.0f);
+		m_healthLabel = CreateWidget<Label>("Health: 100");
+		m_healthLabel->SetPosition(30.0f, 30.0f);
 		m_healthLabel->SetOutlineThickness(2.0f);
 		m_healthLabel->SetFillColor(sf::Color::Black);
 		m_healthLabel->SetOutlineColor(sf::Color::White);
+
+		m_image = CreateWidget<Image>();
+		m_image->SetImage(World::GetWorld()->GetTexture("player"));
+		m_button->AddChild(m_image);
+		
+		m_image->SetPosition(25.0f, 0.0f);
 
 		m_button->OnClick = [this]()
 		{
@@ -87,6 +94,8 @@ private:
 	std::shared_ptr<Button> m_button = nullptr; // Example button, if needed
 
 	std::shared_ptr<CanvasPanel> m_canvas = nullptr;
+
+	std::shared_ptr<Image> m_image = nullptr;
 };
 
 
