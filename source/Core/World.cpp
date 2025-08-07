@@ -15,11 +15,14 @@
 #include <Gameplay/SplashScreenFramework.h>
 #include <Transitions/FadeTransition.h>
 #include <Core/TilemapManager.h>
+#include <MathUtils.h>
 
 std::shared_ptr<World> World::_world = nullptr;
 
 World::World() : m_isRunning(true)
 {
+	
+	MAD::MathUtils::rand_init();
 	LoadInternalAssets();
 	LoadResources();
 	//CreateECSManager();
