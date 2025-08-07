@@ -11,6 +11,8 @@
 #include <UI/Button.h>
 #include <UI/CanvasPanel.h>
 #include <UI/Image.h>
+#include <UI/VerticalLayout.h>
+#include <UI/HorizontalLayout.h>
 
 
 class UI : public UserWidget
@@ -33,17 +35,17 @@ public:
 		Signal::GetInstance().AddListener<std::string, int>("SendText", funcSendText);
 
 		InitGUI();
-	} 
+	}
 
 	void OnConstruct() override
 	{
-		
+
 
 	}
 
 	void Update(float deltaTime) override
 	{
-		
+
 	}
 
 
@@ -52,42 +54,74 @@ private:
 	void InitGUI()
 	{
 
+		m_resolutions.emplace_back(sf::Vector2i(1920, 1080));
+		m_resolutions.emplace_back(sf::Vector2i(1280, 720));
+		m_resolutions.emplace_back(sf::Vector2i(640, 480));
+		m_resolutions.emplace_back(sf::Vector2i(2560, 1440));
+
 		m_canvas = CreateWidget<CanvasPanel>();
+
+		m_verticalLayout = CreateWidget<VerticalLayout>();
+
+		m_horizontalLayout = CreateWidget<HorizontalLayout>();
+
+
+		m_verticalLayout->SetAnchor(Anchor::TopLeft);
 
 		m_button = CreateWidget<Button>();
 		m_button->SetFitToContent(true);
-		m_button->SetAnchor(Anchor::Center);
-		m_button->SetPosition(0.0f,100.0f);
 		m_healthLabel = CreateWidget<Label>("Health: 100");
-		m_healthLabel->SetPosition(30.0f, 30.0f);
 		m_healthLabel->SetOutlineThickness(2.0f);
 		m_healthLabel->SetFillColor(sf::Color::Black);
 		m_healthLabel->SetOutlineColor(sf::Color::White);
 
 		m_image = CreateWidget<Image>();
 		m_image->SetImage(World::GetWorld()->GetTexture("player"));
-		m_button->AddChild(m_image);
+
+
+		for (int i=0; i<4;i++)
+		{
+			m_images.emplace_back(CreateWidget<Image>());
+			m_images.back()->SetImage(World::GetWorld()->GetTexture("player"));
+			m_horizontalLayout->AddChild(m_images.back());
+		}
 		
-		m_image->SetPosition(25.0f, 0.0f);
+		
+		m_verticalLayout->AddChild(m_healthLabel);
+		//m_verticalLayout->AddChild(m_horizontalLayout);
+		m_verticalLayout->AddChild(m_button);
+		m_verticalLayout->AddChild(m_image);
+	
+
+
+		m_horizontalLayout->SetAnchor(Anchor::TopCenter);
+		//m_horizontalLayout->SetSpacing(10.0f);
+		m_verticalLayout->SetSpacing(20.0f);
+
+
 
 		m_button->OnClick = [this]()
-		{
-			sf::Sound clickSound;
-			clickSound.setBuffer(World::GetWorld()->GetSound("click_sound"));
-			
-			clickSound.play();
-			Signal::GetInstance().Dispatch("ShakeCamera");
-		};
+			{
+				sf::Sound clickSound;
+				clickSound.setBuffer(World::GetWorld()->GetSound("click_sound"));
+
+				clickSound.play();
+				Signal::GetInstance().Dispatch("ShakeCamera");
+
+
+				auto newResolution = MAD::MathUtils::PickRandomFromVector<sf::Vector2i>(m_resolutions);
+				World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
+			};
 	}
 
-    void updateHealthPlayer(int health) 
-    {
+	void updateHealthPlayer(int health)
+	{
 		std::cout << "Player health: " << health << std::endl;
 		if (m_healthLabel)
 		{
 			m_healthLabel->SetText("Health: " + std::to_string(health));
 		}
-    }
+	}
 
 	std::shared_ptr<Label> m_healthLabel = nullptr;
 
@@ -96,6 +130,16 @@ private:
 	std::shared_ptr<CanvasPanel> m_canvas = nullptr;
 
 	std::shared_ptr<Image> m_image = nullptr;
+
+	std::shared_ptr<VerticalLayout> m_verticalLayout = nullptr; // Example vertical layout, if needed
+	std::shared_ptr<HorizontalLayout> m_horizontalLayout = nullptr;
+
+	
+	std::vector<std::shared_ptr<Image>> m_images;
+
+
+	std::vector<sf::Vector2i> m_resolutions;
+
 };
 
 

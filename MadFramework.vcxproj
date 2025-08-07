@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\UI\CanvasPanel.cpp" />
+    <ClCompile Include="source\UI\HorizontalLayout.cpp" />
     <ClCompile Include="source\UI\Image.cpp" />
     <ClCompile Include="source\UI\Panel.cpp" />
     <ClCompile Include="main.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="source\UI\Button.cpp" />
     <ClCompile Include="source\UI\UserWidget.cpp" />
     <ClCompile Include="source\UI\Label.cpp" />
+    <ClCompile Include="source\UI\VerticalLayout.cpp" />
     <ClCompile Include="source\UI\Widget.cpp" />
     <ClCompile Include="source\Window\Window.cpp" />
   </ItemGroup>
@@ -227,10 +229,12 @@
     <ClInclude Include="include\Transitions\FadeTransition.h" />
     <ClInclude Include="include\UI\Button.h" />
     <ClInclude Include="include\UI\CanvasPanel.h" />
+    <ClInclude Include="include\UI\HorizontalLayout.h" />
     <ClInclude Include="include\UI\Image.h" />
     <ClInclude Include="include\UI\Panel.h" />
     <ClInclude Include="include\UI\UserWidget.h" />
     <ClInclude Include="include\UI\Label.h" />
+    <ClInclude Include="include\UI\VerticalLayout.h" />
     <ClInclude Include="include\UI\Widget.h" />
     <ClInclude Include="include\Utils\EasingFunctions.h" />
     <ClInclude Include="include\Utils\StringUtil.h" />

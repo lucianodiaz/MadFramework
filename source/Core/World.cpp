@@ -129,6 +129,11 @@ void World::ProcessInput()
 		if (event.type == sf::Event::Closed) {
 			_window->Close();
 		}
+
+		if (event.type == sf::Event::Resized)
+		{
+			Signal::GetInstance().Dispatch("OnResized");
+		}
 	}
 
 	m_sceneManager.ProcessInput(event);

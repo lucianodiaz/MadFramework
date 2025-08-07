@@ -22,19 +22,6 @@ void UserWidget::AddChildWidget(std::shared_ptr<Widget> childWidget)
 	}
 }
 
-//void UserWidget::AddMainWidget(std::shared_ptr<Widget> mainWidget)
-//{
-//	if(!m_mainWidget)
-//	{
-//		
-//	}
-//	else
-//	{
-//		// Optionally, you could log a warning or throw an exception here
-//		throw std::exception("Main widget already set. Only one main widget is allowed.");
-//	}
-//}
-
 void UserWidget::ProcessInput(const sf::Event& event)
 {
 	if (m_mainWidget)

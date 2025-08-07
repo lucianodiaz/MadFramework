@@ -1,9 +1,15 @@
 #include <UI/CanvasPanel.h>
 #include <Core/World.h>
+#include <Core/Signal.h>
 
 CanvasPanel::CanvasPanel()
 {
 	SetPosition(0.0f, 0.0f);
+
+	Signal::GetInstance().AddListener("OnResized", std::function<void()>([this]()
+		{
+			UpdateShape();
+		}));
 }
 
 sf::Vector2f CanvasPanel::GetSize() const

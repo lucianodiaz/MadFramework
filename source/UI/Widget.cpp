@@ -14,13 +14,13 @@ Widget::~Widget()
 void Widget::SetPosition(float x, float y)
 {
 	m_offsetFromAnchor = sf::Vector2f(x, y);
-	UpdateShape();
+	//UpdateShape();
 }
 
 void Widget::SetPosition(sf::Vector2f position)
 {
 	m_offsetFromAnchor = position;
-	UpdateShape();
+	//UpdateShape();
 }
 
 void Widget::SetParent(std::shared_ptr<Widget> parent)
