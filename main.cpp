@@ -3,7 +3,6 @@
 #include <Input/ActionTarget.h>
 #include <ECS/Components/SpriteAnimationComponent.h>
 #include <Gameplay/AnimationController.h>
-#include <MathUtils.h>
 #include <ECS/Components/CameraViewComponent.h>
 #include <Transitions/FadeTransition.h>
 #include <Utils/EasingFunctions.h>
@@ -107,10 +106,10 @@ private:
 				//World::GetWorld()->GetSoundManager().PlayMusic("theme_music");
 
 				//Signal::GetInstance().Dispatch("ShakeCamera");
-				fullScreen = !fullScreen;
-				World::GetWorld()->GetWindow().SetFullScreen(fullScreen);
-				//auto newResolution = MAD::MathUtils::PickRandomFromVector<sf::Vector2i>(m_resolutions);
-				//World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
+				//fullScreen = !fullScreen;
+				//World::GetWorld()->GetWindow().SetFullScreen(fullScreen);
+				auto newResolution = MAD::MathUtils::PickRandom(m_resolutions);
+				World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
 			};
 	}
 

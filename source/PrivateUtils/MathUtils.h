@@ -27,25 +27,40 @@ namespace MAD
 			return VectorLength(vector) >= threshold;
 		}
 
-
-		template<typename T>
-		T& PickRandomFromVector(std::vector<T>& vector)
+		//You can use this to get a random value in a Indexed Container std::vector,std::array,std::deque
+		template<typename Container>
+		auto& PickRandom(Container& container)
 		{
-			if (vector.empty())
-			{	
-				throw std::runtime_error("Vector is empty, cannot pick a random element.");
+			if (container.empty())
+			{
+				throw std::runtime_error("Container is empty, cannot pick a random element.");
 			}
 
-			std::random_device rd;
-			std::mt19937 generator(rd());
+			static std::random_device rd;
+			static std::mt19937 generator(rd());
 
-			std::uniform_int_distribution<> distribution(0, vector.size() - 1);
+			std::uniform_int_distribution<> distribution(0, static_cast<int>(container.size()) - 1);
 
-			int randomIndex = distribution(generator);
+			return container[distribution(generator)];
+		}
 
-			T randomValue = vector[randomIndex];
+		//You can use this to get a random value in a iterator Container std::list,std::unordered_map
+		template<typename Container>
+		auto& PickRandomIterable(Container& container)
+		{
+			if (container.empty())
+			{
+				throw std::runtime_error("Container is empty, cannot pick a random element.");
+			}
 
-			return randomValue;
+			static std::random_device rd;
+			static std::mt19937 generator(rd());
+
+			std::uniform_int_distribution<> distribution(0, static_cast<int>(container.size()) - 1);
+
+			auto it = container.begin();
+			std::advance(it, distribution(generator));
+			return *it;
 		}
 	}
 }
