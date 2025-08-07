@@ -10,6 +10,7 @@
 #include "TimerManager.h"
 #include "SceneManager.h"
 #include "TweenManager.h"
+#include "SoundManager.h"
 
 class ECSManager;
 class Actor;
@@ -80,6 +81,7 @@ public:
 
 	SceneManager& GetSceneManager() { return m_sceneManager; }
 
+	SoundMananger& GetSoundManager() { return m_soundManager; }
 	
 protected:
 	World();
@@ -123,6 +125,8 @@ protected:
 	SceneManager m_sceneManager;
 
 	TweenManager m_tweenManager;
+
+	SoundMananger m_soundManager;
 
 	ResourceManager<sf::Texture, std::string> m_textures;
 	ResourceManager<sf::Music, std::string> m_musics;

@@ -102,10 +102,10 @@ private:
 
 		m_button->OnClick = [this]()
 			{
-				sf::Sound clickSound;
-				clickSound.setBuffer(World::GetWorld()->GetSound("click_sound"));
 
-				clickSound.play();
+				World::GetWorld()->GetSoundManager().PlaySound("click_sound");
+				//World::GetWorld()->GetSoundManager().PlayMusic("theme_music");
+
 				Signal::GetInstance().Dispatch("ShakeCamera");
 
 
@@ -445,7 +445,6 @@ public:
     {
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		//World::GetWorld()->GetSceneManager().ChangeScene("level1");
 		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
     }
 };

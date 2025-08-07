@@ -156,6 +156,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Core\SoundManager.cpp" />
     <ClCompile Include="source\UI\CanvasPanel.cpp" />
     <ClCompile Include="source\UI\HorizontalLayout.cpp" />
     <ClCompile Include="source\UI\Image.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="include\ECS\Systems\MovementSystem.h" />
     <ClInclude Include="include\Gameplay\Actor.h" />
     <ClInclude Include="include\Gameplay\AnimationController.h" />
+    <ClInclude Include="include\Core\SoundManager.h" />
     <ClInclude Include="include\Gameplay\SplashScreenFramework.h" />
     <ClInclude Include="include\Input\Action.h" />
     <ClInclude Include="include\Input\ActionMap.h" />
