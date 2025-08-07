@@ -35,6 +35,21 @@ void Window::Resize(int width, int height)
 	Signal::GetInstance().Dispatch("OnResized");
 }
 
+void Window::SetFullScreen(bool fullScreen)
+{
+	m_isFullScreen = fullScreen;
+
+	// Guardar parámetros antes de cerrar
+	sf::VideoMode mode = m_isFullScreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(_width, _height);
+	sf::Uint32 style = m_isFullScreen ? sf::Style::Fullscreen : sf::Style::Titlebar | sf::Style::Close;
+
+	// Cerrar y volver a crear
+	_window->close();
+	_window->create(mode, _title, style);
+
+	Signal::GetInstance().Dispatch("OnFullScreen");
+}
+
 bool Window::pollEvent(sf::Event& evt)
 {
 	return _window->pollEvent(evt);

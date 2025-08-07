@@ -106,11 +106,11 @@ private:
 				World::GetWorld()->GetSoundManager().PlaySound("click_sound");
 				//World::GetWorld()->GetSoundManager().PlayMusic("theme_music");
 
-				Signal::GetInstance().Dispatch("ShakeCamera");
-
-
-				auto newResolution = MAD::MathUtils::PickRandomFromVector<sf::Vector2i>(m_resolutions);
-				World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
+				//Signal::GetInstance().Dispatch("ShakeCamera");
+				fullScreen = !fullScreen;
+				World::GetWorld()->GetWindow().SetFullScreen(fullScreen);
+				//auto newResolution = MAD::MathUtils::PickRandomFromVector<sf::Vector2i>(m_resolutions);
+				//World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
 			};
 	}
 
@@ -140,6 +140,8 @@ private:
 
 	std::vector<sf::Vector2i> m_resolutions;
 
+
+	bool fullScreen = false;
 };
 
 

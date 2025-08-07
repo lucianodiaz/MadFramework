@@ -66,6 +66,17 @@ void CanvasPanel::UpdateShape()
 			case Anchor::BottomRight:
 				anchorBase = sf::Vector2f(canvasSize.x - childSize.x, canvasSize.y - childSize.y);
 				break;
+
+			case Anchor::StretchHorizontal:
+				anchorBase = sf::Vector2f(canvasSize.x, canvasSize.y - childSize.y);
+				break;
+
+			case Anchor::StretchVertical:
+				anchorBase = sf::Vector2f(canvasSize.x - childSize.x, canvasSize.y);
+				break;
+			case Anchor::Stretch:
+				anchorBase = sf::Vector2f(canvasSize.x, canvasSize.y);
+				break;
 			}
 
 			//

@@ -20,6 +20,8 @@ public:
 
 	void Resize(int width, int height);
 
+	void SetFullScreen(bool fullScreen);
+
 	bool pollEvent(sf::Event& evt);
 
 	bool IsOpen() const { return _window->isOpen(); }
@@ -29,7 +31,7 @@ private:
 
 	unsigned int _width;
 	unsigned int _height;
-
+	bool m_isFullScreen = false;
 	std::string _title;
 
 	std::unique_ptr<sf::RenderWindow> _window;

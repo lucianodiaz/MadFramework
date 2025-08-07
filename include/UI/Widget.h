@@ -7,7 +7,8 @@ enum class Anchor
 {
 	TopLeft, TopCenter, TopRight,
 	CenterLeft, Center, CenterRight,
-	BottomLeft, BottomCenter, BottomRight
+	BottomLeft, BottomCenter, BottomRight,
+	StretchHorizontal, StretchVertical, Stretch
 };
 
 class Widget : public std::enable_shared_from_this<Widget>

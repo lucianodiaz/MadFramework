@@ -17,5 +17,6 @@ protected:
 	void UpdateShape() override {};
 
 
+
 	sf::Color m_backgroundColor = sf::Color::Transparent; // Default background color
 };
