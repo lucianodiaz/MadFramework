@@ -10,6 +10,9 @@ public:
 	CameraSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs) {};
 
 protected:
+
+	sf::View& GetLetterBoxView(sf::View view);
+
 	void UpdateEntities(float deltaTime) override;
 
 	void UpdateShake(float deltaTime, CameraViewComponent& cam);

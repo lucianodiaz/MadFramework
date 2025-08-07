@@ -2,6 +2,35 @@
 #include <ECS/Components/TransformComponent.h>
 #include <Core/World.h>
 
+sf::View& CameraSystem::GetLetterBoxView(sf::View view)
+{
+	// TODO: Insertar una instrucción "return" aquí
+	float windowRatio = (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().x / (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().y;
+	float viewRatio = view.getSize().x / view.getSize().y;
+	float sizeX = 1.0f;
+	float sizeY = 1.0f;
+	float posX = 0.0f;
+	float posY = 0.0f;
+
+	bool horizontalSpacing = true;
+	if (windowRatio < viewRatio)
+		horizontalSpacing = false;
+
+	if (horizontalSpacing)
+	{
+		sizeX = viewRatio / windowRatio;
+		posX = (1.0f - sizeX) / 2.0f;
+	}
+	else
+	{
+		sizeY = windowRatio / viewRatio;
+		posY = (1.0f - sizeY) / 2.0f;
+	}
+
+	view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+	return view;
+}
+
 void CameraSystem::UpdateEntities(float deltaTime)
 {
 
@@ -11,6 +40,8 @@ void CameraSystem::UpdateEntities(float deltaTime)
 	{
 		auto& camera = m_ecs->GetComponent<CameraViewComponent>(entity);
 		auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
+
+
 
 		camera.cameraPosition = camera.cameraPosition + (transform.position - camera.cameraPosition) * camera.LagFactor;
 
@@ -33,7 +64,7 @@ void CameraSystem::UpdateEntities(float deltaTime)
 		camera.zoom = 1.0f; // Reset zoom after applying to avoid cumulative zooming
 		if (camera.isMainCamera)
 		{
-			World::GetWorld()->GetWindow().GetRenderWindow().setView(camera.cameraView);
+			World::GetWorld()->GetWindow().GetRenderWindow().setView(GetLetterBoxView(camera.cameraView));
 		}
 	}
 }

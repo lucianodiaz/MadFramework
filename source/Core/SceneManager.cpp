@@ -216,7 +216,34 @@ void SceneManager::Update(float deltaTime)
 	}
 }
 
+sf::View& SceneManager::GetLetterBoxView(sf::View view)
+{
+	// TODO: Insertar una instrucción "return" aquí
+	float windowRatio = (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().x / (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().y;
+	float viewRatio = view.getSize().x / view.getSize().y;
+	float sizeX = 1.0f;
+	float sizeY = 1.0f;
+	float posX = 0.0f;
+	float posY = 0.0f;
 
+	bool horizontalSpacing = true;
+	if (windowRatio < viewRatio)
+		horizontalSpacing = false;
+
+	if (horizontalSpacing)
+	{
+		sizeX = viewRatio / windowRatio;
+		posX = (1.0f - sizeX) / 2.0f;
+	}
+	else
+	{
+		sizeY = windowRatio / viewRatio;
+		posY = (1.0f - sizeY) / 2.0f;
+	}
+
+	view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+	return view;
+}
 void SceneManager::Draw(sf::RenderWindow& window)
 {
 	if (m_currentScene)
@@ -229,7 +256,11 @@ void SceneManager::Draw(sf::RenderWindow& window)
 			sf::View uiView;
 			uiView.setSize(window.getSize().x , window.getSize().y);
 			uiView.setCenter(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
-			window.setView(uiView);
+
+
+
+
+			window.setView(GetLetterBoxView(uiView));
 			userWidget->Draw(window);
 		}
 

@@ -1,8 +1,9 @@
 #include "Window/Window.h"
+#include <Core/Signal.h>
 
 Window::Window(int w, int h, std::string& title) :
 	_width(w),_height(h),_title(title),
-	_window(std::make_unique<sf::RenderWindow>(sf::VideoMode(_width,_height),_title,sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize))
+	_window(std::make_unique<sf::RenderWindow>(sf::VideoMode(_width,_height),_title,sf::Style::Titlebar | sf::Style::Close))
 {
 }
 
@@ -24,6 +25,14 @@ void Window::Display()
 void Window::Close()
 {
 	_window->close();
+}
+
+void Window::Resize(int width, int height)
+{
+	_width = width;
+	_height = height;
+	_window->setSize(sf::Vector2u(_width, _height));
+	Signal::GetInstance().Dispatch("OnResized");
 }
 
 bool Window::pollEvent(sf::Event& evt)

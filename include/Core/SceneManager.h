@@ -32,6 +32,9 @@ protected:
 	void AddUserWidget(std::shared_ptr<T> userWidget);
 
 private:
+
+	sf::View& GetLetterBoxView(sf::View);
+
 	std::unordered_map<std::string, std::unique_ptr<IScene>> m_scenes;
 
 	IScene* m_currentScene = nullptr;

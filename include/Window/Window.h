@@ -18,6 +18,8 @@ public:
 
 	void Close();
 
+	void Resize(int width, int height);
+
 	bool pollEvent(sf::Event& evt);
 
 	bool IsOpen() const { return _window->isOpen(); }
