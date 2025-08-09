@@ -1,5 +1,6 @@
 #include "ECS/ECSManager.h"
 #include <ECS/Systems/RenderSystem.h>
+#include <ECS/Systems/ParticleSystem.h>
 
 Entity ECSManager::CreateEntity()
 {
@@ -36,6 +37,12 @@ void ECSManager::Draw(sf::RenderWindow& window)
         if (renderSystem)
         {
             renderSystem->Render(window);
+        }
+
+        auto particleSystem = std::dynamic_pointer_cast<ParticleSystem>(system);
+        if (particleSystem)
+        {
+            particleSystem->Draw(window);
         }
     }
 }

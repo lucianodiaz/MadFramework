@@ -11,6 +11,7 @@ public:
 	AnimationSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs) {};
 
 
+
 protected:
 
 	void UpdateEntities(float deltaTime) override;

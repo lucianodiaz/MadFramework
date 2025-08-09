@@ -12,6 +12,8 @@
 #include <UI/Image.h>
 #include <UI/VerticalLayout.h>
 #include <UI/HorizontalLayout.h>
+#include <ECS/Components/ParticlesTypes.h>
+#include <ECS/Components/ParticleEmitterComponent.h>
 
 
 class UI : public UserWidget
@@ -108,7 +110,7 @@ private:
 				//Signal::GetInstance().Dispatch("ShakeCamera");
 				//fullScreen = !fullScreen;
 				//World::GetWorld()->GetWindow().SetFullScreen(fullScreen);
-				auto newResolution = MAD::MathUtils::PickRandom(m_resolutions);
+				auto newResolution = MAD::MathUtils::PickRandomIndexed(m_resolutions);
 				World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
 			};
 	}
@@ -159,6 +161,18 @@ public:
 		//AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
 		AddComponent<VelocityComponent>(0,0);
 		SetGameTag("CosmicBall");
+
+		m_smoke.spawnRate = 60.f;
+		m_smoke.maxParticles = 800;
+		m_smoke.velMin = { -20.f,-10.f };
+		m_smoke.velMax = { 20.f,-50.f };
+		m_smoke.lifetimeMin = 0.8f; m_smoke.lifetimeMax = 1.3f;
+		m_smoke.sizeMin = 3.f; m_smoke.sizeMax = 8.f;
+		m_smoke.color = sf::Color(180, 180, 180, 200);
+		m_smoke.gravity = { 0.f, -10.f }; // “sube” si tu eje Y crece hacia abajo, invierte
+		m_smoke.drag = 0.5f;
+
+		AddComponent<ParticleEmitterComponent>(m_smoke);
     }
 
 	void Start() override
@@ -178,6 +192,10 @@ public:
 		//velocityComp.velocity.y -= sin(60) * deltaTime;
 
 	}
+
+
+private:
+	EmitterSettings m_smoke;
 };
 
 class Player : public Actor, public ActionTarget<std::string>
@@ -346,6 +364,100 @@ private:
 
 };
 
+class MainMenuWidget : public UserWidget
+{
+public:
+	MainMenuWidget() {};
+
+	void OnConstruct() override
+	{
+		m_panel = CreateWidget<CanvasPanel>();
+
+		m_vLayout = CreateWidget<VerticalLayout>();
+
+		m_vLayout->SetAnchor(Anchor::Center);
+		m_vLayout->SetSpacing(100.0f);
+
+		m_playButton = CreateWidget<Button>();
+		
+
+		m_playButton->SetButtonSize(sf::Vector2f(300, 100));
+		
+
+		m_vLayout->AddChild(m_playButton);
+		//m_vLayout->AddChild(m_exitButton);
+
+		m_textPlay = CreateWidget<Label>("PLAY");
+		
+		//m_textExit = CreateWidget<Label>("EXIT");
+		m_textPlay->SetFillColor(sf::Color::Black);
+		//m_textExit->SetFillColor(sf::Color::Black);
+		m_playButton->AddChild(m_textPlay);
+		//m_exitButton->AddChild(m_textExit);
+
+		//m_vLayout->SetPosition(-100.0f, -200.0f);
+		m_exitButton = CreateWidget<Button>();
+
+
+		m_playButton->OnClick = [this]()
+			{
+				Signal::GetInstance().Dispatch("EnterGame");
+			};
+	}
+
+	void Update(float deltaTime) override
+	{
+
+	}
+
+private:
+
+
+	std::shared_ptr<CanvasPanel> m_panel;
+	std::shared_ptr<VerticalLayout> m_vLayout;
+	std::shared_ptr <Button> m_playButton;
+	std::shared_ptr <Button> m_exitButton;
+	std::shared_ptr <Label> m_textPlay;
+	std::shared_ptr <Label> m_textExit;
+};
+
+
+class MainMenuScene : public IScene
+{
+public:
+
+	MainMenuScene() {};
+
+	void OnLoad() override
+	{
+		
+	}
+	void OnUnload() override {};
+
+	void OnSceneEnter() override
+	{
+		m_menu = World::GetWorld()->CreateGUI<MainMenuWidget>();
+
+		Signal::GetInstance().AddListener("EnterGame",
+			std::function<void()>([this]() {
+				EnterTheGame();
+				}));
+	}
+
+	void EnterTheGame()
+	{
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(Fade::In, 1.0f), nullptr);
+	}
+	void OnSceneExit() override {};
+
+	void Update(float deltaTime) override {};
+
+	bool CanTransition() const override { return true; };
+
+private:
+	std::shared_ptr<MainMenuWidget> m_menu = nullptr;
+};
+
 
 class SecondLevelScene : public IScene
 {
@@ -444,9 +556,10 @@ class Game
 public:
     Game()
     {
+		World::GetWorld()->GetSceneManager().AddScene("MainMenu", std::make_unique<MainMenuScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
     }
 };
 

@@ -22,7 +22,7 @@ public:
 	virtual void OnSceneExit() = 0;
 
 	virtual void Update(float deltaTime) = 0;
-	virtual void Draw(sf::RenderWindow& window) = 0;
+	virtual void Draw(sf::RenderWindow& window) {};
 	
 	virtual bool CanTransition() const = 0;
 

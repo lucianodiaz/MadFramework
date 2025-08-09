@@ -5,7 +5,7 @@
 #include <ECS/Systems/CameraSystem.h>
 #include <ECS/Systems/RenderSystem.h>
 #include <ECS/Systems/AnimationSystem.h>
-
+#include <ECS/Systems/ParticleSystem.h>
 
 const std::unique_ptr<ECSManager>& SceneManager::GetECSManager()
 {
@@ -36,6 +36,7 @@ void SceneManager::AddScene(const std::string& name, std::unique_ptr<IScene> sce
 		m_scenes[name]->ecs->RegisterSystem<CameraSystem>(m_scenes[name]->ecs);
 		m_scenes[name]->ecs->RegisterSystem<RenderSystem>(m_scenes[name]->ecs);
 		m_scenes[name]->ecs->RegisterSystem<AnimationSystem>(m_scenes[name]->ecs);
+		m_scenes[name]->ecs->RegisterSystem<ParticleSystem>(m_scenes[name]->ecs);
 
 		m_currentSceneName = name;
 		m_scenes[name]->OnLoad();

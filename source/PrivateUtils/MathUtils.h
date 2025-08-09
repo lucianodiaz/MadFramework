@@ -1,67 +1,79 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
-#include <iostream>
 #include <cmath>
-#include <vector>
 #include <random>
+#include <vector>
+#include <list>
+#include <deque>
+#include <array>
+#include <stdexcept>
 #include <algorithm>
+#include <iterator>
 
-namespace MAD
+namespace MAD::MathUtils
 {
-	namespace MathUtils
-	{
-		inline void rand_init() {
-			srand(time(NULL));
-		};
+    inline std::mt19937& rng() {
+        static thread_local std::mt19937 gen{ std::random_device{}() };
+        return gen;
+    }
 
-		inline float random(float min, float max) { return (rand() / float(RAND_MAX)) * (max - min) + min; }
-		inline int random(int min, int max) { return rand() % (max - min + 1) + min; }
+    inline float frand(float a, float b)
+    {
+        auto [lo, hi] = std::minmax(a, b);
+        std::uniform_real_distribution<float> d(lo, hi);
+        return d(rng());
+    }
 
-		inline float VectorLength(const sf::Vector2f& vector)
-		{
-			return std::sqrt(vector.x * vector.x + vector.y * vector.y);
-		}
+    inline sf::Vector2f vrand(const sf::Vector2f& a, const sf::Vector2f& b)
+    {
+        auto [lx, hx] = std::minmax(a.x, b.x);
+        auto [ly, hy] = std::minmax(a.y, b.y);
+        return { frand(lx, hx), frand(ly, hy) };
+    }
 
-		inline float IsMoving(const sf::Vector2f& vector, float threshold = 0.01f)
-		{
-			return VectorLength(vector) >= threshold;
-		}
+    inline float VectorLength(const sf::Vector2f& v)
+    {
+        return std::sqrt(v.x * v.x + v.y * v.y);
+    }
 
-		//You can use this to get a random value in a Indexed Container std::vector,std::array,std::deque
-		template<typename Container>
-		auto& PickRandom(Container& container)
-		{
-			if (container.empty())
-			{
-				throw std::runtime_error("Container is empty, cannot pick a random element.");
-			}
+    inline bool IsMoving(const sf::Vector2f& v, float threshold = 0.01f)
+    {
+        return VectorLength(v) >= threshold;
+    }
 
-			static std::random_device rd;
-			static std::mt19937 generator(rd());
+    // Contenedores indexados: vector/array/deque (const y no-const)
+    template <typename Container>
+    auto& PickRandomIndexed(Container& c)
+    {
+        if (c.empty()) throw std::runtime_error("Empty container");
+        std::uniform_int_distribution<std::size_t> d(0, c.size() - 1);
+        return c[d(rng())];
+    }
+    template <typename Container>
+    const auto& PickRandomIndexed(const Container& c)
+    {
+        if (c.empty()) throw std::runtime_error("Empty container");
+        std::uniform_int_distribution<std::size_t> d(0, c.size() - 1);
+        return c[d(rng())];
+    }
 
-			std::uniform_int_distribution<> distribution(0, static_cast<int>(container.size()) - 1);
-
-			return container[distribution(generator)];
-		}
-
-		//You can use this to get a random value in a iterator Container std::list,std::unordered_map
-		template<typename Container>
-		auto& PickRandomIterable(Container& container)
-		{
-			if (container.empty())
-			{
-				throw std::runtime_error("Container is empty, cannot pick a random element.");
-			}
-
-			static std::random_device rd;
-			static std::mt19937 generator(rd());
-
-			std::uniform_int_distribution<> distribution(0, static_cast<int>(container.size()) - 1);
-
-			auto it = container.begin();
-			std::advance(it, distribution(generator));
-			return *it;
-		}
-	}
+    // Contenedores solo iterables: list, (un)ordered_{set,map}, etc.
+    template <typename Container>
+    auto& PickRandomIterable(Container& c)
+    {
+        if (c.empty()) throw std::runtime_error("Empty container");
+        std::uniform_int_distribution<std::size_t> d(0, c.size() - 1);
+        auto it = c.begin();
+        std::advance(it, static_cast<long>(d(rng())));
+        return *it;
+    }
+    template <typename Container>
+    const auto& PickRandomIterable(const Container& c)
+    {
+        if (c.empty()) throw std::runtime_error("Empty container");
+        std::uniform_int_distribution<std::size_t> d(0, c.size() - 1);
+        auto it = c.begin();
+        std::advance(it, static_cast<long>(d(rng())));
+        return *it;
+    }
 }
-

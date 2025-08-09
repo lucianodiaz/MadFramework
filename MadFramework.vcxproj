@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Core\SoundManager.cpp" />
+    <ClCompile Include="source\ECS\Systems\ParticleSystem.cpp" />
     <ClCompile Include="source\UI\CanvasPanel.cpp" />
     <ClCompile Include="source\UI\HorizontalLayout.cpp" />
     <ClCompile Include="source\UI\Image.cpp" />
@@ -200,11 +201,14 @@
     <ClInclude Include="include\Core\TweenManager.h" />
     <ClInclude Include="include\ECS\Components\CameraViewComponent.h" />
     <ClInclude Include="include\ECS\Components\GravityComponent.h" />
+    <ClInclude Include="include\ECS\Components\ParticleEmitterComponent.h" />
+    <ClInclude Include="include\ECS\Components\ParticlesTypes.h" />
     <ClInclude Include="include\ECS\Components\SpriteAnimationComponent.h" />
     <ClInclude Include="include\ECS\Components\SpriteComponent.h" />
     <ClInclude Include="include\ECS\Components\ZIndexComponent.h" />
     <ClInclude Include="include\ECS\Systems\AnimationSystem.h" />
     <ClInclude Include="include\ECS\Systems\CameraSystem.h" />
+    <ClInclude Include="include\ECS\Systems\ParticleSystem.h" />
     <ClInclude Include="include\ECS\Systems\RenderSystem.h" />
     <ClInclude Include="include\Core\MadEntry.h" />
     <ClInclude Include="include\Core\ResourceManager.h" />
