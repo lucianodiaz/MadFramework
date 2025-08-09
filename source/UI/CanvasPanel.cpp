@@ -80,12 +80,16 @@ void CanvasPanel::UpdateShape()
 			}
 
 			//
-			child->m_computedPosition = anchorBase + child->GetOffsetFromAnchor();
+			child->SetLayoutPosition(anchorBase + child->GetOffsetFromAnchor());
+			child->UpdateShape();
 		}
 		else
 		{
-			child->m_computedPosition = child->GetOffsetFromAnchor();
+			child->SetLayoutPosition( child->GetOffsetFromAnchor());
+			child->UpdateShape();
 		}
+
+		
 		
 		
 	}

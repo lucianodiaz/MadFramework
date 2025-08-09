@@ -3,7 +3,7 @@
 
 Label::Label(const std::string& text)
 {
-	SetPosition(0, 0);
+	//SetPosition(0, 0);
 	SetText(text);
 
 	SetFont(World::GetWorld()->GetFont("defaultFont"));
@@ -16,7 +16,7 @@ Label::~Label()
 void Label::SetText(const std::string& text)
 {
 	m_text.setString(text);
-	UpdateShape();
+	RequestLayout();
 }
 
 const std::string& Label::GetText() const
@@ -44,13 +44,13 @@ void Label::SetOutlineThickness(float thickness)
 void Label::SetCharacterSize(unsigned int size)
 {
 	m_text.setCharacterSize(size);
-	UpdateShape();
+	RequestLayout();
 }
 
 void Label::SetFont(const sf::Font& font)
 {
 	m_text.setFont(font);
-	UpdateShape();
+	RequestLayout();
 }
 
 sf::Vector2f Label::GetSize() const

@@ -11,11 +11,11 @@ public:
 	virtual sf::Vector2f GetSize()const override;
 
 	void SetSpacing(float spacing) { m_spacing = spacing; UpdateShape(); }
-
+	void UpdateShape() override;
 protected:
 
 	void Draw(sf::RenderWindow& window) override;
-	void UpdateShape() override;
+	
 private:
 	float m_spacing;
 };

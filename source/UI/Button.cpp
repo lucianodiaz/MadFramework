@@ -6,9 +6,9 @@ Button::FunctionType Button::DefaultOnClickFunction = []() {
 
 Button::Button() : OnClick(DefaultOnClickFunction), m_state(None)
 {
-	SetPosition(0, 0);
-	m_renderTexture.create(100, 50); // Default size, can be changed later
-	m_shape.setSize(sf::Vector2f(100, 50)); // Default size, can be changed later
+	//SetPosition(0, 0);
+	m_renderTexture.create(m_sizeButton.x, m_sizeButton.y); // Default size, can be changed later
+	m_shape.setSize(sf::Vector2f(m_sizeButton.x, m_sizeButton.y)); // Default size, can be changed later
 	m_shape.setFillColor(m_normalColor);
 	m_shape.setOutlineThickness(2.0f);
 	m_shape.setOutlineColor(sf::Color::Black);
@@ -23,6 +23,24 @@ Button::Button() : OnClick(DefaultOnClickFunction), m_state(None)
 
 Button::~Button()
 {
+}
+
+void Button::SetButtonSize(sf::Vector2f newSize)
+{
+	m_sizeButton = newSize;
+	m_renderTexture.create(m_sizeButton.x, m_sizeButton.y); // Default size, can be changed later
+	m_shape.setSize(sf::Vector2f(m_sizeButton.x, m_sizeButton.y)); // Default size, can be changed later
+	m_shape.setFillColor(m_normalColor);
+	m_shape.setOutlineThickness(2.0f);
+	m_shape.setOutlineColor(sf::Color::Black);
+
+	m_renderTexture.draw(m_shape);
+	m_renderTexture.display();
+	const sf::Texture& texture = m_renderTexture.getTexture();
+
+	m_sprite.setTextureRect(sf::IntRect(m_shape.getPosition().x, m_shape.getPosition().y, m_shape.getSize().x, m_shape.getSize().y));
+	m_sprite.setTexture(texture);
+	RequestLayout();
 }
 
 sf::Vector2f Button::GetSize() const
@@ -48,8 +66,8 @@ void Button::Draw(sf::RenderWindow& window)
 	if (!m_imageSetted)
 	{
 
-		m_renderTexture.create(100, 50); // Default size, can be changed later
-		m_shape.setSize(sf::Vector2f(100, 50)); // Default size, can be changed later
+		m_renderTexture.create(m_sizeButton.x, m_sizeButton.y); // Default size, can be changed later
+		m_shape.setSize(sf::Vector2f(m_sizeButton.x, m_sizeButton.y)); // Default size, can be changed later
 		m_shape.setFillColor(m_normalColor);
 		m_shape.setOutlineThickness(2.0f);
 		m_shape.setOutlineColor(sf::Color::Black);
@@ -113,11 +131,15 @@ void Button::UpdateShape()
 		m_sprite.setTextureRect(sf::IntRect(m_shape.getPosition().x,m_shape.getPosition().y,m_shape.getSize().x,m_shape.getSize().y));
 		m_sprite.setTexture(texture);
 	}
+	else
+	{
+	}
 
-	if (m_parent)
+	RequestLayout();
+	/*if (m_parent)
 	{
 		Widget::UpdateShape();
-	}
+	}*/
 }
 
 void Button::ProcessInput(const sf::Event& event)

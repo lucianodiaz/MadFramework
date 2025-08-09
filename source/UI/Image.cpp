@@ -14,7 +14,7 @@ void Image::SetImage(const sf::Texture& texture)
 {
 	m_texture = texture;
 	m_sprite.setTexture(m_texture);
-	UpdateShape();
+	RequestLayout();
 }
 
 sf::Vector2f Image::GetSize() const

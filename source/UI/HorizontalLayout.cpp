@@ -41,7 +41,7 @@ void HorizontalLayout::Draw(sf::RenderWindow& window)
 void HorizontalLayout::UpdateShape()
 {
 	float maxHeight = 0.0f;
-
+	if (m_children.empty()) return;
 	for (const auto& child : m_children)
 	{
 		sf::Vector2f size = child->GetSize();
@@ -57,8 +57,8 @@ void HorizontalLayout::UpdateShape()
 		auto& child = m_children[i];
 		sf::Vector2f size = child->GetSize();
 
-		child->SetPosition(x, (maxHeight - size.y) / 2.0f); // Centrado vertical
-
+		child->SetLayoutPosition({ x, (maxHeight - size.y) / 2.0f }); // Centrado vertical
+		child->UpdateShape();
 		x += size.x;
 		if (i < m_children.size() - 1) {
 			x += m_spacing; 

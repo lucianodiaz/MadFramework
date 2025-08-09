@@ -13,16 +13,18 @@ public:
 	Button();
 	virtual ~Button();
 
+	void SetButtonSize(sf::Vector2f newSize);
+
 	virtual sf::Vector2f GetSize() const override;
 
 	FunctionType OnClick;
-
+	virtual void UpdateShape() override;
 protected:
 	virtual void Draw(sf::RenderWindow& window) override;
 	void OnMouseEnter();
 	void OnMouseLeave();
 
-	virtual void UpdateShape() override;
+	
 	virtual void ProcessInput(const sf::Event& event) override;
 
 	sf::RenderTexture m_renderTexture; // Render texture for the button
@@ -46,4 +48,6 @@ private:
 	bool m_imageSetted = false; // Flag to check if the image is set
 
 	float m_margin = 10.0f;
+
+	sf::Vector2f m_sizeButton = { 100.0f,50.0f };
 };
