@@ -114,6 +114,11 @@ void SceneManager::ProcessInput(sf::Event& event)
 void SceneManager::Update(float deltaTime)
 {
 
+	for (auto& userWidget : m_currentScene->m_userWidgets)
+	{
+		userWidget->Update(deltaTime);
+	}
+
 	if (m_isSplashScreen)
 	{
 		if (m_splashTransitionIn)
