@@ -1,6 +1,6 @@
 #include <UI/Widget.h>
 
-Widget::Widget() : m_visible(true)
+Widget::Widget() : m_visible(true), m_root(nullptr)
 {
 	m_computedPosition = sf::Vector2f(0.0f, 0.0f);
 	m_offsetFromAnchor = sf::Vector2f(0.0f, 0.0f);
@@ -66,11 +66,19 @@ Widget* Widget::GetRoot()
 void Widget::Hide()
 {
 	m_visible = false;
+	for (auto c : m_children)
+	{
+		c->Hide();
+	}
 }
 
 void Widget::Show()
 {
 	m_visible = true;
+	for (auto c : m_children)
+	{
+		c->Show();
+	}
 }
 
 bool Widget::IsVisible() const

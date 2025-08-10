@@ -65,7 +65,7 @@ void World::Run(int frame_per_seconds)
 	m_sceneManager.ChangeSceneWithTransition("mad_splash_screen_01", std::make_unique<FadeTransition>(Fade::In, 1.0f), std::make_unique<FadeTransition>(Fade::Out, 1.0f));
 
 
-	while (_window->IsOpen())
+	while (_window->IsOpen() && !m_quit)
 	{
 		ProcessInput();
 		bool repaint = false;
@@ -99,28 +99,6 @@ void World::CreateMainWindow(int width, int height, std::string name)
 {
 	_window = std::make_unique<Window>(width, height, name);
 }
-
-//void World::CreateECSManager()
-//{
-//	/*ecs = std::make_unique<ECSManager>();
-//
-//	if (!ecs)
-//	{
-//		std::cout << "Error creating ECS!.." << std::endl;
-//	}*/
-//
-//}
-
-//void World::RegisterDefaultSystems()
-//{
-//	
-//	/*m_sceneManager.GetECSManager()->RegisterSystem<MovementSystem>(ecs);
-//	m_sceneManager.GetECSManager()->RegisterSystem<CollisionSystem>(ecs);
-//	m_sceneManager.GetECSManager()->RegisterSystem<CameraSystem>(ecs);
-//	m_sceneManager.GetECSManager()->RegisterSystem<RenderSystem>(ecs);
-//	m_sceneManager.GetECSManager()->RegisterSystem<AnimationSystem>(ecs);*/
-//
-//}
 
 void World::ProcessInput()
 {
@@ -164,12 +142,6 @@ void World::Update(float deltaTime)
 void World::Render()
 {
 	_window->Clear();
-
-	
-
-	//m_tilemapManager.Draw(_window->GetRenderWindow());
-
-	//ecs->Draw(_window->GetRenderWindow());
 
 	m_sceneManager.Draw(_window->GetRenderWindow());
 
@@ -241,6 +213,11 @@ void World::LoadSound(const std::string& name, const std::string& path)
 	{
 		std::cerr << "error loading resource: " << e.what() << std::endl;
 	}
+}
+
+void World::QuitGame()
+{
+	m_quit = true;
 }
 
 TilemapManager& World::TilemapManager()

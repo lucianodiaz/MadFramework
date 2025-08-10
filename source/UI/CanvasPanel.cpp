@@ -25,10 +25,6 @@ sf::Vector2f CanvasPanel::GetSize() const
 
 void CanvasPanel::Draw(sf::RenderWindow& window)
 {
-	/*for (const auto child : m_children)
-	{
-		child->Draw(window);
-	}*/
 }
 
 void CanvasPanel::UpdateShape()

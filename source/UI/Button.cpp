@@ -1,6 +1,6 @@
 #include <UI/Button.h>
 
-Button::FunctionType Button::DefaultOnClickFunction = []() {
+Button::FunctionType Button::DefaultOnClickFunction = [](Button&) {
 	// Default action for button click
 	};
 
@@ -144,50 +144,36 @@ void Button::UpdateShape()
 
 void Button::ProcessInput(const sf::Event& event)
 {
-	if (event.type == sf::Event::MouseButtonPressed)
+	const sf::Vector2f globalPosition = GetGlobalPosition();
+	const sf::Vector2f size = GetSize();
+	sf::FloatRect rect(globalPosition.x, globalPosition.y, size.x, size.y);
+
+	if (event.type == sf::Event::MouseButtonPressed) 
 	{
-		const sf::Vector2f globalPosition = GetGlobalPosition();
-		const sf::Vector2f size = GetSize();
-
-		sf::FloatRect rect;
-		rect.left = globalPosition.x;
-		rect.top = globalPosition.y;
-		rect.width = size.x;
-		rect.height = size.y;
-
-		if (rect.contains(event.mouseButton.x, event.mouseButton.y))
+		if (rect.contains((float)event.mouseButton.x, (float)event.mouseButton.y)) 
 		{
-			OnClick();
+			m_pressedInside = true;
 		}
 	}
-	else if(event.type == sf::Event::MouseMoved)
+	else if (event.type == sf::Event::MouseButtonReleased) 
 	{
-		const sf::Vector2f globalPosition = GetGlobalPosition();
-		const sf::Vector2f size = GetSize();
-
-		sf::FloatRect rect;
-		rect.left = globalPosition.x;
-		rect.top = globalPosition.y;
-		rect.width = size.x;
-		rect.height = size.y;
-
+		const bool insideNow = rect.contains((float)event.mouseButton.x, (float)event.mouseButton.y);
+		if (m_pressedInside && insideNow) 
+		{
+			OnClick(*this);
+		}
+		m_pressedInside = false;
+	}
+	else if (event.type == sf::Event::MouseMoved) 
+	{
+		// hover como ya tenías
 		unsigned int oldState = m_state;
 		m_state = None;
+		const sf::Vector2f mousePosition((float)event.mouseMove.x, (float)event.mouseMove.y);
+		if (rect.contains(mousePosition)) m_state = Hovered;
 
-		const sf::Vector2f mousePosition(event.mouseMove.x, event.mouseMove.y);
-		if (rect.contains(mousePosition))
-		{
-			m_state = Hovered;
-		}
-		if ((oldState & State::Hovered) && !(m_state & State::Hovered))
-		{
-			OnMouseLeave();
-		}
-		else if (!(oldState & State::Hovered) && (m_state & State::Hovered))
-		{
-			OnMouseEnter();
-		}
+		if ((oldState & State::Hovered) && !(m_state & State::Hovered)) OnMouseLeave();
+		else if (!(oldState & State::Hovered) && (m_state & State::Hovered)) OnMouseEnter();
 	}
-	
 
 }

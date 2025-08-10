@@ -32,10 +32,6 @@ sf::Vector2f HorizontalLayout::GetSize() const
 
 void HorizontalLayout::Draw(sf::RenderWindow& window)
 {
-	for (const auto child : m_children)
-	{
-		child->Draw(window);
-	}
 }
 
 void HorizontalLayout::UpdateShape()

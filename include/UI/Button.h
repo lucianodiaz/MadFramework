@@ -6,7 +6,7 @@ class Button : public Widget
 {
 public:
 
-	using FunctionType = std::function<void()>;
+	using FunctionType = std::function<void(Button& self)>;
 
 	static FunctionType DefaultOnClickFunction;
 
@@ -44,7 +44,7 @@ private:
 
 	unsigned int m_state = None; // Current state of the button
 
-
+	bool m_pressedInside = false;
 	bool m_imageSetted = false; // Flag to check if the image is set
 
 	float m_margin = 10.0f;

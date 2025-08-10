@@ -75,6 +75,8 @@ public:
 
 	const bool IsShowFPS() const { return m_showFPS; }
 
+	void QuitGame();
+
 	TilemapManager& TilemapManager();
 
 	const std::string& AssetsPath() { return m_defaultAssetsPath; }
@@ -146,6 +148,8 @@ protected:
 	const std::string m_internalAssetPath = "mad/internalAssets/";
 	const std::string m_defaultAssetsPath = "assets/";
 	void LoadInternalAssets();
+
+	bool m_quit=false;
 };
 
 

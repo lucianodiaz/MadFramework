@@ -83,7 +83,7 @@ private:
 		m_image->SetImage(World::GetWorld()->GetTexture("player"));
 
 
-		for (int i=0; i<4;i++)
+		for (int i=0; i<10;i++)
 		{
 			m_images.emplace_back(CreateWidget<Image>());
 			m_images.back()->SetImage(World::GetWorld()->GetTexture("player"));
@@ -104,7 +104,7 @@ private:
 
 
 
-		m_button->OnClick = [this]()
+		m_button->OnClick = [this](Button& button)
 			{
 
 				World::GetWorld()->GetSoundManager().PlaySound("click_sound");
@@ -113,8 +113,9 @@ private:
 				//Signal::GetInstance().Dispatch("ShakeCamera");
 				//fullScreen = !fullScreen;
 				//World::GetWorld()->GetWindow().SetFullScreen(fullScreen);
-				auto newResolution = MAD::MathUtils::PickRandomIndexed(m_resolutions);
-				World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
+				//auto newResolution = MAD::MathUtils::PickRandomIndexed(m_resolutions);
+				//World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
+				World::GetWorld()->ShowFPS(true);
 			};
 	}
 
@@ -398,11 +399,64 @@ public:
 		m_playButton->AddChild(m_textPlay);
 		m_exitButton->AddChild(m_textExit);
 
+		SetConfirmationContainer();
 
-		m_playButton->OnClick = [this]()
+		m_playButton->OnClick = [this](Button& button)
 			{
 				Signal::GetInstance().Dispatch("EnterGame");
 			};
+
+		m_exitButton->OnClick = [this](Button& button)
+			{
+				//Por Alguna razon la segunda vez que presiono este button
+				//se esta llamando este m_yesButton->OnClick 
+				m_vLayout->Hide();
+				m_containerConfirmation->Show();
+			};
+	}
+
+	void SetConfirmationContainer()
+	{
+		m_containerConfirmation = CreateWidget<VerticalLayout>();
+		m_panel->AddChild(m_containerConfirmation);
+		m_containerConfirmation->SetAnchor(Anchor::Center);
+
+		m_confirmationText = CreateWidget<Label>("WANT TO QUIT?");
+		m_containerConfirmation->AddChild(m_confirmationText);
+
+		m_containerButtons = CreateWidget<HorizontalLayout>();
+
+		m_yesButton = CreateWidget<Button>();
+		m_noButton = CreateWidget<Button>();
+		m_yesButton->SetButtonSize({ 300.0f,100.0f });
+		m_noButton->SetButtonSize({ 300.0f,100.0f });
+		m_yesText = CreateWidget<Label>("YES");
+		m_noText = CreateWidget<Label>("NO");
+
+		m_yesButton->AddChild(m_yesText);
+		m_noButton->AddChild(m_noText);
+
+		m_containerButtons->AddChild(m_yesButton);
+		m_containerButtons->AddChild(m_noButton);
+
+		m_containerButtons->SetSpacing(30.0f);
+
+		m_containerConfirmation->AddChild(m_containerButtons);
+
+		m_containerConfirmation->Hide();
+
+		m_containerConfirmation->SetSpacing(30.0f);
+		m_yesButton->OnClick = [this](Button& button)
+			{
+				World::GetWorld()->QuitGame();
+			};
+
+		m_noButton->OnClick = [this](Button& button)
+			{
+				m_vLayout->Show();
+				m_containerConfirmation->Hide();
+			};
+
 	}
 
 	void Update(float deltaTime) override
@@ -413,12 +467,22 @@ public:
 private:
 
 
-	std::shared_ptr<CanvasPanel> m_panel;
-	std::shared_ptr<VerticalLayout> m_vLayout;
-	std::shared_ptr <Button> m_playButton;
-	std::shared_ptr <Button> m_exitButton;
-	std::shared_ptr <Label> m_textPlay;
-	std::shared_ptr <Label> m_textExit;
+	std::shared_ptr<CanvasPanel> m_panel = nullptr;
+	std::shared_ptr<VerticalLayout> m_vLayout = nullptr;
+	std::shared_ptr <Button> m_playButton = nullptr;
+	std::shared_ptr <Button> m_exitButton = nullptr;
+	std::shared_ptr <Label> m_textPlay = nullptr;
+	std::shared_ptr <Label> m_textExit = nullptr;
+
+	//Other Buttons
+
+	std::shared_ptr<VerticalLayout> m_containerConfirmation = nullptr;
+	std::shared_ptr<HorizontalLayout> m_containerButtons = nullptr;
+	std::shared_ptr <Button> m_yesButton = nullptr;
+	std::shared_ptr <Button> m_noButton = nullptr;
+	std::shared_ptr <Label> m_confirmationText = nullptr;
+	std::shared_ptr <Label> m_yesText = nullptr;
+	std::shared_ptr <Label> m_noText = nullptr;
 };
 
 
