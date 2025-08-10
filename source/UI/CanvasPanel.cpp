@@ -12,6 +12,11 @@ CanvasPanel::CanvasPanel()
 		}));
 }
 
+CanvasPanel::~CanvasPanel()
+{
+}
+
+
 sf::Vector2f CanvasPanel::GetSize() const
 {
 	auto size = World::GetWorld()->GetWindow().GetRenderWindow().getSize();
@@ -20,10 +25,10 @@ sf::Vector2f CanvasPanel::GetSize() const
 
 void CanvasPanel::Draw(sf::RenderWindow& window)
 {
-	for (const auto child : m_children)
+	/*for (const auto child : m_children)
 	{
 		child->Draw(window);
-	}
+	}*/
 }
 
 void CanvasPanel::UpdateShape()
@@ -83,11 +88,11 @@ void CanvasPanel::UpdateShape()
 			child->SetLayoutPosition(anchorBase + child->GetOffsetFromAnchor());
 			child->UpdateShape();
 		}
-		else
-		{
-			child->SetLayoutPosition( child->GetOffsetFromAnchor());
-			child->UpdateShape();
-		}
+		//else
+		//{
+		//	child->SetLayoutPosition( child->GetOffsetFromAnchor());
+		//	//child->UpdateShape();
+		//}
 
 		
 		

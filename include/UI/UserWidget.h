@@ -9,7 +9,7 @@ class UserWidget
 {
 public:
 	UserWidget();
-	virtual ~UserWidget() = default;
+	virtual ~UserWidget();
 
 	virtual void OnConstruct() {};
 	virtual void Update(float deltaTime) = 0;
@@ -44,21 +44,23 @@ private:
 	void ProcessInput(const sf::Event& event);// Process input events for the main widget
 
 	std::shared_ptr<Widget> m_mainWidget; // Main widget that contains all other widgets only exist one main widget
+	std::vector<std::shared_ptr<Widget>> m_widgetsToDraw;
 };
 
 template<typename T, typename ...Args>
 inline std::shared_ptr<T>& UserWidget::CreateWidget(Args && ...args)
 {
 	auto widget = std::make_shared<T>(std::forward<Args>(args)...);
-
-	if(m_mainWidget)
+	
+	if (m_mainWidget)
 	{
-		m_mainWidget->AddChild(widget);
+		m_widgetsToDraw.push_back(widget);
 	}
 	else
 	{
 		m_mainWidget = widget;
-		//throw std::runtime_error("Main widget is not set. Please set a main widget before adding child widgets.");
+		//m_widgetsToDraw.emplace_back(widget);
+	
 	}
 
 	return widget;

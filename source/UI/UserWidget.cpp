@@ -5,6 +5,10 @@ UserWidget::UserWidget()
 {
 }
 
+UserWidget::~UserWidget()
+{
+}
+
 void UserWidget::SetMainWidget(std::shared_ptr<Widget> mainWidget)
 {
 	m_mainWidget = mainWidget;
@@ -28,7 +32,7 @@ void UserWidget::ProcessInput(const sf::Event& event)
 	{
 		m_mainWidget->ProcessInput(event);
 		
-		for (const auto& child : m_mainWidget->m_children)
+		for (const auto& child : m_widgetsToDraw)
 		{
 			if (child->IsVisible())
 			{
@@ -44,11 +48,11 @@ void UserWidget::Draw(sf::RenderWindow& window)
 	{
 		m_mainWidget->Draw(window);
 		
-		for (const auto& child : m_mainWidget->m_children)
+		for (const auto& widget : m_widgetsToDraw)
 		{
-			if (child->IsVisible())
+			if (widget->IsVisible())
 			{
-				child->Draw(window);
+				widget->Draw(window);
 			}
 		}
 	}

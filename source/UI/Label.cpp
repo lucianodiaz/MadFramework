@@ -62,6 +62,7 @@ sf::Vector2f Label::GetSize() const
 
 void Label::Draw(sf::RenderWindow& window)
 {
+	if (m_parent && !m_parent->IsVisible()) return;
 	if (!m_visible)
 		return;
 	sf::RenderStates states;

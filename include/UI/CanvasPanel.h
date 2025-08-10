@@ -5,7 +5,7 @@ class CanvasPanel : public Panel
 {
 public:
 	CanvasPanel();
-	virtual ~CanvasPanel() = default;
+	virtual ~CanvasPanel();
 	virtual sf::Vector2f GetSize() const override;
 	
 protected:

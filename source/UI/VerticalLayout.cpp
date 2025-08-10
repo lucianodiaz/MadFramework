@@ -31,29 +31,33 @@ sf::Vector2f VerticalLayout::GetSize() const
 
 void VerticalLayout::Draw(sf::RenderWindow& window)
 {
-	for (const auto child : m_children)
+	/*for (const auto child : m_children)
 	{
 		child->Draw(window);
-	}
+	}*/
 }
 
 void VerticalLayout::UpdateShape()
 {
-	if (m_children.empty()) return;
 
-	float maxWidth = 0.0f;
-	for (const auto& child : m_children)
-		maxWidth = std::max(maxWidth, child->GetSize().x);
 
-	const float pad = m_spacing;
+	float max_x = 0.0f;
 
-	float y = pad; // padding superior
 	for (const auto& child : m_children)
 	{
-		const sf::Vector2f size = child->GetSize();
-		const float x = pad + (maxWidth - size.x) * 0.5f; // centrado horizontal
-		child->SetLayoutPosition({ x, y });
-		child->UpdateShape();
-		y += size.y + m_spacing; // spacing entre filas
+		sf::Vector2f size = child->GetSize();
+
+		if (size.x > max_x)
+		{
+			max_x = size.x + m_spacing;
+		}
+	}
+
+	float y = m_spacing;
+	for (const auto& child : m_children)
+	{
+		sf::Vector2f size = child->GetSize();
+		child->SetLayoutPosition({ ((max_x - size.x) / 2.0f) + m_spacing, y });
+		y += size.y + m_spacing;
 	}
 }

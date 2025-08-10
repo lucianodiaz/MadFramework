@@ -25,7 +25,8 @@ void Widget::SetPosition(sf::Vector2f position)
 
 void Widget::SetParent(std::shared_ptr<Widget> parent)
 {
-	m_parent = parent;
+	if(parent)m_parent = parent;
+	
 }
 
 void Widget::AddChild(std::shared_ptr<Widget> child)

@@ -62,10 +62,13 @@ private:
 
 		m_canvas = CreateWidget<CanvasPanel>();
 
+		m_canvas->AddChild(m_verticalLayout);
+
 		m_verticalLayout = CreateWidget<VerticalLayout>();
 
 		m_horizontalLayout = CreateWidget<HorizontalLayout>();
 
+		m_canvas->AddChild(m_horizontalLayout);
 
 		m_verticalLayout->SetAnchor(Anchor::TopLeft);
 
@@ -89,13 +92,13 @@ private:
 		
 		
 		m_verticalLayout->AddChild(m_healthLabel);
-		//m_verticalLayout->AddChild(m_horizontalLayout);
+		m_verticalLayout->AddChild(m_horizontalLayout);
 		m_verticalLayout->AddChild(m_button);
 		m_verticalLayout->AddChild(m_image);
 	
 
 
-		m_horizontalLayout->SetAnchor(Anchor::TopCenter);
+		//m_horizontalLayout->SetAnchor(Anchor::TopCenter);
 		//m_horizontalLayout->SetSpacing(10.0f);
 		m_verticalLayout->SetSpacing(20.0f);
 
@@ -374,29 +377,26 @@ public:
 		m_panel = CreateWidget<CanvasPanel>();
 
 		m_vLayout = CreateWidget<VerticalLayout>();
-
+		AddChildWidget(m_vLayout);
 		m_vLayout->SetAnchor(Anchor::Center);
-		m_vLayout->SetSpacing(100.0f);
+		m_vLayout->SetSpacing(30.0f);
 
 		m_playButton = CreateWidget<Button>();
-		
-
 		m_playButton->SetButtonSize(sf::Vector2f(300, 100));
-		
+		m_exitButton = CreateWidget<Button>();
+		m_exitButton->SetButtonSize(sf::Vector2f(300, 100));
 
 		m_vLayout->AddChild(m_playButton);
-		//m_vLayout->AddChild(m_exitButton);
+
+		m_vLayout->AddChild(m_exitButton);
 
 		m_textPlay = CreateWidget<Label>("PLAY");
 		
-		//m_textExit = CreateWidget<Label>("EXIT");
+		m_textExit = CreateWidget<Label>("EXIT");
 		m_textPlay->SetFillColor(sf::Color::Black);
-		//m_textExit->SetFillColor(sf::Color::Black);
+		m_textExit->SetFillColor(sf::Color::Black);
 		m_playButton->AddChild(m_textPlay);
-		//m_exitButton->AddChild(m_textExit);
-
-		//m_vLayout->SetPosition(-100.0f, -200.0f);
-		m_exitButton = CreateWidget<Button>();
+		m_exitButton->AddChild(m_textExit);
 
 
 		m_playButton->OnClick = [this]()
