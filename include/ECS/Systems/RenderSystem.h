@@ -16,5 +16,5 @@ protected:
 
 	void UpdateEntities(float deltaTime)override;
 	std::unique_ptr<ECSManager>& m_ecs;
-	sf::Text fpsText;
+
 };

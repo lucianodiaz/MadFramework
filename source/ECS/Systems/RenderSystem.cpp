@@ -9,19 +9,12 @@
 
 RenderSystem::RenderSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
 {
-	
-		Signal::GetInstance().AddListener
-		(
-			"onFPSUpdate",
-			static_cast<std::function<void(int)>>([this](int fps)
-				{
-					fpsText.setString("FPS: " +  std::to_string(fps));
-				})
-		);
+
 }
 
 void RenderSystem::Render(sf::RenderWindow& window)
 {
+	
 	auto entities = m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteComponent>();
 
 	for (auto& entity : entities)
@@ -94,23 +87,6 @@ void RenderSystem::Render(sf::RenderWindow& window)
 		}
 	}
 
-
-	
-	if (World::GetWorld()->IsShowFPS())
-	{
-		fpsText.setFont(World::GetWorld()->GetFont("defaultFont"));
-		fpsText.setCharacterSize(24);
-		fpsText.setFillColor(sf::Color::White);
-
-		for (auto entity : m_ecs->GetEntitiesWithComponent<CameraViewComponent>())
-		{
-			auto camera = m_ecs->GetComponent<CameraViewComponent>(entity);
-			sf::Vector2f center = camera.cameraView.getCenter();
-			sf::Vector2f size = camera.cameraView.getSize();
-			fpsText.setPosition((center.x + size.x / 2.f) - (fpsText.getGlobalBounds().width *1.2), (center.y - size.y / 2.f) - (fpsText.getGlobalBounds().height/2)+10.f);
-		}
-		window.draw(fpsText);
-	}
 
 }
 
