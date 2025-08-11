@@ -77,6 +77,8 @@ public:
 
 	void QuitGame();
 
+	void DisableEngineSplashScreen();
+
 	TilemapManager& TilemapManager();
 
 	const std::string& AssetsPath() { return m_defaultAssetsPath; }
@@ -114,6 +116,7 @@ protected:
 	bool m_wasRun = false;
 
 	bool m_showFPS = false;
+	bool m_engineStartsWithSplash = true;
 
 	std::vector<std::unique_ptr<Actor>> m_actors;
 	static std::shared_ptr <World> _world;

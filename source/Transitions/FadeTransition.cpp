@@ -1,49 +1,77 @@
 #include <Transitions/FadeTransition.h>
-#include <Core/World.h>
+#include <iostream>
 
-FadeTransition::FadeTransition(Fade fade, float duration) : m_fade(fade), m_duration(duration), m_elapsed(0.0f)
+
+FadeTransition::FadeTransition(FadeType type, float duration, sf::Color color)
+    : m_type(type), m_duration(duration), m_color(color), m_currentTime(0.0f), m_finished(false)
 {
-	m_isFinished = false;
 }
 
 void FadeTransition::OnStart()
 {
-	std::cout << "On Start FadeTransition " << (m_fade == Fade::In ? "In" : "Out") << std::endl;
+    m_currentTime = 0.0f;
+    m_finished = false;
 
-	m_overlay.setSize(sf::Vector2f(World::GetWorld()->GetWindow().GetRenderWindow().getSize()));
+    // Set up overlay to cover entire screen
+    // Note: This should be set based on window size, not hardcoded
+    auto windowSize = sf::Vector2u(1920, 1080); // You should get this from World/Window
+    m_overlay.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
+    m_overlay.setPosition(0, 0);
 
-	m_overlay.setFillColor(sf::Color(0, 0, 0, (m_fade== Fade::In) ? 255 : 0));
+    // Set initial alpha based on fade type
+    sf::Uint8 initialAlpha = (m_type == FadeOut) ? 0 : 255;
+    m_color.a = initialAlpha;
+    m_overlay.setFillColor(m_color);
+
+    std::cout << "[FadeTransition] Started " << (m_type == FadeOut ? "FadeOut" : "FadeIn")
+        << " transition for " << m_duration << " seconds" << std::endl;
 }
 
 void FadeTransition::Update(float deltaTime)
 {
-	m_elapsed += deltaTime;
+    if (m_finished) return;
 
-	float progress = std::min(m_elapsed / m_duration, 1.0f);
+    m_currentTime += deltaTime;
 
-	m_alpha = (m_fade == Fade::In) ? (1.0f - progress) * 255 : progress * 255;
+    // Calculate alpha based on progress and fade type
+    float progress = std::min(m_currentTime / m_duration, 1.0f);
 
-	if (progress >= 1.0f && !m_isFinished)
-	{
-		m_isFinished = true;
-	}
+    sf::Uint8 alpha;
+    if (m_type == FadeOut) {
+        // Fade out: go from 0 (transparent) to 255 (opaque)
+        alpha = static_cast<sf::Uint8>(progress * 255);
+    }
+    else {
+        // Fade in: go from 255 (opaque) to 0 (transparent)
+        alpha = static_cast<sf::Uint8>((1.0f - progress) * 255);
+    }
+
+    m_color.a = alpha;
+    m_overlay.setFillColor(m_color);
+
+    // Check if finished
+    if (progress >= 1.0f) {
+        m_finished = true;
+        std::cout << "[FadeTransition] Finished " << (m_type == FadeOut ? "FadeOut" : "FadeIn") << std::endl;
+    }
 }
 
 void FadeTransition::Draw(sf::RenderWindow& window)
 {
-	m_overlay.setFillColor(sf::Color(0, 0, 0, static_cast<sf::Uint8>(m_alpha)));
-	window.draw(m_overlay);
+    // Update overlay size to match current window size
+    auto windowSize = window.getSize();
+    m_overlay.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
+
+    window.draw(m_overlay);
 }
 
 bool FadeTransition::IsFinished() const
 {
-	return m_isFinished;
+    return m_finished;
 }
 
 void FadeTransition::OnEnd()
 {
-	std::cout << "On End FadeTransition "<< (m_fade == Fade::In ? "In" : "Out") << std::endl;
-	m_isFinished = false;
-	//m_overlay.setFillColor(sf::Color::Black);
-	
+    std::cout << "[FadeTransition] OnEnd called" << std::endl;
+    m_finished = true;
 }

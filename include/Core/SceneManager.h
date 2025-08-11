@@ -38,6 +38,15 @@ public:
 	void StartWithInternalSplash(std::unique_ptr<ISceneTransition> outT,
 		std::unique_ptr<ISceneTransition> inT);
 
+	// Check if there's a transition waiting for the current scene to be ready
+	bool IsTransitionPending() const { return !m_pendingScene.empty(); }
+
+	// Get the name of the scene we're trying to transition to
+	const std::string& GetPendingSceneName() const { return m_pendingScene; }
+
+	void DisableEngineSplashScreen();
+
+	void CancelPendingTransition();
 protected:
 	friend class World;
 
@@ -47,6 +56,9 @@ protected:
 private:
 
 	enum class TransitionPhase { Idle, Out, Switch, In };
+
+	// Check current transition phase
+	TransitionPhase GetTransitionPhase() const { return m_phase; }
 
 	// Helpers
 	void startOutPhaseIfNeeded();
@@ -85,12 +97,25 @@ private:
 
 private:
 	void debugTransitionState();
+	void switchToNewScene();
+	void finishTransition();
+	bool isTransitionFullyCovering(ISceneTransition* transition);
+	void drawTransitions(sf::RenderWindow& window);
+	void drawUI(sf::RenderWindow& window);
+	void handleFirstUserSceneRequest(const std::string& sceneName,
+		std::unique_ptr<ISceneTransition> outT,
+		std::unique_ptr<ISceneTransition> inT);
+	void startEngineWithInternalSplash();
+	void createInternalSplashScene();
 	const std::string kSplashName = "mad_splash_screen_01";
 	bool m_bootWithSplash = false;      // estamos en modo “boot con splash”
 	bool m_splashActive = false;      // splash es la escena actual
 	// Pedido del usuario que se aplicará al terminar el splash:
 	std::string m_afterSplashScene;
 	std::unique_ptr<ISceneTransition> m_afterOut, m_afterIn;
+	bool m_engineStartsWithSplash = true;
+	bool m_firstUserSceneRequest = true;
+	bool m_splashSceneCreated = false;
 };
 
 template<typename T>

@@ -1,29 +1,26 @@
 #pragma once
 #include <Core/ISceneTransition.h>
 
-enum class Fade
-{
-	Out,
-	In
-};
 class FadeTransition : public ISceneTransition
 {
 public:
+    enum FadeType {
+        FadeOut,  // Fade from transparent to opaque (covers scene)
+        FadeIn    // Fade from opaque to transparent (reveals scene)
+    };
 
+    FadeTransition(FadeType type, float duration, sf::Color color = sf::Color::Black);
 
-
-	FadeTransition(Fade fade,float duration);
-
-	void OnStart() override;
-	void Update(float deltaTime) override;
-	void Draw(sf::RenderWindow& window) override;
-	bool IsFinished() const override;
-	void OnEnd() override;
+    void OnStart() override;
+    void Update(float deltaTime) override;
+    void Draw(sf::RenderWindow& window) override;
+    bool IsFinished() const override;
+    void OnEnd() override;
 
 private:
-	bool m_isFinished;
-	float m_alpha{};
-	Fade m_fade;
-	float m_duration;
-	float m_elapsed;
+    FadeType m_type;
+    float m_duration;
+    float m_currentTime;
+    sf::Color m_color;
+    bool m_finished;
 };

@@ -512,7 +512,7 @@ public:
 
 	void EnterTheGame()
 	{
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1" , std::make_unique<FadeTransition>(Fade::Out, 5.0f), std::make_unique<FadeTransition>(Fade::In, 1.0f));
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1" , std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 1.0f));
 	}
 	void OnSceneExit() override {};
 
@@ -543,7 +543,7 @@ public :
 
 		World::GetWorld()->GetTimerManager().CreateTimer(10.0f, [this]()
 			{
-				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(Fade::In, 3.0f), nullptr);
+				World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 1.0f));
 			}
 		, false);
 	}
@@ -622,11 +622,12 @@ class Game
 public:
     Game()
     {
+		//World::GetWorld()->GetSceneManager().DisableEngineSplashScreen();
 		//World::GetWorld()->SetFPS(120);
 		World::GetWorld()->GetSceneManager().AddScene("MainMenu", std::make_unique<MainMenuScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu",std::make_unique<FadeTransition>(Fade::Out,1.0f), std::make_unique<FadeTransition>(Fade::In, 1.0f));
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu", std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 1.0f));
     }
 };
 
