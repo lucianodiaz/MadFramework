@@ -40,7 +40,7 @@ public:
 	Window& GetWindow() const { return *_window; }
 
 
-	static std::shared_ptr <World> GetWorld() 
+	static std::shared_ptr <World> GetWorld()
 	{
 		if (_world == nullptr)
 		{
@@ -50,7 +50,7 @@ public:
 		return _world;
 	}
 
-	inline void StartGame() { if(!m_wasRun)Run(); }
+	inline void StartGame() { if (!m_wasRun)Run(m_fps); }
 
 	sf::Texture& GetTexture(const std::string& id);
 	sf::Music& GetMusic(const std::string& id);
@@ -84,17 +84,15 @@ public:
 	SceneManager& GetSceneManager() { return m_sceneManager; }
 
 	SoundMananger& GetSoundManager() { return m_soundManager; }
-	
+
+	void SetFPS(unsigned int newFPS);
+
 protected:
 	World();
 
 	void Run(int frame_per_seconds = 30);
 
-	void CreateMainWindow(int width,int height, std::string name);
-
-	//void CreateECSManager();
-
-	//void RegisterDefaultSystems();
+	void CreateMainWindow(int width, int height, std::string name);
 
 	void ProcessInput();
 
@@ -111,8 +109,6 @@ protected:
 	std::shared_ptr<T> GetSystem();
 
 	std::unique_ptr<Window> _window;
-
-	//std::unique_ptr<ECSManager> ecs;
 
 	bool m_isRunning;
 	bool m_wasRun = false;
@@ -144,12 +140,14 @@ protected:
 	friend class ISystem;
 	friend class GameRunner;
 
-	private:
+private:
 	const std::string m_internalAssetPath = "mad/internalAssets/";
 	const std::string m_defaultAssetsPath = "assets/";
 	void LoadInternalAssets();
 
-	bool m_quit=false;
+	bool m_quit = false;
+
+	unsigned int m_fps = 30;
 };
 
 

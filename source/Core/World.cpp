@@ -19,6 +19,7 @@
 
 std::shared_ptr<World> World::_world = nullptr;
 
+
 World::World() : m_isRunning(true)
 {
 	LoadInternalAssets();
@@ -33,16 +34,17 @@ World::World() : m_isRunning(true)
 
 	CreateMainWindow(1920, 1080, WindowName);
 
-	auto splashScene = std::make_unique<SplashScreenFramework>(2.5f);
-	m_sceneManager.AddScene("mad_splash_screen_01", std::move(splashScene));
-	
-
 	std::cout << "App is running!.." << std::endl;
 }
 
 World::~World()
 {
 	std::cout << "App is clossing" << std::endl;
+}
+
+void World::SetFPS(unsigned int newFPS)
+{
+	m_fps = newFPS;
 }
 
 
@@ -60,10 +62,15 @@ void World::Run(int frame_per_seconds)
 
 	Signal::GetInstance().Dispatch("onFPSUpdate", frame_per_seconds);
 
+	if (!m_sceneManager.HasScene("mad_splash_screen_01")) {
+		auto splashScene = std::make_unique<SplashScreenFramework>(2.5f);
+		m_sceneManager.AddScene("mad_splash_screen_01", std::move(splashScene));
+	}
 
-	//I guess I will call Splash screen Here for one reason
-	m_sceneManager.ChangeSceneWithTransition("mad_splash_screen_01", std::make_unique<FadeTransition>(Fade::In, 1.0f), std::make_unique<FadeTransition>(Fade::Out, 1.0f));
-
+	m_sceneManager.StartWithInternalSplash(
+		std::make_unique<FadeTransition>(Fade::Out, 1.0f),
+		std::make_unique<FadeTransition>(Fade::In, 1.0f)
+	);
 
 	while (_window->IsOpen() && !m_quit)
 	{
@@ -103,19 +110,13 @@ void World::CreateMainWindow(int width, int height, std::string name)
 void World::ProcessInput()
 {
 	sf::Event event;
-
 	while (_window->pollEvent(event)) {
-		if (event.type == sf::Event::Closed) {
-			_window->Close();
-		}
+		if (event.type == sf::Event::Closed) _window->Close();
+		if (event.type == sf::Event::Resized) Signal::GetInstance().Dispatch("OnResized");
 
-		if (event.type == sf::Event::Resized)
-		{
-			Signal::GetInstance().Dispatch("OnResized");
-		}
+		// pásalo aquí:
+		m_sceneManager.ProcessInput(event);
 	}
-
-	m_sceneManager.ProcessInput(event);
 
 	for (auto& actor : m_actors)
 	{
@@ -126,11 +127,11 @@ void World::ProcessInput()
 
 void World::Update(float deltaTime)
 {
-
 	m_sceneManager.Update(deltaTime);
 
-	m_sceneManager.GetECSManager()->Update(deltaTime); //update systems
-
+	if (m_sceneManager.GetCurrentScene()) {
+		m_sceneManager.GetECSManager()->Update(deltaTime);
+	}
 	for (auto& actor : m_actors)
 	{
 		actor->Update(deltaTime); //update entities

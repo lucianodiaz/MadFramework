@@ -431,7 +431,9 @@ public:
 		m_yesButton->SetButtonSize({ 300.0f,100.0f });
 		m_noButton->SetButtonSize({ 300.0f,100.0f });
 		m_yesText = CreateWidget<Label>("YES");
+		m_yesText->SetFillColor(sf::Color::Black);
 		m_noText = CreateWidget<Label>("NO");
+		m_noText->SetFillColor(sf::Color::Black);
 
 		m_yesButton->AddChild(m_yesText);
 		m_noButton->AddChild(m_noText);
@@ -620,10 +622,11 @@ class Game
 public:
     Game()
     {
+		//World::GetWorld()->SetFPS(120);
 		World::GetWorld()->GetSceneManager().AddScene("MainMenu", std::make_unique<MainMenuScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu",std::make_unique<FadeTransition>(Fade::In,1.0f), std::make_unique<FadeTransition>(Fade::Out, 3.0f));
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu",std::make_unique<FadeTransition>(Fade::Out,1.0f), std::make_unique<FadeTransition>(Fade::In, 1.0f));
     }
 };
 

@@ -9,13 +9,22 @@ class SceneManager
 {
 public:
 
-	SceneManager() {};
+	SceneManager();
 
 	void AddScene(const std::string& name, std::unique_ptr<IScene> scene);
 
+	
 	void ChangeScene(const std::string& sceneName);
 
-	void ChangeSceneWithTransition(const std::string& nextScene, std::unique_ptr<ISceneTransition> transitionIn, std::unique_ptr<ISceneTransition> transitionOut);
+    void ChangeSceneWithTransition(
+        const std::string& sceneName,
+        std::unique_ptr<ISceneTransition> outTransition,
+        std::unique_ptr<ISceneTransition> inTransition
+    );
+
+	IScene* GetCurrentScene() const { return m_currentScene; }
+	const std::string& GetCurrentSceneName() const { return m_currentSceneName; }
+	bool HasScene(const std::string& name) const { return m_scenes.find(name) != m_scenes.end(); }
 
 	void Update(float deltaTime);
 
@@ -25,6 +34,10 @@ public:
 
 	const std::unique_ptr<ECSManager>& GetECSManager();
 	TilemapManager& GetTilemapManager();
+
+	void StartWithInternalSplash(std::unique_ptr<ISceneTransition> outT,
+		std::unique_ptr<ISceneTransition> inT);
+
 protected:
 	friend class World;
 
@@ -32,6 +45,13 @@ protected:
 	void AddUserWidget(std::shared_ptr<T> userWidget);
 
 private:
+
+	enum class TransitionPhase { Idle, Out, Switch, In };
+
+	// Helpers
+	void startOutPhaseIfNeeded();
+	void switchScene();        // Hace OnSceneExit/OnSceneEnter y cambia punteros
+	void clearTransitions();   // Llama OnEnd() y resetea punteros apropiadamente
 
 	sf::View& GetLetterBoxView(sf::View);
 
@@ -50,11 +70,26 @@ private:
 	std::string m_currentSceneName;
 	std::string m_nextSceneName;
 	std::string m_splashSceneName;
+	std::string  m_pendingScene;
 
 	bool m_isTransitionRunning = false;
 	bool m_isTransitionOut = false;
 
 	bool m_isSplashScreen = false;
+
+	sf::Text fpsText;
+
+	TransitionPhase m_phase{ TransitionPhase::Idle };
+	std::unique_ptr<ISceneTransition> m_out;
+	std::unique_ptr<ISceneTransition> m_in;
+
+private:
+	const std::string kSplashName = "mad_splash_screen_01";
+	bool m_bootWithSplash = false;      // estamos en modo “boot con splash”
+	bool m_splashActive = false;      // splash es la escena actual
+	// Pedido del usuario que se aplicará al terminar el splash:
+	std::string m_afterSplashScene;
+	std::unique_ptr<ISceneTransition> m_afterOut, m_afterIn;
 };
 
 template<typename T>
