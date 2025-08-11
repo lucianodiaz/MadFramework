@@ -512,7 +512,7 @@ public:
 
 	void EnterTheGame()
 	{
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1", std::make_unique<FadeTransition>(Fade::In, 1.0f), nullptr);
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1" , std::make_unique<FadeTransition>(Fade::Out, 5.0f), std::make_unique<FadeTransition>(Fade::In, 1.0f));
 	}
 	void OnSceneExit() override {};
 

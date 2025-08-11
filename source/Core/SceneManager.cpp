@@ -38,24 +38,35 @@ SceneManager::SceneManager()
 			})
 	);
 }
+
 void SceneManager::StartWithInternalSplash(std::unique_ptr<ISceneTransition> outT,
 	std::unique_ptr<ISceneTransition> inT)
 {
 	m_bootWithSplash = true;
 
+	// If there's already a pending scene request and it's not the splash,
+	// save it for after splash completion
 	if (!m_pendingScene.empty() && m_pendingScene != kSplashName) {
 		m_afterSplashScene = std::move(m_pendingScene);
 		m_afterOut = std::move(m_out);
 		m_afterIn = std::move(m_in);
 	}
 
+	// Set up splash transition
 	m_pendingScene = kSplashName;
 	m_out = std::move(outT);
 	m_in = std::move(inT);
 
+	// Only start transition if we're truly idle
 	if (m_phase == TransitionPhase::Idle) {
+		// Ensure the splash scene exists
+		if (!HasScene(kSplashName)) {
+			std::cerr << "[SceneManager] Splash scene '" << kSplashName << "' not found!\n";
+			return;
+		}
 		startOutPhaseIfNeeded();
 	}
+	// If not idle, the transition will start when current transition completes
 }
 void SceneManager::AddScene(const std::string& name, std::unique_ptr<IScene> scene)
 {
@@ -147,17 +158,19 @@ void SceneManager::ProcessInput(sf::Event& event)
 }
 void SceneManager::Update(float deltaTime)
 {
-	// 1) Update current scene logic
-	if (m_currentScene) {
+	debugTransitionState();
+
+	// 1) Update current scene logic (only if not transitioning out)
+	if (m_currentScene && m_phase != TransitionPhase::Out) {
 		m_currentScene->Update(deltaTime);
 	}
 
-	// 2) FSM
+	// 2) FSM - Fixed logic
 	switch (m_phase) {
 	case TransitionPhase::Idle:
 	{
+		// Only start transition if we have a pending scene and we're truly idle
 		if (!m_pendingScene.empty()) {
-			// Do NOT switch directly here; let the FSM honor OUT if present
 			startOutPhaseIfNeeded();
 		}
 		break;
@@ -167,34 +180,44 @@ void SceneManager::Update(float deltaTime)
 	{
 		if (m_out) {
 			m_out->Update(deltaTime);
+			// Check if current scene allows transition AND out transition is finished
 			const bool canSwap = (m_currentScene ? m_currentScene->CanTransition() : true);
 			if (m_out->IsFinished() && canSwap) {
 				m_out->OnEnd();
 				m_out.reset();
-				m_phase = TransitionPhase::Switch;
+				// Move directly to switch phase
+				switchScene();
+
+				// After switching, start IN transition if available
+				if (m_in) {
+					m_in->OnStart();
+					m_phase = TransitionPhase::In;
+				}
+				else {
+					m_phase = TransitionPhase::Idle;
+				}
 			}
 		}
 		else {
-			m_phase = TransitionPhase::Switch;
+			// No OUT transition, go directly to switch
+			switchScene();
+			if (m_in) {
+				m_in->OnStart();
+				m_phase = TransitionPhase::In;
+			}
+			else {
+				m_phase = TransitionPhase::Idle;
+			}
 		}
 		break;
 	}
 
 	case TransitionPhase::Switch:
 	{
-		if (!m_pendingScene.empty()) {
-			// Mark splash when entering it (fix: flag must be set even when coming from OUT)
-			if (m_pendingScene == kSplashName) m_splashActive = true;
-			switchScene();
-		}
-
-		if (m_in) {
-			m_in->OnStart();
-			m_phase = TransitionPhase::In;
-		}
-		else {
-			m_phase = TransitionPhase::Idle;
-		}
+		// This phase should be very brief - just for immediate switching
+		// We should never stay here for more than one frame
+		std::cerr << "[SceneManager] Warning: Stuck in Switch phase!\n";
+		m_phase = TransitionPhase::Idle;
 		break;
 	}
 
@@ -206,17 +229,24 @@ void SceneManager::Update(float deltaTime)
 				m_in->OnEnd();
 				m_in.reset();
 
-				// If splash just finished IN, auto-launch user's first requested scene (if any)
+				// Special handling for splash screen completion
 				if (m_splashActive && m_currentSceneName == kSplashName) {
 					m_splashActive = false;
 
 					if (!m_afterSplashScene.empty()) {
+						// Queue the next scene transition
 						m_pendingScene = std::move(m_afterSplashScene);
 						m_out = std::move(m_afterOut);
 						m_in = std::move(m_afterIn);
+
+						// Clear the after-splash variables
+						m_afterSplashScene.clear();
+						m_afterOut.reset();
+						m_afterIn.reset();
+
+						// Start the queued transition
 						startOutPhaseIfNeeded();
-						// stay in FSM; do not jump to Idle here
-						return;
+						return; // Don't set to Idle, let the transition continue
 					}
 				}
 
@@ -224,6 +254,7 @@ void SceneManager::Update(float deltaTime)
 			}
 		}
 		else {
+			// No IN transition, go to idle
 			m_phase = TransitionPhase::Idle;
 		}
 		break;
@@ -259,20 +290,26 @@ sf::View& SceneManager::GetLetterBoxView(sf::View view)
 	view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
 	return view;
 }
+
 void SceneManager::Draw(sf::RenderWindow& window)
 {
-	if (m_currentScene)
+	// Only draw current scene if we're not transitioning out or if there's no out transition
+	if (m_currentScene && (m_phase != TransitionPhase::Out || !m_out))
 	{
 		m_currentScene->m_tilemapManager.Draw(window);
 		m_currentScene->ecs->Draw(window);
 		m_currentScene->Draw(window);
+
+		// Draw UI widgets with proper view
 		for (auto& userWidget : m_currentScene->m_userWidgets)
 		{
 			sf::View uiView;
-			uiView.setSize(window.getSize().x , window.getSize().y);
+			uiView.setSize(static_cast<float>(window.getSize().x),
+				static_cast<float>(window.getSize().y));
 			uiView.setCenter(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
 			window.setView(GetLetterBoxView(uiView));
 
+			// Draw FPS counter
 			if (World::GetWorld()->IsShowFPS())
 			{
 				fpsText.setFont(World::GetWorld()->GetFont("defaultFont"));
@@ -282,20 +319,37 @@ void SceneManager::Draw(sf::RenderWindow& window)
 				fpsText.setOutlineThickness(1.0f);
 				sf::Vector2f center = uiView.getCenter();
 				sf::Vector2f size = uiView.getSize();
-				fpsText.setPosition((center.x + size.x / 2.f) - (fpsText.getGlobalBounds().width * 1.2), (center.y - size.y / 2.f) - (fpsText.getGlobalBounds().height / 2) + 10.f);
+				fpsText.setPosition((center.x + size.x / 2.f) - (fpsText.getGlobalBounds().width * 1.2f),
+					(center.y - size.y / 2.f) - (fpsText.getGlobalBounds().height / 2.f) + 10.f);
 				window.draw(fpsText);
 			}
 
 			userWidget->Draw(window);
 		}
-
 	}
+
+	// Draw transitions on top of everything
+	// OUT transition should render on top of scene
 	if (m_phase == TransitionPhase::Out && m_out)
 	{
+		// Reset to default view for transitions
+		sf::View defaultView;
+		defaultView.setSize(static_cast<float>(window.getSize().x),
+			static_cast<float>(window.getSize().y));
+		defaultView.setCenter(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+		window.setView(defaultView);
+
 		m_out->Draw(window);
 	}
-	else if (m_phase == TransitionPhase::In && m_in) 
+	// IN transition should also render on top
+	else if (m_phase == TransitionPhase::In && m_in)
 	{
+		sf::View defaultView;
+		defaultView.setSize(static_cast<float>(window.getSize().x),
+			static_cast<float>(window.getSize().y));
+		defaultView.setCenter(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+		window.setView(defaultView);
+
 		m_in->Draw(window);
 	}
 }
@@ -316,18 +370,40 @@ void SceneManager::startOutPhaseIfNeeded()
 
 void SceneManager::switchScene()
 {
-	// Seguridad
-	if (m_pendingScene.empty() || !HasScene(m_pendingScene)) {
-		// Nada que hacer
+	// Safety check
+	if (m_pendingScene.empty()) {
+		std::cerr << "[SceneManager] switchScene called with empty pending scene\n";
+		return;
+	}
+
+	if (!HasScene(m_pendingScene)) {
+		std::cerr << "[SceneManager] Scene '" << m_pendingScene << "' not found\n";
 		m_pendingScene.clear();
 		return;
 	}
 
-	if (m_currentScene) m_currentScene->OnSceneExit();
+	// Exit current scene
+	if (m_currentScene) {
+		m_currentScene->OnSceneExit();
+		m_currentScene = nullptr; // Clear reference to ensure clean state
+	}
+
+	// Update current scene reference
 	m_currentScene = m_scenes[m_pendingScene].get();
 	m_currentSceneName = m_pendingScene;
-	m_currentScene->OnSceneEnter();
+
+	// Clear pending scene before calling OnSceneEnter to avoid recursion
 	m_pendingScene.clear();
+
+	// Enter new scene
+	if (m_currentScene) {
+		m_currentScene->OnSceneEnter();
+
+		// Special flag for splash screen
+		if (m_currentSceneName == kSplashName) {
+			m_splashActive = true;
+		}
+	}
 }
 
 void SceneManager::clearTransitions()
@@ -335,4 +411,24 @@ void SceneManager::clearTransitions()
 	if (m_out) { m_out->OnEnd(); m_out.reset(); }
 	if (m_in) { m_in->OnEnd();  m_in.reset(); }
 	m_phase = TransitionPhase::Idle;
+}
+
+void SceneManager::debugTransitionState() {
+	static TransitionPhase lastPhase = TransitionPhase::Idle;
+	static std::string lastScene = "";
+
+	if (m_phase != lastPhase || m_currentSceneName != lastScene) {
+		std::cout << "[SceneManager] Phase: ";
+		switch (m_phase) {
+		case TransitionPhase::Idle: std::cout << "Idle"; break;
+		case TransitionPhase::Out: std::cout << "Out"; break;
+		case TransitionPhase::Switch: std::cout << "Switch"; break;
+		case TransitionPhase::In: std::cout << "In"; break;
+		}
+		std::cout << ", Scene: " << m_currentSceneName
+			<< ", Pending: " << m_pendingScene << std::endl;
+
+		lastPhase = m_phase;
+		lastScene = m_currentSceneName;
+	}
 }

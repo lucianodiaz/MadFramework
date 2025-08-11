@@ -63,13 +63,13 @@ void World::Run(int frame_per_seconds)
 	Signal::GetInstance().Dispatch("onFPSUpdate", frame_per_seconds);
 
 	if (!m_sceneManager.HasScene("mad_splash_screen_01")) {
-		auto splashScene = std::make_unique<SplashScreenFramework>(2.5f);
+		auto splashScene = std::make_unique<SplashScreenFramework>(5.0f);
 		m_sceneManager.AddScene("mad_splash_screen_01", std::move(splashScene));
 	}
 
 	m_sceneManager.StartWithInternalSplash(
 		std::make_unique<FadeTransition>(Fade::Out, 1.0f),
-		std::make_unique<FadeTransition>(Fade::In, 1.0f)
+		std::make_unique<FadeTransition>(Fade::In, 3.0f)
 	);
 
 	while (_window->IsOpen() && !m_quit)

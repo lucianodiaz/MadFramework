@@ -84,6 +84,7 @@ private:
 	std::unique_ptr<ISceneTransition> m_in;
 
 private:
+	void debugTransitionState();
 	const std::string kSplashName = "mad_splash_screen_01";
 	bool m_bootWithSplash = false;      // estamos en modo “boot con splash”
 	bool m_splashActive = false;      // splash es la escena actual
