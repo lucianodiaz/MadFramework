@@ -245,6 +245,14 @@ void SceneManager::handleFirstUserSceneRequest(const std::string& sceneName,
 			m_afterIn = std::move(inT);
 			m_firstUserSceneRequest = false;
 
+			// Normal scene change logic (or fallback if splash failed)
+			m_pendingScene = sceneName;//
+			m_out = std::move(outT);
+			m_in = std::move(inT);
+
+			if (m_phase == TransitionPhase::Idle) {
+				startOutPhaseIfNeeded();
+			}
 			// Start the engine with splash screen
 			startEngineWithInternalSplash();
 			return;
@@ -256,10 +264,10 @@ void SceneManager::handleFirstUserSceneRequest(const std::string& sceneName,
 		}
 	}
 
-	// Normal scene change logic (or fallback if splash failed)
-	m_pendingScene = sceneName;
+	m_pendingScene = sceneName;//
 	m_out = std::move(outT);
 	m_in = std::move(inT);
+
 
 	if (m_phase == TransitionPhase::Idle) {
 		startOutPhaseIfNeeded();
