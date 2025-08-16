@@ -135,11 +135,7 @@ void Button::UpdateShape()
 	{
 	}
 
-	RequestLayout();
-	/*if (m_parent)
-	{
-		Widget::UpdateShape();
-	}*/
+	//RequestLayout();
 }
 
 void Button::ProcessInput(const sf::Event& event)

@@ -57,7 +57,24 @@ void VerticalLayout::UpdateShape()
 	for (const auto& child : m_children)
 	{
 		sf::Vector2f size = child->GetSize();
-		child->SetLayoutPosition({ ((max_x - size.x) / 2.0f) + m_spacing, y });
+		sf::Vector2f parentSize = GetSize();
+		//Ahora estamos centrando todo al medio, lo que queremos es que se ubiquen dependiendo de su alignment
+		//child->SetLayoutPosition({ ((max_x - size.x) / 2.0f) + m_spacing, y });
+
+		switch (child->GetHorizontalAlignment())
+		{
+
+		case HorizontalAlignment::Left:
+			child->SetLayoutPosition(sf::Vector2f(m_spacing, y));
+			break;
+		case HorizontalAlignment::Center:
+			child->SetLayoutPosition(sf::Vector2f((parentSize.x - size.x) / 2.0f, y));
+			break;
+		case HorizontalAlignment::Right:
+			child->SetLayoutPosition(sf::Vector2f((parentSize.x - size.x), y));
+			break;
+
+		}
 		y += size.y + m_spacing;
 	}
 }

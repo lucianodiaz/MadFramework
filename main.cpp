@@ -73,20 +73,20 @@ private:
 		m_verticalLayout->SetAnchor(Anchor::TopLeft);
 
 		m_button = CreateWidget<Button>();
-		m_button->SetFitToContent(true);
 		m_healthLabel = CreateWidget<Label>("Health: 100");
 		m_healthLabel->SetOutlineThickness(2.0f);
 		m_healthLabel->SetFillColor(sf::Color::Black);
 		m_healthLabel->SetOutlineColor(sf::Color::White);
-
+		m_healthLabel->SetHorizontalAlignment(HorizontalAlignment::Left);
 		m_image = CreateWidget<Image>();
 		m_image->SetImage(World::GetWorld()->GetTexture("player"));
 
 
-		for (int i=0; i<10;i++)
+		for (int i=0; i<5;i++)
 		{
 			m_images.emplace_back(CreateWidget<Image>());
 			m_images.back()->SetImage(World::GetWorld()->GetTexture("player"));
+			m_image->SetVerticalAlignment(VerticalAlignment::Bottom);
 			m_horizontalLayout->AddChild(m_images.back());
 		}
 		
@@ -96,10 +96,6 @@ private:
 		m_verticalLayout->AddChild(m_button);
 		m_verticalLayout->AddChild(m_image);
 	
-
-
-		//m_horizontalLayout->SetAnchor(Anchor::TopCenter);
-		//m_horizontalLayout->SetSpacing(10.0f);
 		m_verticalLayout->SetSpacing(20.0f);
 
 
@@ -108,13 +104,6 @@ private:
 			{
 
 				World::GetWorld()->GetSoundManager().PlaySound("click_sound");
-				//World::GetWorld()->GetSoundManager().PlayMusic("theme_music");
-
-				//Signal::GetInstance().Dispatch("ShakeCamera");
-				//fullScreen = !fullScreen;
-				//World::GetWorld()->GetWindow().SetFullScreen(fullScreen);
-				//auto newResolution = MAD::MathUtils::PickRandomIndexed(m_resolutions);
-				//World::GetWorld()->GetWindow().Resize(newResolution.x, newResolution.y);
 				World::GetWorld()->ShowFPS(true);
 			};
 	}
@@ -392,12 +381,14 @@ public:
 		m_vLayout->AddChild(m_exitButton);
 
 		m_textPlay = CreateWidget<Label>("PLAY");
-		
 		m_textExit = CreateWidget<Label>("EXIT");
 		m_textPlay->SetFillColor(sf::Color::Black);
 		m_textExit->SetFillColor(sf::Color::Black);
 		m_playButton->AddChild(m_textPlay);
 		m_exitButton->AddChild(m_textExit);
+
+		m_textPlay->SetVerticalAlignment(VerticalAlignment::Bottom);
+		m_textPlay->SetHorizontalAlignment(HorizontalAlignment::Left);
 
 		SetConfirmationContainer();
 
@@ -627,7 +618,7 @@ public:
 		World::GetWorld()->GetSceneManager().AddScene("MainMenu", std::make_unique<MainMenuScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu", std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 1.0f));
+		World::GetWorld()->GetSceneManager().ChangeScene("MainMenu");
     }
 };
 

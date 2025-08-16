@@ -11,6 +11,16 @@ enum class Anchor
 	StretchHorizontal, StretchVertical, Stretch
 };
 
+enum class VerticalAlignment
+{
+	Top, Center, Bottom
+};
+
+enum class HorizontalAlignment
+{
+	Left, Center, Right
+};
+
 class Widget : public std::enable_shared_from_this<Widget>
 {
 public:
@@ -28,7 +38,14 @@ public:
 
 	void SetAnchor(Anchor anchor);
 
+	void SetVerticalAlignment(VerticalAlignment verticalAlignment);
+
+	void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
+
 	Anchor GetAnchor() const { return m_anchor; }
+
+	HorizontalAlignment GetHorizontalAlignment() const { return m_hAlignment; }
+	VerticalAlignment GetVerticalAlignment() const { return m_vAlignment;  }
 
 	sf::Vector2f GetGlobalPosition()const;
 	sf::Vector2f& GetOffsetFromAnchor() { return m_offsetFromAnchor; }
@@ -63,6 +80,8 @@ protected:
 	bool m_fitToContent = false; // Flag to check if the widget should fit to its content
 
 	Anchor m_anchor = Anchor::TopLeft; // Default anchor position
+	VerticalAlignment m_vAlignment = VerticalAlignment::Center;
+	HorizontalAlignment m_hAlignment = HorizontalAlignment::Center;
 
 	Widget* m_root;
 	

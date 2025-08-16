@@ -35,6 +35,7 @@ void Widget::AddChild(std::shared_ptr<Widget> child)
 	{
 		m_children.push_back(child);
 		child->SetParent(shared_from_this());
+		child->UpdateShape();
 		RequestLayout();
 	}
 
@@ -43,6 +44,18 @@ void Widget::AddChild(std::shared_ptr<Widget> child)
 void Widget::SetAnchor(Anchor anchor)
 {
 	m_anchor = anchor;
+	RequestLayout();
+}
+
+void Widget::SetVerticalAlignment(VerticalAlignment verticalAlignment)
+{
+	m_vAlignment = verticalAlignment;
+	RequestLayout();
+}
+
+void Widget::SetHorizontalAlignment(HorizontalAlignment horizontalAlignment)
+{
+	m_hAlignment = horizontalAlignment;
 	RequestLayout();
 }
 
@@ -88,10 +101,44 @@ bool Widget::IsVisible() const
 
 void Widget::UpdateShape()
 {
-	/*if (m_parent)
+	if (m_parent)
 	{
-		m_parent->UpdateShape();
-	}*/
+		sf::Vector2f parentSize = m_parent->GetSize();
+		sf::Vector2f childSize = GetSize();
+		sf::Vector2f anchorBase;
+		float m_internalSpacing = 10.0f;
+		switch (m_vAlignment)
+		{
+		case VerticalAlignment::Top:
+			anchorBase = sf::Vector2f(0.0f, 0.0f);
+			break;
+		case VerticalAlignment::Center:
+			anchorBase = sf::Vector2f(0.0f, ((parentSize.y - childSize.y) - m_internalSpacing) / 2.0f);
+			break;
+		case VerticalAlignment::Bottom:
+			anchorBase = sf::Vector2f(0.0f, (parentSize.y - childSize.y) - m_internalSpacing);
+			break;
+		}
+
+		switch (m_hAlignment)
+		{
+		case HorizontalAlignment::Left:
+			anchorBase = anchorBase + sf::Vector2f(0.0f,0.0f);
+			break;
+		case HorizontalAlignment::Center:
+			anchorBase = anchorBase + sf::Vector2f((parentSize.x - childSize.x) / 2.0f, 0.0f);
+			break;
+		case HorizontalAlignment::Right:
+			anchorBase = anchorBase + sf::Vector2f((parentSize.x - childSize.x), 0.0f);
+			break;
+		}
+
+		SetLayoutPosition(anchorBase + m_computedPosition);
+	}
+
+
+
+	
 }
 
 void Widget::RequestLayout()
