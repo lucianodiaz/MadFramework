@@ -1,6 +1,6 @@
 #include "Gameplay/Actor.h"
-
-
+#include <Core/World.h>
+#include <ECS/ECSManager.h>
 
 Actor::Actor(float x, float y) : m_ecs(*World::GetWorld()->GetECSManager())
 {	
@@ -28,6 +28,16 @@ void Actor::Update(float deltaTime)
 
 void Actor::ProcessInput()
 {
+}
+
+void Actor::SetPosition(const sf::Vector2f& p)
+{
+    m_ecs.GetComponent<TransformComponent>(m_entity).setPosition(p);
+}
+
+void Actor::SetPosition(float x, float y)
+{
+    m_ecs.GetComponent<TransformComponent>(m_entity).setPosition(x,y);
 }
 
 sf::Vector2f& Actor::GetPosition()

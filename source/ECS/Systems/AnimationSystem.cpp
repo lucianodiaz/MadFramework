@@ -1,41 +1,34 @@
 #include <ECS/Systems/AnimationSystem.h>
+#include <ECS/ECSManager.h>
+
+AnimationSystem::AnimationSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs) 
+{
+}
 
 void AnimationSystem::UpdateEntities(float deltaTime)
 {
 
-	auto entites = m_ecs->GetEntitiesWithComponent<SpriteAnimationComponent>();
+    for (auto e : m_ecs->GetEntitiesWithComponent<SpriteAnimationComponent>())
+    {
+        for (auto* anim : m_ecs->GetComponents<SpriteAnimationComponent>(e))
+        {
+            if (anim->animations.empty()) continue;
+            auto& data = anim->animations[anim->currentAnimation];
+            if (!data.isPlaying || data.isPaused) continue;
 
-	for (auto& entity : entites)
-	{
-		auto& animation = m_ecs->GetComponent<SpriteAnimationComponent>(entity);
-
-		if (animation.animations.empty()) 			continue;
-
-		auto& data = animation.animations[animation.currentAnimation];
-
-		if (!data.isPlaying || data.isPaused) continue;
-
-		data.elapsedTime += deltaTime;
-
-		if (data.elapsedTime >= data.frameDuration)
-		{
-			data.elapsedTime = 0.0f; // Reset elapsed time
-			data.currentFrame++;
-
-			if (data.currentFrame >= data.totalFrames)
-			{
-				if (data.isLooping)
-				{
-					data.currentFrame = 0;
-				}
-				else
-				{
-					data.currentFrame = data.totalFrames - 1; // Stop at the last frame
-					data.isPlaying = false; // Stop the animation
-				}
-			}
-			data.frameRect.left = data.frameRect.width * data.currentFrame;
-			animation.sprite.setTextureRect(data.frameRect);
-		}
-	}
+            data.elapsedTime += deltaTime;
+            if (data.elapsedTime >= data.frameDuration)
+            {
+                data.elapsedTime = 0.0f;
+                data.currentFrame++;
+                if (data.currentFrame >= data.totalFrames)
+                {
+                    if (data.isLooping) data.currentFrame = 0;
+                    else { data.currentFrame = data.totalFrames - 1; data.isPlaying = false; }
+                }
+                data.frameRect.left = data.frameRect.width * data.currentFrame;
+                anim->sprite.setTextureRect(data.frameRect);
+            }
+        }
+    }
 }

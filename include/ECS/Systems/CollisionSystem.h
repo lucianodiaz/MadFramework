@@ -1,11 +1,13 @@
 #pragma once
 
-#include <Core/QuadTree.h>
 #include "ECS/System.h"
-#include "ECS/ECSManager.h"
+#include <Core/QuadTree.h>
 #include <ECS/Components/ColliderComponent.h>
 #include <ECS/Components/TransformComponent.h>
 #include <unordered_set>
+
+
+class ECSManager;
 
 struct PairHash {
 	std::size_t operator()(const std::pair<Entity, Entity>& p) const {

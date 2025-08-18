@@ -1,5 +1,6 @@
 #include <Core/QuadTree.h>
 #include <ECS/Components/TransformComponent.h>
+#include <ECS/ECSManager.h>
 
 QuadTree::QuadTree(int pLevel, sf::FloatRect pBounds, std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
 {

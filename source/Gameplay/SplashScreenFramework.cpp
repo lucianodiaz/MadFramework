@@ -1,6 +1,7 @@
 // Fixed SplashScreenFramework.cpp
 #include <Gameplay/SplashScreenFramework.h>
 #include <Core/World.h>
+#include <Window/Window.h>
 #include <iostream>
 
 SplashScreenFramework::SplashScreenFramework(float duration) : m_duration(duration)

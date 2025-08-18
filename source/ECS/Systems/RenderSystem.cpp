@@ -1,8 +1,9 @@
+#include <ECS/ECSManager.h>
 #include <ECS/Systems/RenderSystem.h>
-#include <ECS/Components/TransformComponent.h>
 #include <ECS/Components/ColliderComponent.h>
 #include <ECS/Components/SpriteAnimationComponent.h>
 #include <ECS/Components/CameraViewComponent.h>
+#include <ECS/Components/TransformComponent.h>
 
 
 
@@ -15,103 +16,75 @@ RenderSystem::RenderSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
 void RenderSystem::Render(sf::RenderWindow& window)
 {
 	
-	auto entities = m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteComponent>();
+    // Sprites
+    for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteComponent>())
+        for (auto* s : m_ecs->GetComponents<SpriteComponent>(e))
+            window.draw(s->sprite);
 
-	for (auto& entity : entities)
-	{
-		auto& sprite = m_ecs->GetComponent<SpriteComponent>(entity);
+    // Animations
+    for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteAnimationComponent>())
+        for (auto* a : m_ecs->GetComponents<SpriteAnimationComponent>(e))
+            if (!a->animations.empty()) window.draw(a->sprite);
 
-		window.draw(sprite.sprite);
-	}
+    // Debug colliders
+    for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, ColliderComponent>())
+    {
+        auto& tr = m_ecs->GetComponent<TransformComponent>(e);
+        for (auto* c : m_ecs->GetComponents<ColliderComponent>(e))
+        {
+            if (!c->debugDraw) continue;
+            auto realPosition = tr.position + c->offset;
 
-	auto entitiesAnimated = m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteAnimationComponent>();
-
-	for (auto& entity : entitiesAnimated)
-	{
-		auto& animation = m_ecs->GetComponent<SpriteAnimationComponent>(entity);
-		if (animation.animations.empty())
-			continue;
-		auto& animationData = animation.animations[animation.currentAnimation];
-		window.draw(animation.sprite);
-	}
-
-	//only for debug
-	auto entitiesDebug = m_ecs->GetEntitiesWithComponent<TransformComponent, ColliderComponent>();
-	for (auto& entity : entitiesDebug)
-	{
-		auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
-		auto& collider = m_ecs->GetComponent<ColliderComponent>(entity);
-
-		if (collider.debugDraw)
-		{
-			auto realPosition = transform.position + collider.offset;
-
-			if (collider.shape == ColliderShape::BOX)
-			{
-				sf::RectangleShape rect;
-				rect.setSize(sf::Vector2f(collider.box.width, collider.box.height));
-				rect.setOrigin(collider.box.width / 2.f, collider.box.height / 2.f); // otra opción
-				rect.setPosition(realPosition); // ya está centrado
-				rect.setFillColor(sf::Color::Color(collider.debugColor.r, collider.debugColor.g, collider.debugColor.b,60));
-				rect.setOutlineColor(collider.debugColor);
-				rect.setOutlineThickness(1.0f);
-
-				window.draw(rect);
-			}
-			else if (collider.shape == ColliderShape::CIRCLE)
-			{
-				sf::CircleShape circle;
-				circle.setRadius(collider.circle.radius);
-				circle.setOrigin(collider.circle.radius, collider.circle.radius); // centrado
-				circle.setPosition(realPosition);
-				circle.setFillColor(sf::Color::Transparent);
-				circle.setOutlineColor(collider.debugColor);
-				circle.setOutlineThickness(1.0f);
-
-				window.draw(circle);
-			}
-			else if (collider.shape == ColliderShape::POLYGON)
-			{
-				sf::ConvexShape polygon;
-				polygon.setPointCount(collider.polygon.points.size());
-				for (size_t i = 0; i < collider.polygon.points.size(); ++i)
-				{
-					polygon.setPoint(i, collider.polygon.points[i] + realPosition);
-				}
-				polygon.setFillColor(sf::Color::Transparent);
-				polygon.setOutlineColor(collider.debugColor);
-				polygon.setOutlineThickness(1.0f);
-
-				window.draw(polygon);
-			}
-		}
-	}
-
+            if (c->shape == ColliderShape::BOX) {
+                sf::RectangleShape rect;
+                rect.setSize({ c->box.width, c->box.height });
+                rect.setOrigin(c->box.width / 2.f, c->box.height / 2.f);
+                rect.setPosition(realPosition);
+                rect.setFillColor(sf::Color(c->debugColor.r, c->debugColor.g, c->debugColor.b, 60));
+                rect.setOutlineColor(c->debugColor);
+                rect.setOutlineThickness(1.f);
+                window.draw(rect);
+            }
+            else if (c->shape == ColliderShape::CIRCLE) {
+                sf::CircleShape circle;
+                circle.setRadius(c->circle.radius);
+                circle.setOrigin(c->circle.radius, c->circle.radius);
+                circle.setPosition(realPosition);
+                circle.setFillColor(sf::Color::Transparent);
+                circle.setOutlineColor(c->debugColor);
+                circle.setOutlineThickness(1.f);
+                window.draw(circle);
+            }
+            else if (c->shape == ColliderShape::POLYGON) {
+                sf::ConvexShape poly;
+                poly.setPointCount(c->polygon.points.size());
+                for (size_t i = 0; i < c->polygon.points.size(); ++i)
+                    poly.setPoint(i, c->polygon.points[i] + realPosition);
+                poly.setFillColor(sf::Color::Transparent);
+                poly.setOutlineColor(c->debugColor);
+                poly.setOutlineThickness(1.f);
+                window.draw(poly);
+            }
+        }
+    }
 
 }
 
 void RenderSystem::UpdateEntities(float deltaTime)
 {
-	auto entities = m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteComponent>();
-
-	for (auto& entity : entities)
+	// Sprites
+	for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteComponent>())
 	{
-		auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
-		auto& sprite = m_ecs->GetComponent<SpriteComponent>(entity);
-
-		sprite.sprite.setPosition(transform.position);
+		auto& tr = m_ecs->GetComponent<TransformComponent>(e);
+		for (auto* s : m_ecs->GetComponents<SpriteComponent>(e))
+			s->sprite.setPosition(tr.position);
 	}
 
-	auto entitiesAnimated = m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteAnimationComponent>();
-
-	for (auto& entity : entitiesAnimated)
+	// Animations
+	for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteAnimationComponent>())
 	{
-		auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
-		auto& animation = m_ecs->GetComponent<SpriteAnimationComponent>(entity);
-
-		if (animation.animations.empty())
-			continue;
-
-		animation.sprite.setPosition(transform.position);
+		auto& tr = m_ecs->GetComponent<TransformComponent>(e);
+		for (auto* a : m_ecs->GetComponents<SpriteAnimationComponent>(e))
+			a->sprite.setPosition(tr.position);
 	}
 }

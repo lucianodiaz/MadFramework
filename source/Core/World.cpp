@@ -1,21 +1,17 @@
 #include "Core/World.h"
 #include "ECS/ECSManager.h"
+#include <Window/Window.h>
+#include <windows.h>
+#include <inputPrivateUtil.h>
+#include <Core/Signal.h>
+#include <Gameplay/Actor.h>
+#include <Core/TilemapManager.h>
+#include <MathUtils.h>
 #include <iostream>
 #include <string>
 #include <memory>
-#include <ECS/Systems/MovementSystem.h>
-#include <ECS/Systems/RenderSystem.h>
-#include <windows.h>
-#include <ECS/Systems/CollisionSystem.h>
-#include <inputPrivateUtil.h>
-#include <ECS/Systems/AnimationSystem.h>
-#include <ECS/Systems/CameraSystem.h>
-#include <Core/Signal.h>
-#include <Gameplay/Actor.h>
-#include <Gameplay/SplashScreenFramework.h>
-#include <Transitions/FadeTransition.h>
-#include <Core/TilemapManager.h>
-#include <MathUtils.h>
+#include <Input/Action.h>
+
 
 std::shared_ptr<World> World::_world = nullptr;
 
@@ -24,8 +20,6 @@ World::World() : m_isRunning(true)
 {
 	LoadInternalAssets();
 	LoadResources();
-	//CreateECSManager();
-	/*RegisterDefaultSystems();*/
 	LoadInputs();
 
 	char path[MAX_PATH];
@@ -103,8 +97,6 @@ void World::ProcessInput()
 	while (_window->pollEvent(event)) {
 		if (event.type == sf::Event::Closed) _window->Close();
 		if (event.type == sf::Event::Resized) Signal::GetInstance().Dispatch("OnResized");
-
-		// pásalo aquí:
 		m_sceneManager.ProcessInput(event);
 	}
 
@@ -218,7 +210,6 @@ void World::DisableEngineSplashScreen()
 
 TilemapManager& World::TilemapManager()
 {
-	// TODO: Insertar una instrucción "return" aquí
 	return m_sceneManager.GetTilemapManager();
 }
 
@@ -262,8 +253,6 @@ void World::LoadInternalAssets()
 
 const std::unique_ptr<ECSManager>& World::GetECSManager()
 {
-	// TODO: Insertar una instrucción "return" aquí
-
 	return m_sceneManager.GetECSManager();
 
 }
@@ -287,7 +276,6 @@ Actor& World::GetActor(const Entity& entity)
 
 Actor& World::GetActorByTag(const std::string& tag)
 {
-	// TODO: Insertar una instrucción "return" aquí
 	auto it = std::find_if(m_actors.begin(), m_actors.end(),
 		[&tag](const std::unique_ptr<Actor>& actor) {
 			return actor->GetGameTag() == tag;
@@ -310,6 +298,11 @@ std::vector<Actor> World::GetActorsByTag(const std::string& tag)
 	}
 
 	return actorsWithTag;
+}
+
+Window& World::GetWindow() const
+{
+	return *_window;
 }
 
 sf::Texture& World::GetTexture(const std::string& id)

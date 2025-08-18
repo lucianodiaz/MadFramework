@@ -291,5 +291,14 @@
   <ItemGroup>
     <None Include="resources.json" />
     <None Include="inputs.json" />
+    <None Include="include\ECS\ECSManager.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\Gameplay\Actor.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\Core\World.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

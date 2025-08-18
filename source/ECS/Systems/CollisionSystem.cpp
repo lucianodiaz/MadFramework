@@ -2,7 +2,9 @@
 #include "InternalCollisionCheck.h"
 #include <Core/Signal.h>
 #include <Gameplay/Actor.h>
+#include <ECS/ECSManager.h>
 #include <Core/World.h>
+#include <Window/Window.h>
 
 CollisionSystem::CollisionSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
 {
@@ -36,112 +38,97 @@ void CollisionSystem::UpdateEntities(float deltaTime)
 
 	std::unordered_set<std::pair<Entity, Entity>, PairHash> checkedPairs;
 
-	for (auto& entityA : entities)
-	{
-		auto nearby = m_quadTree->Retrieve(entityA);
+    for (auto& entityA : entities)
+    {
+        auto nearby = m_quadTree->Retrieve(entityA);
 
-		for (Entity entityB : nearby)
-		{
-			if (entityA == entityB) continue;
+        for (Entity entityB : nearby)
+        {
+            if (entityA == entityB) continue;
 
-			Entity minID = std::min(entityA, entityB);
-			Entity maxID = std::max(entityA, entityB);
+            Entity minID = std::min(entityA, entityB);
+            Entity maxID = std::max(entityA, entityB);
+            std::pair<Entity, Entity> pairKey = { minID, maxID };
+            if (checkedPairs.contains(pairKey)) continue;
+            checkedPairs.insert(pairKey);
 
-			std::pair<Entity, Entity> pairkKey = { minID, maxID };
+            auto actorA = World::GetWorld()->GetActor(entityA);
+            auto actorB = World::GetWorld()->GetActor(entityB);
+            if (actorA.GetGameTag() == actorB.GetGameTag()) continue;
 
-			if (checkedPairs.contains(pairkKey)) continue;
-
-			checkedPairs.insert(pairkKey);
-			
-			auto actorA = World::GetWorld()->GetActor(entityA);
-			auto actorB = World::GetWorld()->GetActor(entityB);
-
-			if (actorA.GetGameTag() == actorB.GetGameTag()) continue;
+            auto& transformA = m_ecs->GetComponent<TransformComponent>(entityA);
+            auto& transformB = m_ecs->GetComponent<TransformComponent>(entityB);
 
 
-			auto& transformA = m_ecs->GetComponent<TransformComponent>(entityA);
-			auto& colliderA = m_ecs->GetComponent<ColliderComponent>(entityA);
-			auto& transformB = m_ecs->GetComponent<TransformComponent>(entityB);
-			auto& colliderB = m_ecs->GetComponent<ColliderComponent>(entityB);
+            auto collidersA = m_ecs->GetComponents<ColliderComponent>(entityA);
+            auto collidersB = m_ecs->GetComponents<ColliderComponent>(entityB);
+            if (collidersA.empty() || collidersB.empty()) continue;
 
-			sf::Vector2f posA = transformA.position + colliderA.offset;
-			sf::Vector2f posB = transformB.position + colliderB.offset;
-			sf::Vector2f mtv;
+            for (auto* colA : collidersA)
+            {
+                for (auto* colB : collidersB)
+                {
+                    sf::Vector2f posA = transformA.position + colA->offset;
+                    sf::Vector2f posB = transformB.position + colB->offset;
+                    sf::Vector2f mtv;
+                    bool collisionDetected = false;
 
-			bool collisionDetected = false;
+                    // mismas ramas que ya tenías, pero con colA/colB
+                    if (colA->shape == ColliderShape::CIRCLE && colB->shape == ColliderShape::CIRCLE)
+                    {
+                        collisionDetected = MAD::CollisionUtils::CircleCollision(posA, colA->circle.radius,
+                            posB, colB->circle.radius, mtv);
+                    }
+                    else if (colA->shape == ColliderShape::CIRCLE && colB->shape == ColliderShape::POLYGON)
+                    {
+                        collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(*colA, transformA, *colB, transformB, mtv);
+                    }
+                    else if (colA->shape == ColliderShape::POLYGON && colB->shape == ColliderShape::CIRCLE)
+                    {
+                        collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(*colB, transformB, *colA, transformA, mtv);
+                        mtv = -mtv;
+                    }
+                    else
+                    {
+                        collisionDetected = MAD::CollisionUtils::SATCollision(*colA, transformA, *colB, transformB, mtv);
+                    }
 
-			//We'll gonna use SAT Collision for every shape whiout cirlces, circles will be handled separately
+                    if (!collisionDetected) continue;
 
-			if (colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::CIRCLE)
-			{
-				collisionDetected = MAD::CollisionUtils::CircleCollision(posA, colliderA.circle.radius,
-					posB, colliderB.circle.radius,mtv);
-			}
-			else if(colliderA.shape == ColliderShape::CIRCLE && colliderB.shape == ColliderShape::POLYGON)
-			{
-				collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(colliderA, transformA, colliderB, transformB, mtv);
-			}
-			else if (colliderA.shape == ColliderShape::POLYGON && colliderB.shape == ColliderShape::CIRCLE)
-			{
-				collisionDetected = MAD::CollisionUtils::CirclePolygonCollision(colliderB, transformB, colliderA, transformA, mtv);
-				mtv = -mtv; // Reverse MTV for correct direction
-			}
-			else
-			{
-				collisionDetected = MAD::CollisionUtils::SATCollision(colliderA, transformA, colliderB, transformB, mtv);
-			}
+                    // Señal por colisión (puedes incluir nombres si quieres)
+                    m_currentCollision.insert(pairKey);
+                    Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorA, &actorB);
+                    Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorB, &actorA);
 
-			if (collisionDetected)
-			{
-
-				m_currentCollision.insert(pairkKey);
-
-			
-				Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorA, &actorB);
-				Signal::GetInstance().Dispatch<Actor*, Actor*>("onCollisionDetected", &actorB, &actorA);
-
-				//Stop Entity when is colliding with something
-
-				//if(!colliderA.isStatic && (!colliderA.isTrigger && !colliderB.isTrigger)) transformA.position += mtv;
-				//
-				//if(!colliderB.isStatic && (!colliderB.isTrigger && !colliderA.isTrigger)) transformB.position -= mtv;
-
-				if (!colliderA.isStatic && !colliderB.isStatic && !colliderA.isTrigger && !colliderB.isTrigger)
-				{
-					// Both dynamic: split the MTV
-					transformA.position -= mtv * 0.5f;
-					transformB.position += mtv * 0.5f;
-
-					transformA.isDirty = true;
-					transformB.isDirty = true;
-				}
-				else if (!colliderA.isStatic && colliderB.isStatic && !colliderA.isTrigger) 
-				{
-					// A is dynamic (e.g., player), B is static (e.g., tile): move A out
-					transformA.position -= mtv;
-					auto& velocityA = m_ecs->GetComponent<VelocityComponent>(entityA);
-					if (std::abs(mtv.x) > std::abs(mtv.y)) {
-						velocityA.velocity.x = 0.0f;
-					}
-					else {
-						velocityA.velocity.y = 0.0f;
-					}
-				}
-				else if (!colliderB.isStatic && colliderA.isStatic && !colliderB.isTrigger)
-				{
-					// B is dynamic, A is static: move B out
-					transformB.position += mtv;
-					auto& velocityB = m_ecs->GetComponent<VelocityComponent>(entityB);
-					if (std::abs(mtv.x) > std::abs(mtv.y)) {
-						velocityB.velocity.x = 0.0f;
-					}
-					else {
-						velocityB.velocity.y = 0.0f;
-					}
-				}
-
-			}
-		}
+                    // Resolución física/trigger por instancia
+                    if (!colA->isTrigger && !colB->isTrigger)
+                    {
+                        if (!colA->isStatic && !colB->isStatic)
+                        {
+                            transformA.position -= mtv * 0.5f;
+                            transformB.position += mtv * 0.5f;
+                            transformA.isDirty = transformB.isDirty = true;
+                        }
+                        else if (!colA->isStatic && colB->isStatic)
+                        {
+                            transformA.position -= mtv;
+                            if (m_ecs->HasComponent<VelocityComponent>(entityA)) {
+                                auto& vA = m_ecs->GetComponent<VelocityComponent>(entityA);
+                                if (std::abs(mtv.x) > std::abs(mtv.y)) vA.velocity.x = 0.0f; else vA.velocity.y = 0.0f;
+                            }
+                        }
+                        else if (!colB->isStatic && colA->isStatic)
+                        {
+                            transformB.position += mtv;
+                            if (m_ecs->HasComponent<VelocityComponent>(entityB)) {
+                                auto& vB = m_ecs->GetComponent<VelocityComponent>(entityB);
+                                if (std::abs(mtv.x) > std::abs(mtv.y)) vB.velocity.x = 0.0f; else vB.velocity.y = 0.0f;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 	}
 
 }

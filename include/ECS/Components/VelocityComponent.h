@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
-
-
+#include <ECS/Component.h>
 
 struct VelocityComponent : public IComponent
 {

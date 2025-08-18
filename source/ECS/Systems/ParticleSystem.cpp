@@ -1,5 +1,10 @@
 #include <ECS/Systems/ParticleSystem.h>
 #include <ECS/Components/TransformComponent.h>
+#include <ECS/ECSManager.h>
+
+ParticleSystem::ParticleSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
+{
+}
 
 
 static void integrate(ParticleEmitterComponent& e, float dt)
@@ -25,79 +30,94 @@ static void integrate(ParticleEmitterComponent& e, float dt)
 	}
 }
 
-void ParticleSystem::UpdateEntities(float deltaTime)
+void ParticleSystem::UpdateEntities(float dt)
 {
 	auto entities = m_ecs->GetEntitiesWithComponent<ParticleEmitterComponent, TransformComponent>();
 
-	for (auto entity : entities)
+	for (auto e : entities)
 	{
-		auto& em = m_ecs->GetComponent<ParticleEmitterComponent>(entity);
-		if (!em.enabled) continue;
-
-		//spawn
-		const auto& tr = m_ecs->GetComponent<TransformComponent>(entity);
-
-		if (em.settings.burst)
+		const auto& tr = m_ecs->GetComponent<TransformComponent>(e);
+		for (auto* em : m_ecs->GetComponents<ParticleEmitterComponent>(e))
 		{
-			for (std::uint32_t i = 0; i < em.settings.burstCount; ++i)
+			if (!em->enabled) continue;
+
+			bool canEmit = em->playback.playing;
+
+			if (canEmit && em->playback.startDelay > 0.0f) {
+				em->playback.startDelay -= dt;
+				if (em->playback.startDelay > 0.0f) { integrate(*em, dt); continue; }
+			}
+
+			if (canEmit && em->playback.duration >= 0.0f) {
+				em->playback.elapsed += dt;
+				if (em->playback.elapsed >= em->playback.duration) {
+					canEmit = false;
+					em->playback.playing = (em->playback.mode == EmitterPlayMode::Loop);
+					if (em->playback.playing) em->playback.elapsed = 0.0f;
+				}
+			}
+
+			if (canEmit) {
+				if (em->settings.burst) {
+					for (std::uint32_t i = 0; i < em->settings.burstCount; ++i) em->SpawnOne(tr.position);
+					em->settings.burst = false;
+					if (em->playback.mode == EmitterPlayMode::Once && em->playback.duration < 0.0f) {
+						em->playback.playing = false;
+					}
+				}
+				else if (em->settings.spawnRate > 0.0f) {
+					em->spawnAccumulator += dt * em->settings.spawnRate;
+					while (em->spawnAccumulator >= 1.0f) { em->spawnAccumulator -= 1.0f; em->SpawnOne(tr.position); }
+				}
+			}
+
+			integrate(*em, dt);
+
+			if (em->playback.mode == EmitterPlayMode::Once &&
+				em->playback.duration < 0.0f && em->playback.stopWhenEmpty && em->alive.empty())
 			{
-				em.SpawnOne(tr.position);
-				em.settings.burst = false;
+				em->enabled = false;
+				em->playback.playing = false;
 			}
 		}
-		else if (em.settings.spawnRate > 0.0f)
-		{
-			em.spawnAccumulator += deltaTime * em.settings.spawnRate;
-			while (em.spawnAccumulator >= 1.0f)
-			{
-				em.spawnAccumulator -= 1.0f;
-				em.SpawnOne(tr.position);
-			}
-		}
-
-		integrate(em, deltaTime);
 	}
-
 }
 
 
-void ParticleSystem::Draw(sf::RenderWindow& window)
+
+void ParticleSystem::Render(sf::RenderWindow& window)
 {
-
 	auto entities = m_ecs->GetEntitiesWithComponent<ParticleEmitterComponent, TransformComponent>();
-
-	for (auto entity : entities) {
-		auto& em = m_ecs->GetComponent<ParticleEmitterComponent>(entity);
-		if (em.alive.empty()) continue;
-
-		if (em.settings.asQuads) {
-			sf::VertexArray va(sf::Quads);
-			va.resize(em.alive.size() * 4);
-
-			std::size_t v = 0;
-			for (auto idx : em.alive) {
-				const auto& p = em.pool[idx];
-				float hs = p.size * 0.5f;
-
-				// (sin texturas: quads coloreados; con textura -> añade texCoords)
-				va[v + 0].position = p.pos + sf::Vector2f(-hs, -hs);
-				va[v + 1].position = p.pos + sf::Vector2f(+hs, -hs);
-				va[v + 2].position = p.pos + sf::Vector2f(+hs, +hs);
-				va[v + 3].position = p.pos + sf::Vector2f(-hs, +hs);
-				va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
-				v += 4;
+	for (auto e : entities)
+	{
+		for (auto* em : m_ecs->GetComponents<ParticleEmitterComponent>(e))
+		{
+			if (em->alive.empty()) continue;
+			if (em->settings.asQuads) {
+				sf::VertexArray va(sf::Quads);
+				va.resize(em->alive.size() * 4);
+				std::size_t v = 0;
+				for (auto idx : em->alive) {
+					const auto& p = em->pool[idx];
+					float hs = p.size * 0.5f;
+					va[v + 0].position = p.pos + sf::Vector2f(-hs, -hs);
+					va[v + 1].position = p.pos + sf::Vector2f(+hs, -hs);
+					va[v + 2].position = p.pos + sf::Vector2f(+hs, +hs);
+					va[v + 3].position = p.pos + sf::Vector2f(-hs, +hs);
+					va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
+					v += 4;
+				}
+				window.draw(va);
 			}
-			window.draw(va);
-		}
-		else {
-			sf::VertexArray points(sf::Points);
-			points.resize(em.alive.size());
-			for (std::size_t i = 0; i < em.alive.size(); ++i) {
-				const auto& p = em.pool[em.alive[i]];
-				points[i].position = p.pos;
-				points[i].color = p.color;
+			else {
+				sf::VertexArray points(sf::Points);
+				points.resize(em->alive.size());
+				for (std::size_t i = 0; i < em->alive.size(); ++i) {
+					const auto& p = em->pool[em->alive[i]];
+					points[i].position = p.pos; points[i].color = p.color;
+				}
+				window.draw(points);
 			}
-			window.draw(points);
 		}
 	}
 }

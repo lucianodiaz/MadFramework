@@ -5,9 +5,23 @@
 #include "ParticlesTypes.h"
 #include <MathUtils.h>
 
+
+enum class EmitterPlayMode { Loop, Once };
+
+struct EmitterPlayback
+{
+	bool playing = true;
+	EmitterPlayMode mode = EmitterPlayMode::Loop;
+	float startDelay = 0.0f;
+	float duration = -1.0f; //emmiting time; <0 = infinite
+	float elapsed = 0.0f;
+	bool stopWhenEmpty = true; // in Mode Once, Stops when theres not any particle live
+};
+
 struct ParticleEmitterComponent : public IComponent
 {
 	EmitterSettings settings{};
+	EmitterPlayback playback{};
 
 	std::vector<ParticleInstance> pool;
 	std::vector<std::uint32_t> freeList;
@@ -65,5 +79,51 @@ struct ParticleEmitterComponent : public IComponent
 		alive[idxAlive] = alive.back();
 		alive.pop_back();
 		freeList.push_back(idx);
+	}
+
+	void PlayLoop(float delaySec = 0.0f)
+	{
+		enabled = true;
+		playback = {};
+		playback.playing = true;
+		playback.mode = EmitterPlayMode::Loop;
+		playback.startDelay = delaySec;
+	}
+
+	void PlayOnce(float durationSec = -1.0f, float delaySec = 0.0f, bool stopWhenEmpty_ = true)
+	{
+		enabled = true;
+		playback = {};
+		playback.playing = true;
+		playback.mode = EmitterPlayMode::Once;
+		playback.duration = durationSec;
+		playback.startDelay = delaySec;
+		playback.stopWhenEmpty = stopWhenEmpty_;
+	}
+
+	void Stop()
+	{
+		playback.playing = false;
+		spawnAccumulator = 0.0f;
+	}
+
+	void StopAfter(float seconds)
+	{
+		if (seconds <= 0) { Stop(); return; }
+
+		playback.playing = true;
+		playback.mode = EmitterPlayMode::Once;
+		playback.duration = seconds;
+		playback.elapsed = 0.0f;
+	}
+
+	void Pause() { playback.playing = false; }
+	void Resume() { playback.playing = true; }
+
+	void KillAll()
+	{
+		for (auto idxAlive : alive) { pool[idxAlive].active = false; freeList.push_back(idxAlive); }
+		alive.clear();
+		spawnAccumulator = 0.0f;
 	}
 };

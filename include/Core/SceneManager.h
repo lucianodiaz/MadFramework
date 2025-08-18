@@ -65,7 +65,7 @@ private:
 	void switchScene();        // Hace OnSceneExit/OnSceneEnter y cambia punteros
 	void clearTransitions();   // Llama OnEnd() y resetea punteros apropiadamente
 
-	sf::View& GetLetterBoxView(sf::View);
+	sf::View GetLetterBoxView(sf::View);
 
 	std::unordered_map<std::string, std::unique_ptr<IScene>> m_scenes;
 

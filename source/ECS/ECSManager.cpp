@@ -1,6 +1,7 @@
 #include "ECS/ECSManager.h"
 #include <ECS/Systems/RenderSystem.h>
 #include <ECS/Systems/ParticleSystem.h>
+#include <SFML/Graphics.hpp>
 
 Entity ECSManager::CreateEntity()
 {
@@ -16,8 +17,9 @@ Entity ECSManager::CreateEntity()
 void ECSManager::DestroyEntity(Entity entity)
 {
     m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());
+    m_componentsMulti.erase(entity);
+    m_nameIndex.erase(entity);
     m_entityComponentMasks.erase(entity);
-    m_components.erase(entity);
 }
 
 void ECSManager::Update(float deltaTime)
@@ -32,18 +34,7 @@ void ECSManager::Draw(sf::RenderWindow& window)
 {
     for (auto& system : m_systems)
     {
-        // Intentar castear a RenderSystem
-        auto renderSystem = std::dynamic_pointer_cast<RenderSystem>(system);
-        if (renderSystem)
-        {
-            renderSystem->Render(window);
-        }
-
-        auto particleSystem = std::dynamic_pointer_cast<ParticleSystem>(system);
-        if (particleSystem)
-        {
-            particleSystem->Draw(window);
-        }
+		system->Render(window);
     }
 }
 

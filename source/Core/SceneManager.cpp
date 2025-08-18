@@ -8,6 +8,9 @@
 #include <ECS/Systems/ParticleSystem.h>
 #include <Gameplay/SplashScreenFramework.h>
 #include <Transitions/FadeTransition.h>
+#include <Core/Signal.h>
+#include <Core/World.h>
+#include <Window/Window.h>
 
 const std::unique_ptr<ECSManager>& SceneManager::GetECSManager()
 {
@@ -662,7 +665,7 @@ void SceneManager::clearTransitions()
 	m_phase = TransitionPhase::Idle;
 }
 
-sf::View& SceneManager::GetLetterBoxView(sf::View view)
+sf::View SceneManager::GetLetterBoxView(sf::View view)
 {
 	// TODO: Insertar una instrucción "return" aquí
 	float windowRatio = (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().x / (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().y;

@@ -1,6 +1,7 @@
 #include <UI/CanvasPanel.h>
 #include <Core/World.h>
 #include <Core/Signal.h>
+#include <Window/Window.h>
 
 CanvasPanel::CanvasPanel()
 {
@@ -20,7 +21,7 @@ CanvasPanel::~CanvasPanel()
 sf::Vector2f CanvasPanel::GetSize() const
 {
 	auto size = World::GetWorld()->GetWindow().GetRenderWindow().getSize();
-	return sf::Vector2f(size.x, size.y);
+	return sf::Vector2f(static_cast<float>(size.x), static_cast<float>(size.y));
 }
 
 void CanvasPanel::Draw(sf::RenderWindow& window)

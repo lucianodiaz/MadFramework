@@ -1,14 +1,15 @@
 #pragma once
 #include "ECS/System.h"
 #include <ECS/Components/SpriteAnimationComponent.h>
-#include <ECS/ECSManager.h>
+
+class ECSManager;
 
 
 class AnimationSystem : public System<SpriteAnimationComponent>
 {
 
 public:
-	AnimationSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs) {};
+	AnimationSystem(std::unique_ptr<ECSManager>& ecs);
 
 
 

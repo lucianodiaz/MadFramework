@@ -1,20 +1,19 @@
 #pragma once
 #include <MadFrameworkExport.h>
 #include <SFML/Graphics.hpp>
-#include <Window/Window.h>
 #include <SFML/Audio.hpp>
 #include <nlohmann/json.hpp>
-#include <Input/Action.h>
 #include <Input/ActionMap.h>
-#include "ResourceManager.h"
 #include "TimerManager.h"
 #include "SceneManager.h"
 #include "TweenManager.h"
 #include "SoundManager.h"
+#include "ResourceManager.h"
 
 class ECSManager;
 class Actor;
-
+class Action;
+class Window;
 
 class MAD_API World
 {
@@ -37,7 +36,7 @@ public:
 
 	std::vector<Actor> GetActorsByTag(const std::string& tag);
 
-	Window& GetWindow() const { return *_window; }
+	Window& GetWindow() const;
 
 
 	static std::shared_ptr <World> GetWorld()
@@ -153,37 +152,4 @@ private:
 	unsigned int m_fps = 30;
 };
 
-
-template<typename T>
-inline std::shared_ptr<T>&  World::CreateGUI()
-{
-    static_assert(std::is_base_of<UserWidget, T>::value, "T must derive from UserWidget");
-
-	std::shared_ptr<T> userWidget = std::make_shared<T>();
-	m_sceneManager.AddUserWidget(userWidget);
-    return userWidget;
-}
-
-template<typename T, typename ...Args>
-inline T& World::SpawnActor(Args && ...args)
-{
-	static_assert(std::is_base_of<Actor, T>::value, "T must derive from Actor");
-
-	m_actors.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-	m_actors.back()->Start();
-	return static_cast<T&>(*m_actors.back());
-}
-
-template<typename T>
-inline std::shared_ptr<T> World::GetSystem()
-{
-	for (auto& system : m_sceneManager.GetECSManager()->GetSystems())
-	{
-		if (auto castedSystem = std::dynamic_pointer_cast<T>(system))
-		{
-			return castedSystem;
-		}
-	}
-	
-	return nullptr;
-}
+#include "World.inl"

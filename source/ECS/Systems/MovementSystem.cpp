@@ -1,5 +1,10 @@
 #include <ECS/Systems/MovementSystem.h>
 #include <ECS/Components/VelocityComponent.h>
+#include <ECS/ECSManager.h>
+
+MovementSystem::MovementSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
+{
+}
 
 void MovementSystem::UpdateEntities(float deltaTime)
 {

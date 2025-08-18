@@ -1,8 +1,13 @@
 #include "ECS/Systems/CameraSystem.h"
 #include <ECS/Components/TransformComponent.h>
 #include <Core/World.h>
+#include <ECS/ECSManager.h>
+#include <Window/Window.h>
+CameraSystem::CameraSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
+{
+}
 
-sf::View& CameraSystem::GetLetterBoxView(sf::View view)
+sf::View CameraSystem::GetLetterBoxView(sf::View view)
 {
 	// TODO: Insertar una instrucción "return" aquí
 	float windowRatio = (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().x / (float)World::GetWorld()->GetWindow().GetRenderWindow().getSize().y;
@@ -34,37 +39,24 @@ sf::View& CameraSystem::GetLetterBoxView(sf::View view)
 void CameraSystem::UpdateEntities(float deltaTime)
 {
 
-	auto entities = m_ecs->GetEntitiesWithComponent<CameraViewComponent,TransformComponent>();
+	auto entities = m_ecs->GetEntitiesWithComponent<CameraViewComponent, TransformComponent>();
 
-	for (auto& entity : entities)
+	for (auto e : entities)
 	{
-		auto& camera = m_ecs->GetComponent<CameraViewComponent>(entity);
-		auto& transform = m_ecs->GetComponent<TransformComponent>(entity);
-
-
-
-		camera.cameraPosition = camera.cameraPosition + (transform.position - camera.cameraPosition) * camera.LagFactor;
-
-		camera.cameraView.setCenter(camera.cameraPosition + camera.offset);
-
-		camera.cameraView.setRotation(camera.Angle);
-
-		camera.cameraView.zoom(camera.zoom);
-
-		if (camera.isShake)
+		auto& tr = m_ecs->GetComponent<TransformComponent>(e);
+		for (auto* cam : m_ecs->GetComponents<CameraViewComponent>(e))
 		{
-			UpdateShake(deltaTime, camera);
-		}
+			cam->cameraPosition = cam->cameraPosition + (tr.position - cam->cameraPosition) * cam->LagFactor;
+			cam->cameraView.setCenter(cam->cameraPosition + cam->offset);
+			cam->cameraView.setRotation(cam->Angle);
+			cam->cameraView.zoom(cam->zoom);
 
-		if (camera.clampToBounds)
-		{
-			ClampToBounds(camera);
-		}
+			if (cam->isShake) UpdateShake(deltaTime, *cam);
+			if (cam->clampToBounds) ClampToBounds(*cam);
+			cam->zoom = 1.0f;
 
-		camera.zoom = 1.0f; // Reset zoom after applying to avoid cumulative zooming
-		if (camera.isMainCamera)
-		{
-			World::GetWorld()->GetWindow().GetRenderWindow().setView(GetLetterBoxView(camera.cameraView));
+			if (cam->isMainCamera)
+				World::GetWorld()->GetWindow().GetRenderWindow().setView(GetLetterBoxView(cam->cameraView));
 		}
 	}
 }

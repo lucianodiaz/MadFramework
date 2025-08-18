@@ -1,17 +1,18 @@
 #pragma once
 #include <ECS/System.h>
 #include <ECS/Components/CameraViewComponent.h>
-#include <ECS/ECSManager.h>
+
+class ECSManager;
 
 class CameraSystem : public System<CameraViewComponent>
 {
 
 public:
-	CameraSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs) {};
+	CameraSystem(std::unique_ptr<ECSManager>& ecs);
 
 protected:
 
-	sf::View& GetLetterBoxView(sf::View view);
+	sf::View GetLetterBoxView(sf::View view);
 
 	void UpdateEntities(float deltaTime) override;
 

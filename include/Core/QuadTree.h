@@ -4,7 +4,10 @@
 #include <array>
 #include <ECS/Components/ColliderComponent.h>
 #include <ECS/Entity.h>
-#include <ECS/ECSManager.h>
+
+
+class ECSManager;
+
 class QuadTree
 {
 public:
@@ -15,6 +18,8 @@ public:
 	void Clear();
 	void Insert(const Entity& entity);
 	std::vector<Entity> Retrieve(const Entity& entity);
+
+	~QuadTree() = default;
 private:
 
 	void Split();

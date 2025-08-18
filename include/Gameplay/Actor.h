@@ -1,12 +1,11 @@
 #pragma once
-
-#include <Core/World.h>
-#include <ECS/ECSManager.h>
 #include <ECS/Components/TransformComponent.h>
 #include <MadFrameworkExport.h>
 #include <MadFramework.h>
 
 
+class World;
+class ECSManager;
 
 class MAD_API Actor
 {
@@ -23,16 +22,25 @@ public:
 	virtual void ProcessInput();
 
 
-	template<typename ...Args>
-	void SetPosition(Args& ... args);
+	void SetPosition(const sf::Vector2f& p);
+	void SetPosition(float x, float y);
 
 	sf::Vector2f& GetPosition();
 
 	/* Add Component eg:  AddComponent<VelocityComponent>(50.0f,0.0f)*/
 	template<typename T, typename... Args>
-	void AddComponent(Args&&... args);
+	T& AddComponent(Args&&... args);
+
+	template<typename T, typename... Args>
+	T& AddComponentWithName(std::string_view name, Args&&... args);
 
 	/* Get Component of Actor eg:  GetComponent<TransformComponent>() */ 
+	template<typename T>
+	std::vector<T*> GetComponents();
+
+	template<typename T>
+	T& GetComponent(std::string_view name);
+
 	template<typename T>
 	T& GetComponent();
 
@@ -58,21 +66,4 @@ private:
 
 	void AddSignalListeners();
 };
-
-template<typename ...Args>
-inline void Actor::SetPosition(Args & ...args)
-{
-	m_ecs.GetComponent<TransformComponent>(m_entity).setPosition(std::forward<Args>(args)...);
-}
-
-template<typename T, typename ...Args>
-inline void Actor::AddComponent(Args && ...args)
-{
-	m_ecs.AddComponent<T>(m_entity, std::forward<Args>(args)...);
-}
-
-template<typename T>
-inline T& Actor::GetComponent()
-{
-	return m_ecs.GetComponent<T>(m_entity);	
-}
+#include "Actor.inl"

@@ -14,6 +14,7 @@
 #include <UI/HorizontalLayout.h>
 #include <ECS/Components/ParticlesTypes.h>
 #include <ECS/Components/ParticleEmitterComponent.h>
+#include <Window/Window.h>
 
 
 class UI : public UserWidget
@@ -105,6 +106,8 @@ private:
 
 				World::GetWorld()->GetSoundManager().PlaySound("click_sound");
 				World::GetWorld()->ShowFPS(true);
+
+				Signal::GetInstance().Dispatch("sparks");
 			};
 	}
 
@@ -142,17 +145,17 @@ private:
 class CosmicBall : public Actor
 {
 public:
-    CosmicBall(float x = 150.0f, float y = 80.0f)
-    {
-        GetComponent<TransformComponent>().position.x = x;
-        GetComponent<TransformComponent>().position.y = y;
+	CosmicBall(float x = 150.0f, float y = 80.0f)
+	{
+		GetComponent<TransformComponent>().position.x = x;
+		GetComponent<TransformComponent>().position.y = y;
 
 		//AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
 		//	{0, -20}, { 19, -6 }, { 12, 16 }, { -12, 16 }, { -19, -6 }
 		//}, false, true);
 		AddComponent<ColliderComponent>(10.0f, false, true);
 		//AddComponent<ColliderComponent>(10.0f,20.0f, false, true);
-		AddComponent<VelocityComponent>(0,0);
+		AddComponent<VelocityComponent>(0, 0);
 		SetGameTag("CosmicBall");
 
 		m_smoke.spawnRate = 60.f;
@@ -164,8 +167,34 @@ public:
 		m_smoke.color = sf::Color(180, 180, 180, 200);
 		m_smoke.gravity = { 0.f, -10.f }; // “sube” si tu eje Y crece hacia abajo, invierte
 		m_smoke.drag = 0.5f;
+		m_smoke.burst = true;
+		m_smoke.burstCount = 100;
 
-		AddComponent<ParticleEmitterComponent>(m_smoke);
+		
+
+		m_pComponent = &AddComponentWithName<ParticleEmitterComponent>(std::string("smokeParticle"), m_smoke);
+
+
+		m_sparks.spawnRate = 0.0f;
+		m_sparks.maxParticles = 30;
+		m_sparks.burst = true;
+		m_sparks.burstCount = 130;
+
+		m_sparks.velMin = { -300.0f,-300.0f };
+		m_sparks.velMax = { 300.0f, 300.0f };
+
+		m_sparks.lifetimeMin = 0.35f;
+		m_sparks.lifetimeMax = 0.80f;
+
+		m_sparks.sizeMin = 3.0f;
+		m_sparks.sizeMax = 5.0f;
+
+		m_sparks.color = sf::Color{ 255,220,120,255 };
+		m_sparks.drag = 3.0f;
+
+		m_sparks.asQuads = false;
+
+		m_pSparks = &AddComponentWithName<ParticleEmitterComponent>(std::string("sparkParticle"),m_sparks);
     }
 
 	void Start() override
@@ -175,6 +204,15 @@ public:
 		auto& collider = GetComponent<ColliderComponent>();
 
 		collider.isStatic = false;
+		m_pComponent->PlayOnce(3.0f);
+		m_pSparks->PlayOnce(3.0f,2.0f);
+
+		Signal::GetInstance().AddListener("sparks", std::function<void()>([this]()
+			{
+				m_pComponent->PlayOnce(0.20f);
+				m_pSparks->settings.burst = true;
+				m_pSparks->PlayOnce(1.0f);
+			}));
 	}
 
 	void Update(float deltaTime) override
@@ -189,6 +227,12 @@ public:
 
 private:
 	EmitterSettings m_smoke;
+
+	EmitterSettings m_sparks;
+
+	ParticleEmitterComponent* m_pComponent;
+
+	ParticleEmitterComponent* m_pSparks;
 };
 
 class Player : public Actor, public ActionTarget<std::string>

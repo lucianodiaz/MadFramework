@@ -119,6 +119,8 @@
       <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include;$(ProjectDir)source\PrivateUtils</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -252,6 +254,9 @@
     <ClInclude Include="vendor\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="include\Core\World.inl" />
+    <None Include="include\ECS\ECSManager.inl" />
+    <None Include="include\Gameplay\Actor.inl" />
     <None Include="resources.json" />
     <None Include="inputs.json" />
   </ItemGroup>

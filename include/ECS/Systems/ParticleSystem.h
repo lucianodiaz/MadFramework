@@ -1,18 +1,19 @@
 #pragma once
 #include "ECS/System.h"
 #include <ECS/Components/ParticleEmitterComponent.h>
-#include <ECS/ECSManager.h>
 
+
+class ECSManager;
 
 
 class ParticleSystem : public System<ParticleEmitterComponent>
 {
 
 public:
-	ParticleSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs) {}
+	ParticleSystem(std::unique_ptr<ECSManager>& ecs);
 
 
-	void Draw(sf::RenderWindow& window);
+	void Render(sf::RenderWindow& window)override;
 protected:
 
 	void UpdateEntities(float deltaTime)override;
