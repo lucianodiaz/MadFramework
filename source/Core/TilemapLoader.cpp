@@ -170,7 +170,6 @@ void TilemapLoader::Draw(sf::RenderWindow& window)
 			window.draw(m_Vertexlayers[i], &tileSet.texture);
 
 		}
-	//	const auto& tileSet = m_tileSets.begin()->second[0]; // Suponiendo 1 tileset por ahora
 		
 	}
 }
