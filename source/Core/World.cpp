@@ -201,12 +201,12 @@ void World::LoadSound(const std::string& name, const std::string& path)
 
 void World::LoadShader(const std::string& name, const std::string& fragPath)
 {
-	//m_shaders.Load(name, fragPath);
+	m_shaders.Load(name, fragPath,sf::Shader::Fragment);
 }
 
 void World::LoadShader(const std::string& name, const std::string& vertPath, const std::string& fragPath)
 {
-	//m_shaders.Load(name, vertPath, fragPath);
+	m_shaders.Load(name, vertPath, fragPath);
 }
 
 void World::QuitGame()
