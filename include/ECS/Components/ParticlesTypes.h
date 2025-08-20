@@ -40,4 +40,14 @@ struct EmitterSettings
 	float drag = 0.0f;
 
 	bool asQuads = true;
+
+	std::string textureId;
+	sf::IntRect texRect{ 0,0,0,0 };         // si (0,0,0,0) => use full size
+	bool useAdditive = false;             // aditive bleding optional
+	bool sizeFromTexture = true;
+	std::string shaderId;
+
+	//uniforms
+	float u_time_scale = 1.0f;
+	sf::Glsl::Vec4 u_tint = sf::Glsl::Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 };

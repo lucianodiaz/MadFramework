@@ -1,6 +1,7 @@
 #include <ECS/Systems/ParticleSystem.h>
 #include <ECS/Components/TransformComponent.h>
 #include <ECS/ECSManager.h>
+#include <Core/World.h>
 
 ParticleSystem::ParticleSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
 {
@@ -93,6 +94,75 @@ void ParticleSystem::Render(sf::RenderWindow& window)
 		for (auto* em : m_ecs->GetComponents<ParticleEmitterComponent>(e))
 		{
 			if (em->alive.empty()) continue;
+
+			sf::RenderStates states;
+
+			sf::Texture* texPtr = nullptr;
+			if (!em->settings.textureId.empty())
+			{
+				texPtr = &World::GetWorld()->GetTexture(em->settings.textureId);
+				states.texture = texPtr;
+				sf::VertexArray va(sf::Quads);
+				va.resize(em->alive.size() * 4);
+				std::size_t v = 0;
+
+				// Determina el rect de textura a usar
+				sf::IntRect r = em->settings.texRect;
+				if (r.width == 0 || r.height == 0)
+					r = { 0, 0, (int)texPtr->getSize().x, (int)texPtr->getSize().y };
+
+				for (auto idx : em->alive)
+				{
+					const auto& p = em->pool[idx];
+
+					// Calcula half-extents con aspecto si se desea
+					float halfH = p.size * 0.5f;
+					float aspect = static_cast<float>(r.width) / static_cast<float>(r.height == 0 ? 1 : r.height);
+					float halfW = em->settings.sizeFromTexture ? (halfH * aspect) : halfH;
+
+					// Rotación en torno a p.pos
+					float c = std::cos(p.rot), s = std::sin(p.rot);
+					auto rot = [&](sf::Vector2f local)->sf::Vector2f {
+						return { local.x * c - local.y * s, local.x * s + local.y * c };
+						};
+
+					sf::Vector2f p0 = p.pos + rot({ -halfW, -halfH });
+					sf::Vector2f p1 = p.pos + rot({ +halfW, -halfH });
+					sf::Vector2f p2 = p.pos + rot({ +halfW, +halfH });
+					sf::Vector2f p3 = p.pos + rot({ -halfW, +halfH });
+
+					va[v + 0].position = p0; va[v + 1].position = p1; va[v + 2].position = p2; va[v + 3].position = p3;
+
+					// UVs
+					va[v + 0].texCoords = { static_cast<float>(r.left),               static_cast<float>(r.top) };
+					va[v + 1].texCoords = { static_cast<float>(r.left + r.width),     static_cast<float>(r.top) };
+					va[v + 2].texCoords = { static_cast<float>(r.left + r.width),     static_cast<float>(r.top + r.height) };
+					va[v + 3].texCoords = { static_cast<float>(r.left),               static_cast<float>(r.top + r.height) };
+
+					// Color por vértice (tinte + alpha por vida si alguna vez lo quieres)
+					va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
+
+					v += 4;
+				}
+
+				sf::RenderStates states;
+				states.texture = texPtr;
+				states.blendMode = em->settings.useAdditive ? sf::BlendAdd : sf::BlendAlpha;
+				window.draw(va, states);
+				continue; // ya renderizamos este emisor; sigue con el siguiente
+			}
+
+			sf::Shader* shaderPtr = nullptr;
+			if (!em->settings.shaderId.empty()) {
+				shaderPtr = &World::GetWorld()->GetShader(em->settings.shaderId);
+				// Set uniforms comunes (por emisor/frame)
+				shaderPtr->setUniform("u_time", em->playback.elapsed * em->settings.u_time_scale);
+				shaderPtr->setUniform("u_color", em->settings.u_tint);
+				shaderPtr->setUniform("u_glowColor", sf::Glsl::Vec3(0.f, 1.f, 0.f));
+				if (texPtr) shaderPtr->setUniform("u_texture", *texPtr);
+				states.shader = shaderPtr;
+			}
+
 			if (em->settings.asQuads) {
 				sf::VertexArray va(sf::Quads);
 				va.resize(em->alive.size() * 4);
@@ -107,7 +177,7 @@ void ParticleSystem::Render(sf::RenderWindow& window)
 					va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
 					v += 4;
 				}
-				window.draw(va);
+				window.draw(va,states);
 			}
 			else {
 				sf::VertexArray points(sf::Points);
@@ -116,7 +186,7 @@ void ParticleSystem::Render(sf::RenderWindow& window)
 					const auto& p = em->pool[em->alive[i]];
 					points[i].position = p.pos; points[i].color = p.color;
 				}
-				window.draw(points);
+				window.draw(points, states);
 			}
 		}
 	}

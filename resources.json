@@ -1,5 +1,6 @@
 [
     {"src": "assets/images/human.png", "id": "player", "type": "texture"},
+    {"src": "assets/images/smoke.png", "id": "smoke", "type": "texture"},
     {"src": "assets/music/theme.ogg", "id": "theme_music", "type": "music"},
     {"src": "assets/font/awesomeFont.ttf", "id": "my_font", "type": "font"},
     {"src": "assets/sounds/click.wav", "id": "click_sound", "type": "sound"},

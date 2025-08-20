@@ -4,7 +4,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include "ParticlesTypes.h"
 #include <MathUtils.h>
-
+#include <Core/World.h>
 
 enum class EmitterPlayMode { Loop, Once };
 
@@ -59,10 +59,25 @@ struct ParticleEmitterComponent : public IComponent
 		freeList.pop_back();
 		auto& p = pool[index];
 
+
 		p.active = true;
 		p.age = 0.0f;
 		p.lifetime = MAD::MathUtils::frand(settings.lifetimeMin, settings.lifetimeMax);
-		p.size = MAD::MathUtils::frand(settings.sizeMin, settings.sizeMax);
+		if (!settings.textureId.empty()) {
+			const auto& tex = World::GetWorld()->GetTexture(settings.textureId);
+			sf::Vector2u full = tex.getSize();
+			sf::Vector2u sz = (settings.texRect.width > 0 && settings.texRect.height > 0)
+				? sf::Vector2u(settings.texRect.width, settings.texRect.height)
+				: full;
+			float base = MAD::MathUtils::frand(settings.sizeMin, settings.sizeMax);
+			// usa 'base' como alto y ajusta ancho por aspecto:
+			float aspect = static_cast<float>(sz.x) / static_cast<float>(sz.y == 0 ? 1 : sz.y);
+			p.size = base; // interpretaremos size como "alto" y el ancho = alto*aspect
+		}
+		else
+		{
+			p.size = MAD::MathUtils::frand(settings.sizeMin, settings.sizeMax);
+		}
 		p.rot = MAD::MathUtils::frand(settings.rotMin, settings.rotMax);
 		p.rotSpeed = MAD::MathUtils::frand(settings.rotSpeedMin, settings.rotSpeedMax);
 		p.vel = MAD::MathUtils::vrand(settings.velMin, settings.velMax);

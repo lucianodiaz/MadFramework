@@ -142,6 +142,7 @@ void World::LoadResources()
 		m_fonts.LoadFromJson("resources.json");
 		m_sounds.LoadFromJson("resources.json");
 		m_jsons.LoadFromJson("resources.json");
+		m_shaders.LoadFromJson("shaders.json");
 	}
 	catch (const std::exception& e)
 	{
@@ -196,6 +197,16 @@ void World::LoadSound(const std::string& name, const std::string& path)
 	{
 		std::cerr << "error loading resource: " << e.what() << std::endl;
 	}
+}
+
+void World::LoadShader(const std::string& name, const std::string& fragPath)
+{
+	//m_shaders.Load(name, fragPath);
+}
+
+void World::LoadShader(const std::string& name, const std::string& vertPath, const std::string& fragPath)
+{
+	//m_shaders.Load(name, vertPath, fragPath);
 }
 
 void World::QuitGame()
@@ -328,4 +339,9 @@ sf::Font& World::GetFont(const std::string& id)
 sf::SoundBuffer& World::GetSound(const std::string& id)
 {
 	return m_sounds.Get(id);
+}
+
+sf::Shader& World::GetShader(const std::string& id)
+{
+	return m_shaders.Get(id);
 }

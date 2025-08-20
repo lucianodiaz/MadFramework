@@ -101,9 +101,16 @@ inline void ResourceManager<RESOURCE, ID>::LoadFromJson(const std::string& jsonP
 
 	for (auto& resource : jsonData)
 	{
-		std::string src = resource["src"];
-		std::string id = resource["id"];
+
 		std::string type = StringUtil::ToLower(resource["type"]);
+		std::string src = "";
+		if (type != "shader")
+		{
+			src = resource["src"];
+		}
+		
+		std::string id = resource["id"];
+	
 
 		if constexpr (std::is_same<RESOURCE, sf::Texture>::value)
 		{
@@ -143,6 +150,25 @@ inline void ResourceManager<RESOURCE, ID>::LoadFromJson(const std::string& jsonP
 
 				auto ptr = std::make_unique<nlohmann::json>(jsonContent);
 				m_resources.emplace(id, std::move(ptr));
+			}
+		}
+		else if constexpr (std::is_same<RESOURCE, sf::Shader>::value)
+		{
+			if (type == "shader")
+			{
+				// Soporta: solo fragment, o vertex+fragment
+				if (resource.contains("vertex") && resource.contains("fragment")) {
+					std::string v = resource["vertex"];
+					std::string f = resource["fragment"];
+					Load(id, v, f);
+				}
+				else if (resource.contains("fragment")) {
+					std::string f = resource["fragment"];
+					Load(id, f, sf::Shader::Fragment);
+				}
+				else {
+					throw std::runtime_error("Shader resource needs 'fragment' or ('vertex' and 'fragment'): " + id);
+				}
 			}
 		}
 		else

@@ -56,6 +56,7 @@ public:
 	nlohmann::json& GetJson(const std::string& id);
 	sf::Font& GetFont(const std::string& id);
 	sf::SoundBuffer& GetSound(const std::string& id);
+	sf::Shader& GetShader(const std::string& id);
 
 	ActionMap<std::string>& GetActionsMap() { return m_actionsMap; }
 
@@ -66,6 +67,9 @@ public:
 	void LoadFont(const std::string& name, const std::string& path);
 
 	void LoadSound(const std::string& name, const std::string& path);
+
+	void LoadShader(const std::string& name, const std::string& fragPath);
+	void LoadShader(const std::string& name, const std::string& vertPath, const std::string& fragPath);
 
 	TimerManager& GetTimerManager() { return m_timerManager; }
 	TweenManager& GetTweenManager() { return m_tweenManager; }
@@ -133,6 +137,7 @@ protected:
 	ResourceManager<sf::Font, std::string> m_fonts;
 	ResourceManager<sf::SoundBuffer, std::string> m_sounds;
 	ResourceManager<nlohmann::json, std::string> m_jsons;
+	ResourceManager<sf::Shader, std::string> m_shaders;
 
 	ActionMap<std::string> m_actionsMap;
 

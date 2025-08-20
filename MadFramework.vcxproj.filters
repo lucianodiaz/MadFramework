@@ -300,5 +300,8 @@
     <None Include="include\Core\World.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="assets\shaders\glow.frag" />
+    <None Include="assets\shaders\glow.vert" />
+    <None Include="shaders.json" />
   </ItemGroup>
 </Project>

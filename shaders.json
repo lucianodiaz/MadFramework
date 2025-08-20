@@ -1,0 +1,8 @@
+[
+  {
+    "vertex": "assets/shaders/glow.vert",
+    "fragment": "assets/shaders/glow.frag",
+    "id": "glow",
+    "type": "shader"
+  }
+]

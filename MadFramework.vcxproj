@@ -254,11 +254,14 @@
     <ClInclude Include="vendor\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\glow.frag" />
+    <None Include="assets\shaders\glow.vert" />
     <None Include="include\Core\World.inl" />
     <None Include="include\ECS\ECSManager.inl" />
     <None Include="include\Gameplay\Actor.inl" />
     <None Include="resources.json" />
     <None Include="inputs.json" />
+    <None Include="shaders.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -158,17 +158,20 @@ public:
 		AddComponent<VelocityComponent>(0, 0);
 		SetGameTag("CosmicBall");
 
-		m_smoke.spawnRate = 60.f;
+		m_smoke.spawnRate = 100.f;
 		m_smoke.maxParticles = 800;
 		m_smoke.velMin = { -20.f,-10.f };
 		m_smoke.velMax = { 20.f,-50.f };
+		m_smoke.shaderId = "glow";
+		m_smoke.sizeFromTexture = false;
+		m_smoke.u_time_scale = 1.0f;
+		m_smoke.u_tint = { 1.0f, 0.5f, 0.0f, 1.f };
 		m_smoke.lifetimeMin = 0.8f; m_smoke.lifetimeMax = 1.3f;
 		m_smoke.sizeMin = 3.f; m_smoke.sizeMax = 8.f;
 		m_smoke.color = sf::Color(180, 180, 180, 200);
 		m_smoke.gravity = { 0.f, -10.f }; // “sube” si tu eje Y crece hacia abajo, invierte
 		m_smoke.drag = 0.5f;
-		m_smoke.burst = true;
-		m_smoke.burstCount = 100;
+		m_smoke.burst = false;
 
 		
 
@@ -186,13 +189,13 @@ public:
 		m_sparks.lifetimeMin = 0.35f;
 		m_sparks.lifetimeMax = 0.80f;
 
-		m_sparks.sizeMin = 3.0f;
-		m_sparks.sizeMax = 5.0f;
+		m_sparks.sizeMin = 1.0f;
+		m_sparks.sizeMax = 2.0f;
 
 		m_sparks.color = sf::Color{ 255,220,120,255 };
 		m_sparks.drag = 3.0f;
 
-		m_sparks.asQuads = false;
+		m_sparks.asQuads = true;
 
 		m_pSparks = &AddComponentWithName<ParticleEmitterComponent>(std::string("sparkParticle"),m_sparks);
     }
@@ -204,12 +207,12 @@ public:
 		auto& collider = GetComponent<ColliderComponent>();
 
 		collider.isStatic = false;
-		m_pComponent->PlayOnce(3.0f);
+		m_pComponent->PlayLoop();
 		m_pSparks->PlayOnce(3.0f,2.0f);
 
 		Signal::GetInstance().AddListener("sparks", std::function<void()>([this]()
 			{
-				m_pComponent->PlayOnce(0.20f);
+				//m_pComponent->PlayOnce(0.20f);
 				m_pSparks->settings.burst = true;
 				m_pSparks->PlayOnce(1.0f);
 			}));
