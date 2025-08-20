@@ -223,7 +223,7 @@ public:
 	void Update(float deltaTime) override
 	{
 		auto& velocityComp = GetComponent<VelocityComponent>();
-
+		m_pSparks->settings.color = MAD::MathUtils::colRand();
 		//velocityComp.velocity.x += cos(60) * deltaTime;
 		//velocityComp.velocity.y -= sin(60) * deltaTime;
 
