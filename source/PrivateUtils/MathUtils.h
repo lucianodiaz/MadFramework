@@ -24,6 +24,26 @@ namespace MAD::MathUtils
         return d(rng());
     }
 
+    inline sf::Color colRand(const sf::Color& a, const sf::Color& b)
+    {
+        return {
+            static_cast<sf::Uint8>(frand(a.r, b.r)),
+            static_cast<sf::Uint8>(frand(a.g, b.g)),
+            static_cast<sf::Uint8>(frand(a.b, b.b)),
+            static_cast<sf::Uint8>(frand(a.a, b.a))
+        };
+    }
+
+    inline sf::Color colRand()
+    {
+        return {
+            static_cast<sf::Uint8>(frand(0, 255)),
+            static_cast<sf::Uint8>(frand(0, 255)),
+            static_cast<sf::Uint8>(frand(0, 255)),
+            255
+		};
+    }
+
     inline sf::Vector2f vrand(const sf::Vector2f& a, const sf::Vector2f& b)
     {
         auto [lx, hx] = std::minmax(a.x, b.x);

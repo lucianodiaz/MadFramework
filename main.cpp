@@ -162,8 +162,8 @@ public:
 		m_smoke.maxParticles = 800;
 		m_smoke.velMin = { -20.f,-10.f };
 		m_smoke.velMax = { 20.f,-50.f };
-		m_smoke.shaderId = "glow";
-		m_smoke.sizeFromTexture = false;
+		//m_smoke.shaderId = "glow";
+		//m_smoke.sizeFromTexture = false;
 		m_smoke.u_time_scale = 1.0f;
 		m_smoke.u_tint = { 1.0f, 0.5f, 0.0f, 1.f };
 		m_smoke.lifetimeMin = 0.8f; m_smoke.lifetimeMax = 1.3f;
@@ -175,7 +175,7 @@ public:
 
 		
 
-		m_pComponent = &AddComponentWithName<ParticleEmitterComponent>(std::string("smokeParticle"), m_smoke);
+		//m_pComponent = &AddComponentWithName<ParticleEmitterComponent>(std::string("smokeParticle"), m_smoke);
 
 
 		m_sparks.spawnRate = 0.0f;
@@ -192,7 +192,7 @@ public:
 		m_sparks.sizeMin = 1.0f;
 		m_sparks.sizeMax = 2.0f;
 
-		m_sparks.color = sf::Color{ 255,220,120,255 };
+		m_sparks.color = MAD::MathUtils::colRand(sf::Color::Red,sf::Color::Blue);
 		m_sparks.drag = 3.0f;
 
 		m_sparks.asQuads = true;
@@ -207,14 +207,16 @@ public:
 		auto& collider = GetComponent<ColliderComponent>();
 
 		collider.isStatic = false;
-		m_pComponent->PlayLoop();
+		//m_pComponent->PlayLoop();
 		m_pSparks->PlayOnce(3.0f,2.0f);
 
 		Signal::GetInstance().AddListener("sparks", std::function<void()>([this]()
 			{
 				//m_pComponent->PlayOnce(0.20f);
+				m_pSparks->settings.color = MAD::MathUtils::colRand();
 				m_pSparks->settings.burst = true;
 				m_pSparks->PlayOnce(1.0f);
+				
 			}));
 	}
 
