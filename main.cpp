@@ -158,12 +158,21 @@ public:
 		AddComponent<VelocityComponent>(0, 0);
 		SetGameTag("CosmicBall");
 
+		AddComponentWithName<SpriteComponent>("WaterSprite", World::GetWorld()->GetTexture("water"));
+	
+		GetComponent<SpriteComponent>("WaterSprite").SetShader("waterShader");
+
+
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("texture", GetComponent<SpriteComponent>("WaterSprite").texture);
+		
+
 		m_smoke.spawnRate = 100.f;
 		m_smoke.maxParticles = 800;
 		m_smoke.velMin = { -20.f,-10.f };
 		m_smoke.velMax = { 20.f,-50.f };
-		//m_smoke.shaderId = "glow";
-		//m_smoke.sizeFromTexture = false;
+		m_smoke.texPtr = &World::GetWorld()->GetTexture("smoke");
+		m_smoke.shaderPtr = &World::GetWorld()->GetShader("smokeShader");
+		//m_smoke.useAdditive = true;
 		m_smoke.u_time_scale = 1.0f;
 		m_smoke.u_tint = { 1.0f, 0.5f, 0.0f, 1.f };
 		m_smoke.lifetimeMin = 0.8f; m_smoke.lifetimeMax = 1.3f;
@@ -175,23 +184,23 @@ public:
 
 		
 
-		//m_pComponent = &AddComponentWithName<ParticleEmitterComponent>(std::string("smokeParticle"), m_smoke);
+		m_pComponent = &AddComponentWithName<ParticleEmitterComponent>(std::string("smokeParticle"), m_smoke);
 
 
 		m_sparks.spawnRate = 0.0f;
 		m_sparks.maxParticles = 30;
 		m_sparks.burst = true;
 		m_sparks.burstCount = 130;
-
+		m_sparks.shaderPtr = &World::GetWorld()->GetShader("glow");
 		m_sparks.velMin = { -300.0f,-300.0f };
 		m_sparks.velMax = { 300.0f, 300.0f };
 
 		m_sparks.lifetimeMin = 0.35f;
 		m_sparks.lifetimeMax = 0.80f;
 
-		m_sparks.sizeMin = 1.0f;
-		m_sparks.sizeMax = 2.0f;
-
+		m_sparks.sizeMin = 3.0f;
+		m_sparks.sizeMax = 6.0f;
+		m_sparks.useAdditive = true;
 		m_sparks.color = MAD::MathUtils::colRand(sf::Color::Red,sf::Color::Blue);
 		m_sparks.drag = 3.0f;
 
@@ -207,8 +216,30 @@ public:
 		auto& collider = GetComponent<ColliderComponent>();
 
 		collider.isStatic = false;
-		//m_pComponent->PlayLoop();
-		m_pSparks->PlayOnce(3.0f,2.0f);
+		m_pComponent->PlayLoop();
+		m_pSparks->PlayOnce(3.0f, 1.0f);
+
+		sf::Texture& noiseTex = World::GetWorld()->GetTexture("noise"); // DEBE ser otra textura
+		sf::Texture& smokeTex = World::GetWorld()->GetTexture("smoke");
+
+		smokeTex.setSmooth(true);
+
+		noiseTex.setRepeated(true); // importante para tilear
+
+		if (m_pComponent->settings.shaderPtr)
+		{
+			auto* sh = m_pComponent->settings.shaderPtr;
+			sh->setUniform("texture", m_pComponent->settings.texPtr);
+			sh->setUniform("u_noise", noiseTex);
+			sh->setUniform("u_texSize", sf::Glsl::Vec2(smokeTex.getSize()));
+			sh->setUniform("u_noiseSize", sf::Glsl::Vec2(noiseTex.getSize()));
+			sh->setUniform("u_strength", 0.015f);
+			sh->setUniform("u_scale", 4.0f);
+			sh->setUniform("u_speed", 0.2f);
+			sh->setUniform("u_dissolve", 0.15f);
+			sh->setUniform("u_tint", sf::Glsl::Vec3(1.f, 1.f, 1.f));
+		}
+
 
 		Signal::GetInstance().AddListener("sparks", std::function<void()>([this]()
 			{
@@ -223,7 +254,20 @@ public:
 	void Update(float deltaTime) override
 	{
 		auto& velocityComp = GetComponent<VelocityComponent>();
-		m_pSparks->settings.color = MAD::MathUtils::colRand();
+		//m_pSparks->settings.color = MAD::MathUtils::colRand();
+
+		m_time += deltaTime;
+		if(m_pComponent->settings.shaderPtr)
+			m_pComponent->settings.shaderPtr->setUniform("u_time", m_time);
+
+		if (m_pSparks->settings.shaderPtr && m_pSparks->playback.playing)
+		{
+			m_pSparks->settings.shaderPtr->setUniform("u_time", m_time);
+			m_pSparks->settings.shaderPtr->setUniform("u_baseColor", sf::Glsl::Vec4(m_pSparks->settings.color));
+			m_pSparks->settings.shaderPtr->setUniform("u_glowColor", sf::Glsl::Vec3(0.f, 1.f, 0.f)); // o lo que quieras en [0,1]
+		}
+
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("time", m_time);
 		//velocityComp.velocity.x += cos(60) * deltaTime;
 		//velocityComp.velocity.y -= sin(60) * deltaTime;
 
@@ -231,6 +275,8 @@ public:
 
 
 private:
+	float m_time = 0.0f;
+
 	EmitterSettings m_smoke;
 
 	EmitterSettings m_sparks;

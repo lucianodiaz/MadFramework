@@ -4,5 +4,16 @@
     "fragment": "assets/shaders/glow.frag",
     "id": "glow",
     "type": "shader"
+  },
+  {
+    "vertex": "assets/shaders/smoke.vert",
+    "fragment": "assets/shaders/smoke.frag",
+    "id": "smokeShader",
+    "type": "shader"
+  },
+  {
+    "fragment": "assets/shaders/water.frag",
+    "id": "waterShader",
+    "type": "shader"
   }
 ]

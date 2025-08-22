@@ -68,7 +68,7 @@ void TilemapLoader::LoadTilemap(std::string mapName, const nlohmann::json& level
 		World::GetWorld()->LoadTexture( tileSet.textureName, srcAsset + tileSet.source);
 
 		tileSet.texture = World::GetWorld()->GetTexture(tileSet.textureName);
-		
+		tileSet.texture.setSmooth(false);
 		if (tilesetJson.contains("tiles"))
 		{
 			for (const auto& tile : tilesetJson["tiles"])

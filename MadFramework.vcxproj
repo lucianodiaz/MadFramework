@@ -256,6 +256,9 @@
   <ItemGroup>
     <None Include="assets\shaders\glow.frag" />
     <None Include="assets\shaders\glow.vert" />
+    <None Include="assets\shaders\smoke.frag" />
+    <None Include="assets\shaders\smoke.vert" />
+    <None Include="assets\shaders\water.frag" />
     <None Include="include\Core\World.inl" />
     <None Include="include\ECS\ECSManager.inl" />
     <None Include="include\Gameplay\Actor.inl" />

@@ -16,15 +16,41 @@ RenderSystem::RenderSystem(std::unique_ptr<ECSManager>& ecs) : m_ecs(ecs)
 void RenderSystem::Render(sf::RenderWindow& window)
 {
 	
+    
     // Sprites
     for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteComponent>())
+    {
         for (auto* s : m_ecs->GetComponents<SpriteComponent>(e))
-            window.draw(s->sprite);
+        {
+            sf::RenderStates states;
+            if (s->shader)
+            {
+                states.shader = s->shader;
+            }
+            window.draw(s->sprite, states);
+        }
+    }
+
+           
 
     // Animations
     for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, SpriteAnimationComponent>())
+    {
         for (auto* a : m_ecs->GetComponents<SpriteAnimationComponent>(e))
-            if (!a->animations.empty()) window.draw(a->sprite);
+        {
+            if (!a->animations.empty())
+            {
+                sf::RenderStates states;
+                if (a->shader)
+                {
+                    states.shader = a->shader;
+                }
+                window.draw(a->sprite, states);
+            }
+        }
+           
+
+    }
 
     // Debug colliders
     for (auto e : m_ecs->GetEntitiesWithComponent<TransformComponent, ColliderComponent>())

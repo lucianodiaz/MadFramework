@@ -31,6 +31,12 @@ struct ParticleEmitterComponent : public IComponent
 
 	sf::Vector2f localOffset{ 0.0f,0.0f };
 
+	sf::Shader& SetShader(const std::string& shaderId)
+	{
+		settings.shaderPtr = &World::GetWorld()->GetShader(shaderId);
+		return *settings.shaderPtr;
+	}
+
 	ParticleEmitterComponent(const EmitterSettings& s = {}) : settings(s)
 	{
 		Reserve(s.maxParticles);
@@ -63,9 +69,9 @@ struct ParticleEmitterComponent : public IComponent
 		p.active = true;
 		p.age = 0.0f;
 		p.lifetime = MAD::MathUtils::frand(settings.lifetimeMin, settings.lifetimeMax);
-		if (!settings.textureId.empty()) {
-			const auto& tex = World::GetWorld()->GetTexture(settings.textureId);
-			sf::Vector2u full = tex.getSize();
+		if (settings.texPtr) 
+		{
+			sf::Vector2u full = settings.texPtr->getSize();
 			sf::Vector2u sz = (settings.texRect.width > 0 && settings.texRect.height > 0)
 				? sf::Vector2u(settings.texRect.width, settings.texRect.height)
 				: full;

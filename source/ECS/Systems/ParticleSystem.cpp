@@ -88,106 +88,102 @@ void ParticleSystem::UpdateEntities(float dt)
 
 void ParticleSystem::Render(sf::RenderWindow& window)
 {
-	auto entities = m_ecs->GetEntitiesWithComponent<ParticleEmitterComponent, TransformComponent>();
-	for (auto e : entities)
-	{
-		for (auto* em : m_ecs->GetComponents<ParticleEmitterComponent>(e))
-		{
-			if (em->alive.empty()) continue;
+    auto entities = m_ecs->GetEntitiesWithComponent<ParticleEmitterComponent, TransformComponent>();
+    for (auto e : entities)
+    {
+        for (auto* em : m_ecs->GetComponents<ParticleEmitterComponent>(e))
+        {
+            if (em->alive.empty()) continue;
 
-			sf::RenderStates states;
+            // 1) Un único states por emisor
+            sf::RenderStates states;
+            states.blendMode = em->settings.useAdditive ? sf::BlendAdd : sf::BlendAlpha;
 
-			sf::Texture* texPtr = nullptr;
-			if (!em->settings.textureId.empty())
-			{
-				texPtr = &World::GetWorld()->GetTexture(em->settings.textureId);
-				states.texture = texPtr;
-				sf::VertexArray va(sf::Quads);
-				va.resize(em->alive.size() * 4);
-				std::size_t v = 0;
+            // texture (opcional)
+            if (em->settings.texPtr)
+                states.texture = em->settings.texPtr;
 
-				// Determina el rect de textura a usar
-				sf::IntRect r = em->settings.texRect;
-				if (r.width == 0 || r.height == 0)
-					r = { 0, 0, (int)texPtr->getSize().x, (int)texPtr->getSize().y };
+            // shader (opcional)
+            if (em->settings.shaderPtr)
+            {
+                states.shader = em->settings.shaderPtr;
 
-				for (auto idx : em->alive)
-				{
-					const auto& p = em->pool[idx];
+                // Si el shader espera una textura con nombre distinto a "texture"
+                // em->settings.shaderPtr->setUniform("u_texture", sf::Shader::CurrentTexture);
 
-					// Calcula half-extents con aspecto si se desea
-					float halfH = p.size * 0.5f;
-					float aspect = static_cast<float>(r.width) / static_cast<float>(r.height == 0 ? 1 : r.height);
-					float halfW = em->settings.sizeFromTexture ? (halfH * aspect) : halfH;
+                // Uniforms propios (si los usás en el shader)
+                // em->settings.shaderPtr->setUniform("u_time", m_clock.getElapsedTime().asSeconds() * em->settings.u_time_scale);
+                // em->settings.shaderPtr->setUniform("u_tint", em->settings.u_tint);
+            }
 
-					// Rotación en torno a p.pos
-					float c = std::cos(p.rot), s = std::sin(p.rot);
-					auto rot = [&](sf::Vector2f local)->sf::Vector2f {
-						return { local.x * c - local.y * s, local.x * s + local.y * c };
-						};
+            // 2) Construcción de geometría
+            if (em->settings.texPtr) // QUADS con UVs
+            {
+                sf::VertexArray va(sf::Quads);
+                va.resize(em->alive.size() * 4);
+                std::size_t v = 0;
 
-					sf::Vector2f p0 = p.pos + rot({ -halfW, -halfH });
-					sf::Vector2f p1 = p.pos + rot({ +halfW, -halfH });
-					sf::Vector2f p2 = p.pos + rot({ +halfW, +halfH });
-					sf::Vector2f p3 = p.pos + rot({ -halfW, +halfH });
+                sf::IntRect r = em->settings.texRect;
+                if (r.width == 0 || r.height == 0)
+                    r = { 0, 0, (int)em->settings.texPtr->getSize().x, (int)em->settings.texPtr->getSize().y };
 
-					va[v + 0].position = p0; va[v + 1].position = p1; va[v + 2].position = p2; va[v + 3].position = p3;
+                for (auto idx : em->alive)
+                {
+                    const auto& p = em->pool[idx];
 
-					// UVs
-					va[v + 0].texCoords = { static_cast<float>(r.left),               static_cast<float>(r.top) };
-					va[v + 1].texCoords = { static_cast<float>(r.left + r.width),     static_cast<float>(r.top) };
-					va[v + 2].texCoords = { static_cast<float>(r.left + r.width),     static_cast<float>(r.top + r.height) };
-					va[v + 3].texCoords = { static_cast<float>(r.left),               static_cast<float>(r.top + r.height) };
+                    float halfH = p.size * 0.5f;
+                    float aspect = (float)r.width / (float)(r.height == 0 ? 1 : r.height);
+                    float halfW = em->settings.sizeFromTexture ? (halfH * aspect) : halfH;
 
-					// Color por vértice (tinte + alpha por vida si alguna vez lo quieres)
-					va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
+                    float c = std::cos(p.rot), s = std::sin(p.rot);
+                    auto rot = [&](sf::Vector2f L) { return sf::Vector2f(L.x * c - L.y * s, L.x * s + L.y * c); };
 
-					v += 4;
-				}
+                    sf::Vector2f p0 = p.pos + rot({ -halfW, -halfH });
+                    sf::Vector2f p1 = p.pos + rot({ +halfW, -halfH });
+                    sf::Vector2f p2 = p.pos + rot({ +halfW, +halfH });
+                    sf::Vector2f p3 = p.pos + rot({ -halfW, +halfH });
 
-				sf::RenderStates states;
-				states.texture = texPtr;
-				states.blendMode = em->settings.useAdditive ? sf::BlendAdd : sf::BlendAlpha;
-				window.draw(va, states);
-				continue; // ya renderizamos este emisor; sigue con el siguiente
-			}
+                    va[v + 0].position = p0; va[v + 1].position = p1; va[v + 2].position = p2; va[v + 3].position = p3;
 
-			sf::Shader* shaderPtr = nullptr;
-			if (!em->settings.shaderId.empty()) {
-				shaderPtr = &World::GetWorld()->GetShader(em->settings.shaderId);
-				// Set uniforms comunes (por emisor/frame)
-				shaderPtr->setUniform("u_time", em->playback.elapsed * em->settings.u_time_scale);
-				shaderPtr->setUniform("u_color", em->settings.u_tint);
-				shaderPtr->setUniform("u_glowColor", sf::Glsl::Vec3(0.f, 1.f, 0.f));
-				if (texPtr) shaderPtr->setUniform("u_texture", *texPtr);
-				states.shader = shaderPtr;
-			}
+                    va[v + 0].texCoords = { (float)r.left,             (float)r.top };
+                    va[v + 1].texCoords = { (float)(r.left + r.width),   (float)r.top };
+                    va[v + 2].texCoords = { (float)(r.left + r.width),   (float)(r.top + r.height) };
+                    va[v + 3].texCoords = { (float)r.left,             (float)(r.top + r.height) };
 
-			if (em->settings.asQuads) {
-				sf::VertexArray va(sf::Quads);
-				va.resize(em->alive.size() * 4);
-				std::size_t v = 0;
-				for (auto idx : em->alive) {
-					const auto& p = em->pool[idx];
-					float hs = p.size * 0.5f;
-					va[v + 0].position = p.pos + sf::Vector2f(-hs, -hs);
-					va[v + 1].position = p.pos + sf::Vector2f(+hs, -hs);
-					va[v + 2].position = p.pos + sf::Vector2f(+hs, +hs);
-					va[v + 3].position = p.pos + sf::Vector2f(-hs, +hs);
-					va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
-					v += 4;
-				}
-				window.draw(va,states);
-			}
-			else {
-				sf::VertexArray points(sf::Points);
-				points.resize(em->alive.size());
-				for (std::size_t i = 0; i < em->alive.size(); ++i) {
-					const auto& p = em->pool[em->alive[i]];
-					points[i].position = p.pos; points[i].color = p.color;
-				}
-				window.draw(points, states);
-			}
-		}
-	}
+                    va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
+                    v += 4;
+                }
+
+                window.draw(va, states); // usa states con shader (si hay)
+            }
+            else if (em->settings.asQuads) // QUADS sin textura (shader que NO samplee)
+            {
+                sf::VertexArray va(sf::Quads);
+                va.resize(em->alive.size() * 4);
+                std::size_t v = 0;
+                for (auto idx : em->alive) {
+                    const auto& p = em->pool[idx];
+                    float hs = p.size * 0.5f;
+                    va[v + 0].position = p.pos + sf::Vector2f(-hs, -hs);
+                    va[v + 1].position = p.pos + sf::Vector2f(+hs, -hs);
+                    va[v + 2].position = p.pos + sf::Vector2f(+hs, +hs);
+                    va[v + 3].position = p.pos + sf::Vector2f(-hs, +hs);
+                    va[v + 0].color = va[v + 1].color = va[v + 2].color = va[v + 3].color = p.color;
+                    v += 4;
+                }
+                window.draw(va, states);
+            }
+            else // POINTS
+            {
+                sf::VertexArray points(sf::Points);
+                points.resize(em->alive.size());
+                for (std::size_t i = 0; i < em->alive.size(); ++i) {
+                    const auto& p = em->pool[em->alive[i]];
+                    points[i].position = p.pos;
+                    points[i].color = p.color;
+                }
+                window.draw(points, states);
+            }
+        }
+    }
 }

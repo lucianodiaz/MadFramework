@@ -1,10 +1,52 @@
 [
-    {"src": "assets/images/human.png", "id": "player", "type": "texture"},
-    {"src": "assets/images/smoke.png", "id": "smoke", "type": "texture"},
-    {"src": "assets/music/theme.ogg", "id": "theme_music", "type": "music"},
-    {"src": "assets/font/awesomeFont.ttf", "id": "my_font", "type": "font"},
-    {"src": "assets/sounds/click.wav", "id": "click_sound", "type": "sound"},
-    {"src": "assets/data/level1.json", "id": "level1", "type": "json"},
-    {"src":  "assets/images/idleAnimation.json", "id": "player_idle_animation","type": "json"},
-    {"src":  "assets/images/walkAnimation.json", "id": "player_walk_animation","type": "json"}
+  {
+    "src": "assets/images/human.png",
+    "id": "player",
+    "type": "texture"
+  },
+  {
+    "src": "assets/images/smoke.png",
+    "id": "smoke",
+    "type": "texture"
+  },
+  {
+    "src": "assets/images/water.png",
+    "id": "water",
+    "type": "texture"
+  },
+  {
+    "src": "assets/images/noise.png",
+    "id": "noise",
+    "type": "texture"
+  },
+  {
+    "src": "assets/music/theme.ogg",
+    "id": "theme_music",
+    "type": "music"
+  },
+  {
+    "src": "assets/font/awesomeFont.ttf",
+    "id": "my_font",
+    "type": "font"
+  },
+  {
+    "src": "assets/sounds/click.wav",
+    "id": "click_sound",
+    "type": "sound"
+  },
+  {
+    "src": "assets/data/level1.json",
+    "id": "level1",
+    "type": "json"
+  },
+  {
+    "src": "assets/images/idleAnimation.json",
+    "id": "player_idle_animation",
+    "type": "json"
+  },
+  {
+    "src": "assets/images/walkAnimation.json",
+    "id": "player_walk_animation",
+    "type": "json"
+  }
 ]

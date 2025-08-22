@@ -1,6 +1,7 @@
 #pragma once
 #include <ECS/Component.h>
 #include <SFML/Graphics.hpp>
+#include <Core/World.h>
 
 struct AnimationData
 {
@@ -32,6 +33,18 @@ struct SpriteAnimationComponent : public IComponent
 		sprite.setTexture(texture);
 		sprite.setTextureRect(frameRect);
 	}
+
+	void SetShader(sf::Shader& shader)
+	{
+		this->shader = &shader;
+	}
+
+	void SetShader(const std::string& shaderName)
+	{
+		shader = &World::GetWorld()->GetShader(shaderName);
+	}
+
+	sf::Shader* shader = nullptr; // Optional shader for the sprite animation
 	std::string currentAnimation; // Name of the current animation being played
 	std::unordered_map<std::string,AnimationData> animations; // List of animations for the sprite
 	sf::IntRect frameRect; // Rectangle defining the current frame in the texture

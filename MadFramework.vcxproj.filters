@@ -303,5 +303,8 @@
     <None Include="assets\shaders\glow.frag" />
     <None Include="assets\shaders\glow.vert" />
     <None Include="shaders.json" />
+    <None Include="assets\shaders\smoke.vert" />
+    <None Include="assets\shaders\smoke.frag" />
+    <None Include="assets\shaders\water.frag" />
   </ItemGroup>
 </Project>
