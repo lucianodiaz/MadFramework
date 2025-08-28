@@ -3,7 +3,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include "ParticlesTypes.h"
-#include <MathUtils.h>
+#include <Utils/MathUtils.h>
 #include <Core/World.h>
 
 enum class EmitterPlayMode { Loop, Once };

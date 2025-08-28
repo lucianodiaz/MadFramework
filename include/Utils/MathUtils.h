@@ -1,14 +1,7 @@
 #pragma once
-#include <SFML/System/Vector2.hpp>
-#include <cmath>
 #include <random>
-#include <vector>
-#include <list>
-#include <deque>
-#include <array>
-#include <stdexcept>
-#include <algorithm>
-#include <iterator>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace MAD::MathUtils
 {

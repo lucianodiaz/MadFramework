@@ -203,7 +203,7 @@
     <ClInclude Include="include\ECS\Components\GravityComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\PrivateUtils\MathUtils.h">
+    <ClInclude Include="include\Utils\MathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ECS\Components\CameraViewComponent.h">
