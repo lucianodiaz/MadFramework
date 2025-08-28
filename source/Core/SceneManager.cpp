@@ -325,11 +325,11 @@ void SceneManager::ProcessInput(sf::Event& event)
 
 void SceneManager::Update(float deltaTime)
 {
-	// Debug output (remove in production)
 	static TransitionPhase lastPhase = TransitionPhase::Idle;
 	if (m_phase != lastPhase) {
 		std::cout << "[SceneManager] Phase changed to: ";
-		switch (m_phase) {
+		switch (m_phase)
+		{
 		case TransitionPhase::Idle: std::cout << "Idle"; break;
 		case TransitionPhase::Out: std::cout << "Out"; break;
 		case TransitionPhase::Switch: std::cout << "Switch"; break;
@@ -340,7 +340,8 @@ void SceneManager::Update(float deltaTime)
 	}
 
 	// FSM Logic
-	switch (m_phase) {
+	switch (m_phase) 
+	{
 	case TransitionPhase::Idle:
 	{
 		// Update current scene only when idle
@@ -382,7 +383,7 @@ void SceneManager::Update(float deltaTime)
 
 		if (m_out) {
 			m_out->Update(deltaTime);
-
+			m_overlay = m_out->GetOverlay();
 			// Wait for OUT transition to finish
 			if (m_out->IsFinished()) {
 				m_out->OnEnd();
@@ -425,7 +426,7 @@ void SceneManager::Update(float deltaTime)
 
 		if (m_in) {
 			m_in->Update(deltaTime);
-
+			m_overlay = m_in->GetOverlay();
 			if (m_in->IsFinished()) {
 				m_in->OnEnd();
 				m_in.reset();
@@ -518,15 +519,16 @@ void SceneManager::drawTransitions(sf::RenderWindow& window)
 	transitionView.setCenter(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
 	window.setView(transitionView);
 
-	// Draw active transition
-	if (m_phase == TransitionPhase::Out && m_out)
-	{
-		m_out->Draw(window);
-	}
-	else if (m_phase == TransitionPhase::In && m_in)
-	{
-		m_in->Draw(window);
-	}
+	window.draw(m_overlay);
+	//// Draw active transition
+	//if (m_phase == TransitionPhase::Out && m_out)
+	//{
+	//	m_out->Draw(window);
+	//}
+	//else if (m_phase == TransitionPhase::In && m_in)
+	//{
+	//	m_in->Draw(window);
+	//}
 }
 void SceneManager::switchToNewScene()
 {

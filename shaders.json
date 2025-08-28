@@ -15,5 +15,10 @@
     "fragment": "assets/shaders/water.frag",
     "id": "waterShader",
     "type": "shader"
+  },
+  {
+    "fragment": "assets/shaders/test.frag",
+    "id": "testShader",
+    "type": "shader"
   }
 ]

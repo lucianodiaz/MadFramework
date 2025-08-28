@@ -12,6 +12,8 @@ public:
 
 	sf::RenderWindow& GetRenderWindow() { return *_window; }
 
+	sf::Vector2u GetSize() const { return _window->getSize(); }
+
 	void Clear();
 
 	void Display();

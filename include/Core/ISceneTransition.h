@@ -19,6 +19,8 @@ public:
 
 	virtual ~ISceneTransition() {};
 
+	sf::RectangleShape& GetOverlay() { return m_overlay; }
+
 protected:
 	sf::RectangleShape m_overlay;
 };

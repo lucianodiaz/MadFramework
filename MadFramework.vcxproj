@@ -258,6 +258,7 @@
     <None Include="assets\shaders\glow.vert" />
     <None Include="assets\shaders\smoke.frag" />
     <None Include="assets\shaders\smoke.vert" />
+    <None Include="assets\shaders\test.frag" />
     <None Include="assets\shaders\water.frag" />
     <None Include="include\Core\World.inl" />
     <None Include="include\ECS\ECSManager.inl" />

@@ -1,5 +1,7 @@
 #include <Transitions/FadeTransition.h>
 #include <iostream>
+#include <Core/World.h>
+#include <Window/Window.h>
 
 
 FadeTransition::FadeTransition(FadeType type, float duration, sf::Color color)
@@ -14,7 +16,7 @@ void FadeTransition::OnStart()
 
     // Set up overlay to cover entire screen
     // Note: This should be set based on window size, not hardcoded
-    auto windowSize = sf::Vector2u(1920, 1080); // You should get this from World/Window
+    auto windowSize = World::GetWorld()->GetWindow().GetSize(); // You should get this from World/Window
     m_overlay.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
     m_overlay.setPosition(0, 0);
 

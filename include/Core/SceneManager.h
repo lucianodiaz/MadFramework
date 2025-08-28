@@ -62,8 +62,8 @@ private:
 
 	// Helpers
 	void startOutPhaseIfNeeded();
-	void switchScene();        // Hace OnSceneExit/OnSceneEnter y cambia punteros
-	void clearTransitions();   // Llama OnEnd() y resetea punteros apropiadamente
+	void switchScene();      
+	void clearTransitions();   
 
 	sf::View GetLetterBoxView(sf::View);
 
@@ -94,6 +94,8 @@ private:
 	TransitionPhase m_phase{ TransitionPhase::Idle };
 	std::unique_ptr<ISceneTransition> m_out;
 	std::unique_ptr<ISceneTransition> m_in;
+
+	sf::RectangleShape m_overlay;
 
 private:
 	void debugTransitionState();

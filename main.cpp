@@ -160,18 +160,21 @@ public:
 
 		AddComponentWithName<SpriteComponent>("WaterSprite", World::GetWorld()->GetTexture("water"));
 	
-		GetComponent<SpriteComponent>("WaterSprite").SetShader("waterShader");
+		GetComponent<SpriteComponent>("WaterSprite").SetShader("testShader");
 
 
-		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("texture", GetComponent<SpriteComponent>("WaterSprite").texture);
-		
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_texture", GetComponent<SpriteComponent>("WaterSprite").texture);
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_color1", sf::Glsl::Vec4(0.0,0.0,0.0,1.0));
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_color2", sf::Glsl::Vec4(0.0, 0.0, 0.0, 1.0));
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_threshold", 0.35f);
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_intensity", 2.0f);
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_opacity", 1.0f);
+		GetComponent<SpriteComponent>("WaterSprite").shader->setUniform("u_glowColor", sf::Glsl::Vec4(1.0, 0.0, 0.0, 1.0));
 
 		m_smoke.spawnRate = 100.f;
 		m_smoke.maxParticles = 800;
 		m_smoke.velMin = { -20.f,-10.f };
 		m_smoke.velMax = { 20.f,-50.f };
-		m_smoke.texPtr = &World::GetWorld()->GetTexture("smoke");
-		m_smoke.shaderPtr = &World::GetWorld()->GetShader("smokeShader");
 		//m_smoke.useAdditive = true;
 		m_smoke.u_time_scale = 1.0f;
 		m_smoke.u_tint = { 1.0f, 0.5f, 0.0f, 1.f };
@@ -598,7 +601,7 @@ public:
 
 	void EnterTheGame()
 	{
-		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1" , std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 1.0f));
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("level1" , std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 2.0f));
 	}
 	void OnSceneExit() override {};
 
@@ -713,7 +716,9 @@ public:
 		World::GetWorld()->GetSceneManager().AddScene("MainMenu", std::make_unique<MainMenuScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level1", std::make_unique<FirstLevelScene>());
 		World::GetWorld()->GetSceneManager().AddScene("level2", std::make_unique<SecondLevelScene>());
-		World::GetWorld()->GetSceneManager().ChangeScene("MainMenu");
+
+
+		World::GetWorld()->GetSceneManager().ChangeSceneWithTransition("MainMenu", std::make_unique<FadeTransition>(FadeTransition::FadeOut, 1.0f), std::make_unique<FadeTransition>(FadeTransition::FadeIn, 1.0f));
     }
 };
 

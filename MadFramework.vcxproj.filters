@@ -306,5 +306,6 @@
     <None Include="assets\shaders\smoke.vert" />
     <None Include="assets\shaders\smoke.frag" />
     <None Include="assets\shaders\water.frag" />
+    <None Include="assets\shaders\test.frag" />
   </ItemGroup>
 </Project>
