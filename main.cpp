@@ -1,20 +1,5 @@
 #include <MadFramework.h>
-#include <ECS/Components/ColliderComponent.h>
-#include <Input/ActionTarget.h>
-#include <ECS/Components/SpriteAnimationComponent.h>
-#include <Gameplay/AnimationController.h>
-#include <ECS/Components/CameraViewComponent.h>
-#include <Transitions/FadeTransition.h>
-#include <Utils/EasingFunctions.h>
-#include <UI/Label.h>
-#include <UI/Button.h>
-#include <UI/CanvasPanel.h>
-#include <UI/Image.h>
-#include <UI/VerticalLayout.h>
-#include <UI/HorizontalLayout.h>
-#include <ECS/Components/ParticlesTypes.h>
-#include <ECS/Components/ParticleEmitterComponent.h>
-#include <Window/Window.h>
+
 
 
 class UI : public UserWidget
@@ -301,10 +286,6 @@ public:
         AddComponent<VelocityComponent>(0.0f,0.0f, m_speed);
 
         AddComponent<SpriteAnimationComponent>();
-
-		//AddComponent<ColliderComponent>(std::vector<sf::Vector2f>{
-		//	 {-5, -10}, {5, -10}, {5, 10}, {-5, 10}
-		//}, false, true);
 
 		AddComponent<ColliderComponent>(10.0f,20.f, false, true);
 
