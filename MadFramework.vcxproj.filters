@@ -155,9 +155,6 @@
     <ClInclude Include="include\Core\MadEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\nlohmann\json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\MadFrameworkExport.h">
       <Filter>Header Files</Filter>
     </ClInclude>

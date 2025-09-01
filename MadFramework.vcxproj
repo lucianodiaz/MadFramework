@@ -142,7 +142,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documentos\SFML-2.6.1\include;$(ProjectDir)vendor;$(ProjectDir)include;$(ProjectDir)source\PrivateUtils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\vendor;$(ProjectDir)include;$(ProjectDir)source\PrivateUtils</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -254,7 +254,6 @@
     <ClInclude Include="source\PrivateUtils\inputPrivateUtil.h" />
     <ClInclude Include="source\PrivateUtils\InternalCollisionCheck.h" />
     <ClInclude Include="include\Utils\MathUtils.h" />
-    <ClInclude Include="vendor\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\glow.frag" />
