@@ -3,9 +3,9 @@
 #include <memory>
 #include <vector>
 #include "Widget.h"
+#include <MadFrameworkExport.h>
 
-
-class UserWidget
+class MAD_API UserWidget
 {
 public:
 	UserWidget();

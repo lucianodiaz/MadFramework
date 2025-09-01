@@ -3,7 +3,8 @@
 #include <nlohmann/json.hpp>
 #include <SFML/Graphics.hpp>
 #include "TilemapLoader.h"
-class TilemapManager
+#include <MadFrameworkExport.h>
+class MAD_API TilemapManager
 {
 public:
 	TilemapManager();

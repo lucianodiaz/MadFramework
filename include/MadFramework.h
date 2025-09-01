@@ -7,6 +7,7 @@
 #include <ECS/Components/SpriteComponent.h>
 #include <ECS/Component.h>
 #include <ECS/System.h>
+#include <ECS/ECSManager.h>
 #include <Core/Signal.h>
 #include <Core/MadEntry.h>
 #include <Utils/MathUtils.h>

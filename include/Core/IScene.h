@@ -5,7 +5,7 @@
 #include <UI/UserWidget.h>
 
 
-class IScene
+class MAD_API IScene
 {
 public:
 	IScene() {};

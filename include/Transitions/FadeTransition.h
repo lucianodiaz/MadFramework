@@ -13,7 +13,6 @@ public:
 
     void OnStart() override;
     void Update(float deltaTime) override;
-    void Draw(sf::RenderWindow& window) override;
     bool IsFinished() const override;
     void OnEnd() override;
 

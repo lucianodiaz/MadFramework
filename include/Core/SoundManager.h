@@ -2,9 +2,9 @@
 #include <string>
 #include <SFML/Audio.hpp>
 #include <unordered_map>
+#include <MadFrameworkExport.h>
 
-
-class SoundMananger
+class MAD_API SoundMananger
 {
 public:
 	SoundMananger();

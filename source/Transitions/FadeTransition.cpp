@@ -58,15 +58,6 @@ void FadeTransition::Update(float deltaTime)
     }
 }
 
-void FadeTransition::Draw(sf::RenderWindow& window)
-{
-    // Update overlay size to match current window size
-    auto windowSize = window.getSize();
-    m_overlay.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
-
-    window.draw(m_overlay);
-}
-
 bool FadeTransition::IsFinished() const
 {
     return m_finished;

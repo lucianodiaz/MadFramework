@@ -4,8 +4,8 @@
 #include "IScene.h"
 #include <unordered_map>
 #include "ISceneTransition.h"
-
-class SceneManager
+#include <MadFrameworkExport.h>
+class MAD_API SceneManager
 {
 public:
 

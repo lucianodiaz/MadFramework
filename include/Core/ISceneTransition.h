@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <MadFrameworkExport.h>
 
-
-class ISceneTransition
+class MAD_API ISceneTransition
 {
 public:
 	ISceneTransition() {};
@@ -10,8 +10,6 @@ public:
 	virtual void OnStart() = 0;
 
 	virtual void Update(float deltaTime) = 0;
-
-	virtual void Draw(sf::RenderWindow& window) = 0;
 
 	virtual bool IsFinished() const = 0;
 

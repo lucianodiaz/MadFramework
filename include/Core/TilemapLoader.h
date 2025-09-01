@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
-
+#include <MadFrameworkExport.h>
 struct TileSet
 {
 	int firstgid; // First global tile ID
@@ -24,7 +24,7 @@ struct Layer
 	int height; // Height of the layer in tiles
 };
 
-class TilemapLoader
+class MAD_API TilemapLoader
 {
 public:
 

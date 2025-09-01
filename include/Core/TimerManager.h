@@ -3,8 +3,8 @@
 #include <map>
 #include <functional>
 #include <set>
-
-class TimerManager
+#include <MadFrameworkExport.h>
+class MAD_API TimerManager
 {
 public:
 	TimerManager() = default;

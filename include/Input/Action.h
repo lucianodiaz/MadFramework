@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Window/Event.hpp>
-
-class Action
+#include <MadFrameworkExport.h>
+class MAD_API Action
 {
 public:
 	enum Type

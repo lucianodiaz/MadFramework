@@ -1,7 +1,7 @@
 #pragma once
 #include <Core/IScene.h>
-
-class SplashScreenFramework : public IScene
+#include <MadFrameworkExport.h>
+class MAD_API SplashScreenFramework : public IScene
 {
 
 public:

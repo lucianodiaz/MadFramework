@@ -1,8 +1,8 @@
 #pragma once
 #include <ECS/Components/SpriteAnimationComponent.h>
 #include <nlohmann/json.hpp>
-
-class AnimationController
+#include <MadFrameworkExport.h>
+class MAD_API AnimationController
 {
 public:
 	AnimationController(SpriteAnimationComponent& animationComponent)

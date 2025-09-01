@@ -2,8 +2,9 @@
 #include <string>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include <MadFrameworkExport.h>
 
-class Window
+class MAD_API Window
 {
 public:
 

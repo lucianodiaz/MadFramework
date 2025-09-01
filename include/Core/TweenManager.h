@@ -4,8 +4,9 @@
 #include <list>  
 #include <Animation/Tween.h>  
 #include <Utils/EasingFunctions.h>
+#include <MadFrameworkExport.h>
 
-class TweenManager  
+class TweenManager
 {  
 public:  
 	TweenManager() = default;  

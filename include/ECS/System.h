@@ -3,8 +3,8 @@
 #include <vector>
 #include "Entity.h"
 #include <SFML/Graphics.hpp>
-
-class ISystem {
+#include <MadFrameworkExport.h>
+class MAD_API ISystem {
 
 public:
 	virtual ~ISystem() = default;
