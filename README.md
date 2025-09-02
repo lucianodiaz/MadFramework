@@ -104,7 +104,7 @@ Your project will be ready to go, so you can jump right in and start creating aw
 
 (In the future everything will be more polished, so apologies in advance for the “rough around the edges” experience right now 🙏).
 
-## Learnign how to (Soon)
+## Learning how to work with MAD (Soon)
 
 ## Contact
 
