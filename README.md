@@ -109,3 +109,10 @@ Your project will be ready to go, so you can jump right in and start creating aw
 ## Contact
 
 X: [My personal account](https://x.com/Lucianodb10)
+
+## License
+
+MAD Framework is licensed under the MIT License, a permissive open source license that allows free use in both open and closed source software. This includes modification, distribution, and commercial use, as long as the original copyright notice is preserved.
+
+Check the [LICENSE](https://github.com/lucianodiaz/MadFramework/blob/main/LICENSE)
+ file for further details.
