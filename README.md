@@ -39,7 +39,7 @@
 * ➗ Math Utils – Random numbers, random vectors, random colors, grab random elements from C++ STL containers, vector size, and more!
 * 🔔 Signal System – A simple event/signals system.
 * ⏰ Timer Manager – Manage timers to schedule actions easily.
-
+* 🎆 Particle System – Create particles Components.
 ## Basic Example
 
 ```C++
