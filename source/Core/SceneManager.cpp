@@ -347,6 +347,10 @@ void SceneManager::Update(float deltaTime)
 		// Update current scene only when idle
 		if (m_currentScene) {
 			m_currentScene->Update(deltaTime);
+			for (auto& userWidget : m_currentScene->m_userWidgets)
+			{
+				userWidget->Update(deltaTime);
+			}
 		}
 
 		// Check for pending transitions, but only start if scene allows it
@@ -365,6 +369,10 @@ void SceneManager::Update(float deltaTime)
 		// Continue updating current scene during OUT transition (for splash timer, etc.)
 		if (m_currentScene) {
 			m_currentScene->Update(deltaTime);
+			for (auto& userWidget : m_currentScene->m_userWidgets)
+			{
+				userWidget->Update(deltaTime);
+			}
 		}
 
 		// Double-check that scene still allows transition before proceeding
@@ -422,6 +430,10 @@ void SceneManager::Update(float deltaTime)
 		// Update current scene during IN transition
 		if (m_currentScene) {
 			m_currentScene->Update(deltaTime);
+			for (auto& userWidget : m_currentScene->m_userWidgets)
+			{
+				userWidget->Update(deltaTime);
+			}
 		}
 
 		if (m_in) {

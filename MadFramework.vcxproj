@@ -167,7 +167,6 @@
     <ClCompile Include="source\UI\HorizontalLayout.cpp" />
     <ClCompile Include="source\UI\Image.cpp" />
     <ClCompile Include="source\UI\Panel.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="source\Core\QuadTree.cpp" />
     <ClCompile Include="source\Core\SceneManager.cpp" />
     <ClCompile Include="source\Core\TilemapLoader.cpp" />
