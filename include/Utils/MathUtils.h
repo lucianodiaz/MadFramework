@@ -17,6 +17,13 @@ namespace MAD::MathUtils
         return d(rng());
     }
 
+    inline int irand(int a, int b)
+    {
+        auto [lo, hi] = std::minmax(a, b);
+        std::uniform_int_distribution<int> d(lo, hi);
+        return d(rng());
+	}
+
     inline sf::Color colRand(const sf::Color& a, const sf::Color& b)
     {
         return {
