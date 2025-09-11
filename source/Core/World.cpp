@@ -99,24 +99,53 @@ void World::ProcessInput()
 		m_sceneManager.ProcessInput(event);
 	}
 
-	for (auto& actor : m_actors)
-	{
-		actor->ProcessInput();
-	}
+	std::vector<Actor*> snapshot;
+	snapshot.reserve(m_actors.size());
+	for (auto& up : m_actors) if (up) snapshot.push_back(up.get());
+
+	for (Actor* a : snapshot)
+		if (a->IsAlive()) a->ProcessInput();
 
 }
 
 void World::Update(float deltaTime)
 {
+
+	//destroy actors
+	if (!m_actorToDestroy.empty())
+	{
+		for (Actor* dead : m_actorToDestroy)
+		{
+			auto it = std::remove_if(m_actors.begin(), m_actors.end(),
+				[dead](const std::unique_ptr<Actor>& a) { return a.get() == dead; });
+			m_actors.erase(it, m_actors.end());
+		}
+		m_actorToDestroy.clear();
+	}
+
 	m_sceneManager.Update(deltaTime);
 
 	if (m_sceneManager.GetCurrentScene()) {
 		m_sceneManager.GetECSManager()->Update(deltaTime);
 	}
-	for (auto& actor : m_actors)
+
+	
+	std::vector<Actor*> snapshot;
+	snapshot.reserve(m_actors.size());
+	for (auto& up : m_actors) if (up) snapshot.push_back(up.get());
+
+
+	for (Actor* a : snapshot)
+		if (a->IsAlive()) a->Update(deltaTime);
+
+
+	//add to destroy list
+	for (auto& up : m_actors)
 	{
-		actor->Update(deltaTime); //update entities
+		if (up && !up->IsAlive())
+			m_actorToDestroy.push_back(up.get()); // <-- sin std::move
 	}
+
 	m_tweenManager.Update(deltaTime); //update TweenManager
 	m_timerManager.Update(); //update TimerManager
 }

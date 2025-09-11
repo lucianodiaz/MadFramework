@@ -122,6 +122,8 @@ protected:
 	bool m_engineStartsWithSplash = true;
 
 	std::vector<std::unique_ptr<Actor>> m_actors;
+	std::vector<Actor*> m_actorToDestroy;
+
 	static std::shared_ptr <World> _world;
 
 	TimerManager m_timerManager;

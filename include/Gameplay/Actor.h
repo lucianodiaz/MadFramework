@@ -49,6 +49,14 @@ public:
 
 	void SetGameTag(const std::string& tag) { m_tag = tag; }
 
+	/* Destroy Actor and all its components */
+	void Destroy();
+
+	bool IsAlive() const { return m_alive; }
+
+	// LifeTime in seconds, -1 or 0 means infinite
+	void SetLifetime(float seconds);
+
 protected:
 
 	ECSManager& m_ecs;
@@ -60,10 +68,14 @@ protected:
 	virtual void onCollisionExit(Actor& actorA);
 
 
+	// LifeTime in seconds, -1 means infinite
+	float m_lifeTime = -1.0f;
+
 	friend class World;
 
 private:
 
+	bool m_alive = true;
 	void AddSignalListeners();
 };
 #include "Actor.inl"

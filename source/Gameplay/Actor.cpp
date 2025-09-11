@@ -45,6 +45,18 @@ sf::Vector2f& Actor::GetPosition()
     // TODO: Insertar una instrucción "return" aquí
 	return m_ecs.GetComponent<TransformComponent>(m_entity).position;
 }
+void Actor::Destroy()
+{
+    m_alive = false; 
+    m_ecs.DestroyEntity(m_entity);
+	std::cout << m_tag << " Destroyed" << std::endl;
+}
+void Actor::SetLifetime(float seconds)
+{
+    if (seconds <= 0.0f)return;
+
+    World::GetWorld()->GetTimerManager().CreateTimer(seconds, [this]() {this->Destroy(); });
+}
 
 void Actor::onCollisionEnter(Actor& actorA, Actor& actorB)
 {
