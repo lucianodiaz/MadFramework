@@ -50,4 +50,5 @@ struct SpriteAnimationComponent : public IComponent
 	sf::IntRect frameRect; // Rectangle defining the current frame in the texture
 	sf::Texture texture; // Texture for the sprite animation
 	sf::Sprite sprite; // Sprite to display the animation
+	bool visible = true;
 };

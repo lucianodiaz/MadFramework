@@ -28,4 +28,6 @@ struct SpriteComponent : public IComponent
 	sf::Shader* shader = nullptr;
 	sf::Texture texture;
 	sf::Sprite sprite;
+
+	bool visible = true;
 };

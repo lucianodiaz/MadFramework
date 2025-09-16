@@ -22,6 +22,7 @@ void RenderSystem::Render(sf::RenderWindow& window)
     {
         for (auto* s : m_ecs->GetComponents<SpriteComponent>(e))
         {
+            if (!s->visible)continue;
             sf::RenderStates states;
             if (s->shader)
             {
@@ -40,6 +41,8 @@ void RenderSystem::Render(sf::RenderWindow& window)
         {
             if (!a->animations.empty())
             {
+                if (!a->visible)continue;
+
                 sf::RenderStates states;
                 if (a->shader)
                 {
