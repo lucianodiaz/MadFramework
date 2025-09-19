@@ -57,29 +57,6 @@ namespace MAD::MathUtils
         return { frand(lx, hx), frand(ly, hy) };
     }
 
-
-    Intersect LineIntersect(const sf::Vector2f& a,const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d)
-    {
-        sf::Vector2f r = (b - a);
-
-        sf::Vector2f s = (d - c);
-
-        float rxs = cross(r, s);
-
-        sf::Vector2f cma = c - a;
-        float t = (cross(cma, s)) / rxs;
-        float u = (cross(cma, r)) / rxs;
-
-        if (t >= 0 && t <= 1 && u >= 0 && u <= 1)
-        {
-            return { true,sf::Vector2f(a.x + t * r.x,a.y + t * r.x) };
-        }
-        else
-        {
-            return { false, sf::Vector2f(0,0) };
-        }
-    }
-
     inline float cross(const sf::Vector2f& a, sf::Vector2f& b)
     {
         return a.x * b.y - a.y * b.x;
@@ -88,6 +65,61 @@ namespace MAD::MathUtils
     inline float VectorLength(const sf::Vector2f& v)
     {
         return std::sqrt(v.x * v.x + v.y * v.y);
+    }
+
+    inline float dot(const sf::Vector2f& a, const sf::Vector2f& b)
+    {
+        return a.x * b.x + a.y * b.y;
+    }
+
+    inline Intersect LineIntersect(const sf::Vector2f& a,const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d,float eps = 1e-6f)
+    {
+        sf::Vector2f r = (b - a);
+
+        sf::Vector2f s = (d - c);
+
+        float rxs = cross(r, s);
+
+        sf::Vector2f cma = c - a;
+
+        if (std::fabs(rxs) < eps)
+        {
+            if (std::fabs(cross(cma, r)) < eps)
+            {
+                float rr = dot(r, r);
+                if (rr < eps) return { false,{} };
+
+                float t0 = dot(c - a, r) / rr;
+                float t1 = dot(d - a, r) / rr;
+                if (t0 > t1) std::swap(t0, t1);
+                float t = std::clamp(t0, 0.0f, 1.0f);
+                if (t1 >= 0.0f && t0 <= 1.0f)
+                {
+                    return { true,a + t * r };
+                }
+            }
+            return { false,{} };
+        }
+
+        float t = (cross(cma, s)) / rxs;
+        float u = (cross(cma, r)) / rxs;
+
+        if (t >= -eps && t <= 1.0f + eps && u >= -eps && u <= 1.0f + eps)
+        {
+            return { true,sf::Vector2f(a.x + t * r.x,a.y + t * r.y) };
+        }
+        else
+        {
+            return { false, {} };
+        }
+    }
+
+  
+
+    inline sf::Vector2f normalize(const sf::Vector2f& v)
+    {
+        float len = VectorLength(v);
+        return (len > 0.0f) ? (v / len) : sf::Vector2f(0.0f, 0.0f);
     }
 
     inline bool IsMoving(const sf::Vector2f& v, float threshold = 0.01f)
