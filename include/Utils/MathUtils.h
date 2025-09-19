@@ -5,6 +5,12 @@
 
 namespace MAD::MathUtils
 {
+    struct Intersect
+    {
+        bool result;
+        sf::Vector2f position;
+    };
+
     inline std::mt19937& rng() {
         static thread_local std::mt19937 gen{ std::random_device{}() };
         return gen;
@@ -49,6 +55,34 @@ namespace MAD::MathUtils
         auto [lx, hx] = std::minmax(a.x, b.x);
         auto [ly, hy] = std::minmax(a.y, b.y);
         return { frand(lx, hx), frand(ly, hy) };
+    }
+
+
+    Intersect LineIntersect(const sf::Vector2f& a,const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d)
+    {
+        sf::Vector2f r = (b - a);
+
+        sf::Vector2f s = (d - c);
+
+        float rxs = cross(r, s);
+
+        sf::Vector2f cma = c - a;
+        float t = (cross(cma, s)) / rxs;
+        float u = (cross(cma, r)) / rxs;
+
+        if (t >= 0 && t <= 1 && u >= 0 && u <= 1)
+        {
+            return { true,sf::Vector2f(a.x + t * r.x,a.y + t * r.x) };
+        }
+        else
+        {
+            return { false, sf::Vector2f(0,0) };
+        }
+    }
+
+    inline float cross(const sf::Vector2f& a, sf::Vector2f& b)
+    {
+        return a.x * b.y - a.y * b.x;
     }
 
     inline float VectorLength(const sf::Vector2f& v)
